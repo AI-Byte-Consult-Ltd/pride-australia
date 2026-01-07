@@ -53,7 +53,7 @@ const Footer = () => {
               <span className="font-display text-xl font-bold">Pride Social</span>
             </Link>
             <p className="text-sm text-muted-foreground mb-4">
-              A joyful social network built by and for the Pride community.
+              A joyful social network built by and for the PRIDE community.
             </p>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{countryEmoji}</span>
