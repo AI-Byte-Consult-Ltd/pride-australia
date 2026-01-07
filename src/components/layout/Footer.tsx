@@ -9,11 +9,11 @@ const Footer = () => {
 
   const legalInfo = {
     AU: {
-      registration: 'Pride Foundation Australia Ltd. ABN: 12 345 678 901',
+      registration: 'Pride Foundation Australia Ltd. ABN: soon',
       nonprofit: 'Registered Australian Charity (ACNC)',
     },
     US: {
-      registration: 'Pride Foundation USA Inc. EIN: 12-3456789',
+      registration: 'Pride Foundation USA Inc. EIN: soon',
       nonprofit: 'Registered 501(c)(3) Non-Profit Organization',
     },
   };
