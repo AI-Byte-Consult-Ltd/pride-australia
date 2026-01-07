@@ -129,7 +129,7 @@ const Footer = () => {
 
           <div className="flex flex-col items-center md:items-end gap-2">
             <p className="text-sm text-muted-foreground">
-              © {currentYear} Pride Foundation. All rights reserved.
+              © {currentYear} PRIDE Lab Foundation. All rights reserved.
             </p>
             <a
               href="https://aibyteconsult.com"
