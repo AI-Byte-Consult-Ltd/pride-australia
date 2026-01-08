@@ -1,0 +1,25 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <title>Redirecting…</title>
+    <script>
+      // GitHub Pages SPA redirect:
+      // /support -> /?/support  (then index.html script restores /support)
+      var l = window.location;
+      var redirect =
+        l.protocol +
+        "//" +
+        l.host +
+        "/?/" +
+        l.pathname.slice(1) +
+        (l.search ? "&" + l.search.slice(1) : "") +
+        l.hash;
+
+      window.location.replace(redirect);
+    </script>
+  </head>
+  <body>Redirecting…</body>
+</html>

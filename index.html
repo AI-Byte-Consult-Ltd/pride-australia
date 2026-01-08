@@ -2,6 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+    <script>
+      (function () {
+        // GitHub Pages SPA fix:
+        // If the URL looks like "/?/support" (set by 404.html), restore it to "/support"
+        var l = window.location;
+        if (l.search && l.search.startsWith("?/")) {
+          var path = l.search.slice(2); // remove "?/"
+          // convert "&" back to "?" (preserves query strings)
+          path = path.replace(/&/g, "?");
+          var newUrl = l.pathname.replace(/\/$/, "") + "/" + path + l.hash;
+          window.history.replaceState(null, "", newUrl);
+        }
+      })();
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary SEO -->
