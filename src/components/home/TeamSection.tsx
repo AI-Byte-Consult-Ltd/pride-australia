@@ -1,84 +1,165 @@
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ExternalLink, Globe, Linkedin } from "lucide-react";
 
-import { Linkedin } from 'lucide-react';
+type TeamLinks = {
+  website?: string;
+  linkedin?: string;
+};
 
-const teamMembers = [
+type TeamMember = {
+  name: string;
+  title: string;
+  description: string;
+  image: string;
+  // Where clicking the image/name should go (primary action)
+  primaryUrl: string;
+  links?: TeamLinks;
+};
+
+const teamMembers: TeamMember[] = [
   {
-    name: 'Alexander Lunin',
-    role: 'Co-founder & CEO',
-    linkedIn: 'https://linkedin.com/in/luntick',
-    photo: 'https://ipfs.io/ipfs/bafybeicytytunukprcr2ittadc52iemf3dm2aekkxjvjfaaedxvvnx7b2m',
-    description: 'Visionary leader driving the PRIDE Lab Foundation mission and global initiatives.'
+    name: "Pride Lab Foundation",
+    title: "Community & Foundation",
+    description:
+      "Building Pride Social Network and supporting LGBTQ+ initiatives through technology and community-driven projects.",
+    image: "/team/pride-foundation.png",
+    primaryUrl: "https://pridesocial.org",
+    links: {
+      website: "https://pridesocial.org",
+    },
   },
   {
-    name: 'Aleksandr Tochilov',
-    role: 'Co-founder & Product Director',
-    linkedIn: 'https://linkedin.com/in/alekstoch',
-    photo: 'https://ipfs.io/ipfs/bafybeihefdmoyuyigycx4mkh6zo4suycrgbtcfl7grhsbyz3qkcqnppahq',
-    description: 'Leading product strategy and innovation, ensuring the platform meets user needs.'
+    name: "NIX Space",
+    title: "AI Infrastructure & Automation",
+    description:
+      "AI systems, automation, and infrastructure for modern products — from prototypes to production.",
+    image: "/team/nix-space.png",
+    primaryUrl: "https://nix.space",
+    links: {
+      website: "https://nix.space",
+      // linkedin: "https://www.linkedin.com/company/XXXXX" // optional
+    },
   },
   {
-    name: 'NICS AI',
-    role: 'Main AI Brain',
-    linkedIn: 'https://nics.space', // placeholder
-    photo: 'https://ipfs.io/ipfs/bafkreignzgyque7xpncvgff44ym6d3xyx5ub4rj65hgo4yihhdyhwfqioe',
-    description: 'Advanced AI engine powering smart features and analytics for the community.'
-  },
-  {
-    name: 'AI Byte Consult Ltd',
-    role: 'Main Company',
-    linkedIn: 'https://aibyteconsult.com', // placeholder
-    photo: 'https://ipfs.io/ipfs/bafkreib3md4wdo5mksv2sjqjefy5ndxdtayznb3zgppbu6ogtmx5zptzym',
-    description: 'Providing technological expertise and support for PRIDE Lab Foundation projects.'
+    name: "AByte Consult",
+    title: "AI Development & Business Automation",
+    description:
+      "A global technology company specializing in AI development and business automation across multiple industries.",
+    image: "/team/abyte-consult.png",
+    primaryUrl: "https://abyte-consult.com",
+    links: {
+      website: "https://abyte-consult.com",
+      // linkedin: "https://www.linkedin.com/company/XXXXX" // optional
+    },
   },
 ];
 
-const TeamSection = () => {
+function LinkIconButton({
+  href,
+  label,
+  icon,
+}: {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+}) {
   return (
-    <section className="py-20 lg:py-28 bg-muted/30">
-      <div className="container">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            Meet Our <span className="gradient-pride-text">Team</span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            The passionate leaders behind PRIDE Lab Foundation, working to create a better community for everyone.
+    <Button asChild variant="outline" size="sm" className="gap-2">
+      <a href={href} target="_blank" rel="noreferrer">
+        {icon}
+        <span>{label}</span>
+      </a>
+    </Button>
+  );
+}
+
+export function TeamSection() {
+  return (
+    <section id="team" className="py-16">
+      <div className="container mx-auto px-4">
+        <div className="mx-auto mb-10 max-w-2xl text-center">
+          <h2 className="text-3xl font-semibold tracking-tight">Team & Partners</h2>
+          <p className="mt-3 text-muted-foreground">
+            The people and organizations helping us build Pride Social Network and launch the
+            Pride Lab Foundation.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {teamMembers.map((member, index) => (
-            <div
-              key={member.name}
-              className="group text-center p-8 rounded-2xl bg-card border shadow-card transition-all duration-300 hover:shadow-elevated animate-fade-in"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4">
-                <img
-                  src={member.photo}
-                  alt={member.name}
-                  className="w-full h-full object-cover"
-                />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {teamMembers.map((m) => (
+            <Card key={m.name} className="overflow-hidden">
+              {/* Primary click area: image + name */}
+              <a
+                href={m.primaryUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="block hover:opacity-95 transition"
+                aria-label={`Open ${m.name}`}
+                title={`Open ${m.name}`}
+              >
+                <div className="flex items-center gap-4 p-6">
+                  <div className="h-14 w-14 overflow-hidden rounded-xl border bg-background">
+                    <img
+                      src={m.image}
+                      alt={m.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="truncate text-lg font-semibold">{m.name}</h3>
+                      <ExternalLink className="h-4 w-4 opacity-60" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">{m.title}</p>
+                  </div>
+                </div>
+              </a>
+
+              <div className="px-6 pb-6">
+                <p className="text-sm text-muted-foreground">{m.description}</p>
+
+                {/* Optional: small logo link under the text (same as primary) */}
+                <div className="mt-4">
+                  <a
+                    href={m.primaryUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 text-sm underline underline-offset-4 opacity-90 hover:opacity-100"
+                  >
+                    Visit {m.name}
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
+
+                {/* Secondary links: Website / LinkedIn */}
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {m.links?.website ? (
+                    <LinkIconButton
+                      href={m.links.website}
+                      label="Website"
+                      icon={<Globe className="h-4 w-4" />}
+                    />
+                  ) : null}
+
+                  {m.links?.linkedin ? (
+                    <LinkIconButton
+                      href={m.links.linkedin}
+                      label="LinkedIn"
+                      icon={<Linkedin className="h-4 w-4" />}
+                    />
+                  ) : null}
+                </div>
               </div>
-              <h3 className="font-display text-xl font-semibold mb-1">{member.name}</h3>
-              <p className="text-sm text-muted-foreground mb-2">{member.role}</p>
-              <p className="text-muted-foreground mb-4">{member.description}</p>
-              {member.linkedIn !== '#' && (
-                <a
-                  href={member.linkedIn}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-                >
-                  <Linkedin className="h-5 w-5" />
-                  <span className="text-sm font-medium">Connect on LinkedIn</span>
-                </a>
-              )}
-            </div>
+            </Card>
           ))}
         </div>
       </div>
     </section>
   );
-};
+}
 
 export default TeamSection;
+
