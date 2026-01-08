@@ -5,29 +5,29 @@ const teamMembers = [
   {
     name: 'Alexander Lunin',
     role: 'Co-founder & CEO',
-    linkedIn: 'https://linkedin.com/in/alexanderlunin',
+    linkedIn: 'https://linkedin.com/in/luntick',
     photo: 'https://ipfs.io/ipfs/bafybeicytytunukprcr2ittadc52iemf3dm2aekkxjvjfaaedxvvnx7b2m',
     description: 'Visionary leader driving the PRIDE Lab Foundation mission and global initiatives.'
   },
   {
     name: 'Aleksandr Tochilov',
     role: 'Co-founder & Product Director',
-    linkedIn: 'https://linkedin.com/in/aleksandrtochilov',
-    photo: 'https://ipfs.io/ipfs/bafkreidrf7kv64r45ww4sxzv76fqkdntjfr65qlbi5ryedqdlhyp4gwdkq',
+    linkedIn: 'https://linkedin.com/in/alekstoch',
+    photo: 'https://ipfs.io/ipfs/bafybeihefdmoyuyigycx4mkh6zo4suycrgbtcfl7grhsbyz3qkcqnppahq',
     description: 'Leading product strategy and innovation, ensuring the platform meets user needs.'
   },
   {
     name: 'NICS AI',
     role: 'Main AI Brain',
     linkedIn: '#', // placeholder
-    photo: 'https://pfs.io/ipfs/bafkreignzgyque7xpncvgff44ym6d3xyx5ub4rj65hgo4yihhdyhwfqioe',
+    photo: 'https://ipfs.io/ipfs/bafkreignzgyque7xpncvgff44ym6d3xyx5ub4rj65hgo4yihhdyhwfqioe',
     description: 'Advanced AI engine powering smart features and analytics for the community.'
   },
   {
     name: 'AI Byte Consult Ltd',
     role: 'Main Company',
     linkedIn: '#', // placeholder
-    photo: 'https://ipfs.io/bafkreib3md4wdo5mksv2sjqjefy5ndxdtayznb3zgppbu6ogtmx5zptzym',
+    photo: 'https://ipfs.io/ipfs/bafkreib3md4wdo5mksv2sjqjefy5ndxdtayznb3zgppbu6ogtmx5zptzym',
     description: 'Providing technological expertise and support for PRIDE Lab Foundation projects.'
   },
 ];

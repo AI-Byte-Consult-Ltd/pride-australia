@@ -5,7 +5,7 @@ import { useJurisdiction } from '@/contexts/JurisdictionContext';
 const TermsPage = () => {
   const { jurisdiction, countryName } = useJurisdiction();
   
-  const lastUpdated = 'January 1, 2026';
+  const lastUpdated = 'January 8, 2026';
 
   return (
     <>
