@@ -21,7 +21,7 @@ interface SupportPackage {
 const AUD_SYMBOL = 'A$';
 const VIP_MIN = 199;
 
-// ✅ Updated coin bonuses
+// Updated coin bonuses
 const EARLY_BONUS = 2_000_000;
 const FOUNDING_BONUS = 5_000_000;
 const VIP_BONUS_FROM = 20_000_000;
@@ -58,7 +58,7 @@ const SupportPackagesSection = () => {
   const [customAmount, setCustomAmount] = useState<number>(VIP_MIN);
 
   const buildFinalLink = (baseUrl: string, pkgId: SupportPackage['id']) => {
-    // VIP: optionally append amount parameter (safe for most links; ignored if unsupported)
+    // VIP: append amount param (ignored if provider doesn't support it)
     if (pkgId !== 'vip') return baseUrl;
 
     const amount = Math.max(VIP_MIN, customAmount);
@@ -85,7 +85,7 @@ const SupportPackagesSection = () => {
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Your support helps us build a safe, inclusive platform for the Pride community.
-            Choose a package and receive Pride Coins as a thank you.
+            Choose a package and receive PRIDE Coins as a thank you.
           </p>
         </div>
 
@@ -177,49 +177,47 @@ const SupportPackagesSection = () => {
                 )}
               </CardContent>
 
-              {/* 4 donation buttons */}
+              {/* 4 donation buttons - stacked */}
               <CardFooter className="flex flex-col gap-3">
-                <div className="grid grid-cols-2 gap-3 w-full">
-                  <Button
-                    variant={pkg.featured ? 'pride' : 'default'}
-                    size="lg"
-                    className="w-full gap-2"
-                    onClick={() => handleDonate(pkg, 'stripe')}
-                  >
-                    <CreditCard className="h-4 w-4" />
-                    Donate with Stripe
-                  </Button>
+                <Button
+                  variant={pkg.featured ? 'pride' : 'default'}
+                  size="lg"
+                  className="w-full gap-2"
+                  onClick={() => handleDonate(pkg, 'stripe')}
+                >
+                  <CreditCard className="h-4 w-4" />
+                  Donate with Stripe
+                </Button>
 
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="w-full gap-2"
-                    onClick={() => handleDonate(pkg, 'revolut')}
-                  >
-                    <RefreshCcw className="h-4 w-4" />
-                    Donate with Revolut
-                  </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full gap-2"
+                  onClick={() => handleDonate(pkg, 'revolut')}
+                >
+                  <RefreshCcw className="h-4 w-4" />
+                  Donate with Revolut
+                </Button>
 
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="w-full gap-2"
-                    onClick={() => handleDonate(pkg, 'paypal')}
-                  >
-                    <Wallet className="h-4 w-4" />
-                    Donate with PayPal
-                  </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full gap-2"
+                  onClick={() => handleDonate(pkg, 'paypal')}
+                >
+                  <Wallet className="h-4 w-4" />
+                  Donate with PayPal
+                </Button>
 
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="w-full gap-2"
-                    onClick={() => handleDonate(pkg, 'coinbase')}
-                  >
-                    <Coins className="h-4 w-4" />
-                    Donate with Crypto
-                  </Button>
-                </div>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full gap-2"
+                  onClick={() => handleDonate(pkg, 'coinbase')}
+                >
+                  <Coins className="h-4 w-4" />
+                  Donate with Crypto
+                </Button>
               </CardFooter>
             </Card>
           ))}
