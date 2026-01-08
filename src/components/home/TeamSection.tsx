@@ -6,15 +6,15 @@ const teamMembers = [
   {
     name: 'Alexander Lunin',
     role: 'Co-founder & CEO',
-    linkedIn: 'https://linkedin.com/in/alexanderlunin',
-    photo: 'https://media.licdn.com/dms/image/C5603AQF3FqvHfZlCwQ/profile-displayphoto-shrink_200_200/0/1661234567890?e=1694044800&v=beta&t=abc123',
+    linkedIn: 'https://linkedin.com/in/luntick',
+    photo: 'https://ipfs.io/ipfs/bafybeicytytunukprcr2ittadc52iemf3dm2aekkxjvjfaaedxvvnx7b2m',
     description: 'Visionary leader driving the PRIDE Lab Foundation mission and global initiatives.',
   },
   {
     name: 'Aleksandr Tochilov',
     role: 'Co-founder & Product Director',
-    linkedIn: 'https://linkedin.com/in/aleksandrtochilov',
-    photo: 'https://media.licdn.com/dms/image/C4D03AQG9XKj9l8oJ8A/profile-displayphoto-shrink_200_200/0/1659876543210?e=1694044800&v=beta&t=def456',
+    linkedIn: 'https://linkedin.com/in/alekstoch',
+    photo: 'https://ipfs.io/ipfs/bafybeihefdmoyuyigycx4mkh6zo4suycrgbtcfl7grhsbyz3qkcqnppahq',
     description: 'Leading product strategy and innovation, ensuring the platform meets user needs.',
   },
   {
@@ -22,7 +22,7 @@ const teamMembers = [
     role: 'Main AI Brain',
     linkedIn: '#',
     website: 'https://nics.space',
-    photo: 'https://via.placeholder.com/200?text=NICS+AI',
+    photo: 'https://ipfs.io/ipfs/bafkreignzgyque7xpncvgff44ym6d3xyx5ub4rj65hgo4yihhdyhwfqioe',
     description: 'Advanced AI engine powering smart features and analytics for the community.',
   },
   {
@@ -30,7 +30,7 @@ const teamMembers = [
     role: 'Main Company',
     linkedIn: '#',
     website: 'https://aibyteconsult.com',
-    photo: 'https://via.placeholder.com/200?text=AI+Byte+Consult',
+    photo: 'https://ipfs.io/ipfs/bafkreib3md4wdo5mksv2sjqjefy5ndxdtayznb3zgppbu6ogtmx5zptzym',
     description: 'Providing technological expertise and support for PRIDE Lab Foundation projects.',
   },
 ];
