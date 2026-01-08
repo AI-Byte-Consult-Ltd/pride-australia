@@ -9,11 +9,11 @@ const Footer = () => {
 
   const legalInfo = {
     AU: {
-      registration: 'Pride Foundation Australia Ltd. ABN: soon',
+      registration: 'PRIDE Lab Foundation Australia Ltd. ABN: soon',
       nonprofit: 'Registered Australian Charity (ACNC)',
     },
     US: {
-      registration: 'Pride Foundation USA Inc. EIN: soon',
+      registration: 'PRIDE Lab Foundation USA Inc. EIN: soon',
       nonprofit: 'Registered 501(c)(3) Non-Profit Organization',
     },
   };
@@ -22,13 +22,14 @@ const Footer = () => {
     platform: [
       { name: 'Home', href: '/' },
       { name: 'Marketplace', href: '/marketplace' },
+      { name: 'News', href: '/news' },
+      { name: 'Events', href: '/events' },
       { name: 'Support Us', href: '/support' },
-      { name: 'Dashboard', href: '/dashboard' },
     ],
     foundation: [
-      { name: 'About Pride Foundation', href: '/about' },
-      { name: 'Mission & Values', href: '/about#mission' },
-      { name: 'Transparency', href: '/about#transparency' },
+      { name: 'About PRIDE Lab Foundation', href: '/about' },
+      { name: 'Mission', href: '/mission' },
+      { name: 'Values', href: '/values' },
       { name: 'Contact', href: '/contact' },
     ],
     legal: [

@@ -22,7 +22,7 @@ const features = [
   {
     icon: <Heart className="h-6 w-6" />,
     title: 'Non-Profit Driven',
-    description: 'Operated by Pride Foundation. Every feature, every decision, made with community benefit in mind.',
+    description: 'Operated by PRIDE Lab Foundation. Every feature, every decision, made with community benefit in mind.',
     color: 'pride-purple',
   },
 ];
