@@ -19,14 +19,14 @@ const teamMembers = [
   {
     name: 'NICS AI',
     role: 'Main AI Brain',
-    linkedIn: '#', // placeholder
+    linkedIn: 'https://nics.space', // placeholder
     photo: 'https://ipfs.io/ipfs/bafkreignzgyque7xpncvgff44ym6d3xyx5ub4rj65hgo4yihhdyhwfqioe',
     description: 'Advanced AI engine powering smart features and analytics for the community.'
   },
   {
     name: 'AI Byte Consult Ltd',
     role: 'Main Company',
-    linkedIn: '#', // placeholder
+    linkedIn: 'https://aibyteconsult.com', // placeholder
     photo: 'https://ipfs.io/ipfs/bafkreib3md4wdo5mksv2sjqjefy5ndxdtayznb3zgppbu6ogtmx5zptzym',
     description: 'Providing technological expertise and support for PRIDE Lab Foundation projects.'
   },
