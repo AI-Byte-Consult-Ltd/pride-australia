@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { HelmetProvider } from 'react-helmet-async';
+import { HelmetProvider } from "react-helmet-async";
 import { JurisdictionProvider } from "@/contexts/JurisdictionContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -27,44 +27,68 @@ import NewsPage from "./pages/NewsPage";
 import EventsPage from "./pages/EventsPage";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+// NEW PAGE
+import TransparencyCostsPage from "./pages/TransparencyCostsPage";
 
-const App = () => (
-  <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <JurisdictionProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignupPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/support" element={<SupportPage />} />
-                <Route path="/marketplace" element={<MarketplacePage />} />
-                <Route path="/privacy" element={<PrivacyPage />} />
-                <Route path="/terms" element={<TermsPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/cookies" element={<CookiesPage />} />
-                <Route path="/guidelines" element={<GuidelinesPage />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/admin" element={<AdminDashboardPage />} />
-                <Route path="/mission" element={<MissionPage />} />
-                <Route path="/values" element={<ValuesPage />} />
-                <Route path="/news" element={<NewsPage />} />
-                <Route path="/events" element={<EventsPage />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </JurisdictionProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  </HelmetProvider>
-);
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 60_000, // 60s
+    },
+  },
+});
+
+const App = () => {
+  return (
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <JurisdictionProvider>
+            <TooltipProvider>
+              {/* Global UI */}
+              <Toaster />
+              <Sonner />
+
+              <BrowserRouter>
+                <Routes>
+                  {/* Public */}
+                  <Route path="/" element={<Index />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/signup" element={<SignupPage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/mission" element={<MissionPage />} />
+                  <Route path="/values" element={<ValuesPage />} />
+                  <Route path="/support" element={<SupportPage />} />
+                  <Route path="/marketplace" element={<MarketplacePage />} />
+                  <Route path="/news" element={<NewsPage />} />
+                  <Route path="/events" element={<EventsPage />} />
+
+                  {/* Legal */}
+                  <Route path="/privacy" element={<PrivacyPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/cookies" element={<CookiesPage />} />
+                  <Route path="/guidelines" element={<GuidelinesPage />} />
+                  <Route
+                    path="/transparency-and-costs"
+                    element={<TransparencyCostsPage />}
+                  />
+
+                  {/* App */}
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/admin" element={<AdminDashboardPage />} />
+
+                  {/* Catch-all */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </JurisdictionProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
+  );
+};
 
 export default App;
