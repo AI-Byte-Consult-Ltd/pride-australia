@@ -32,8 +32,8 @@ const SupportPage = () => {
   return (
     <>
       <Helmet>
-        <title>Support Pride Foundation | Pride Social Network</title>
-        <meta name="description" content="Support Pride Foundation and help build a better social network for the Pride community. Choose a supporter package and make an impact." />
+        <title>Support PRIDE Lab Foundation | Pride Social Network</title>
+        <meta name="description" content="Support PRIDE Lab Foundation and help build a better social network for the Pride community. Choose a supporter package and make an impact." />
       </Helmet>
 
       <Layout>
@@ -45,7 +45,7 @@ const SupportPage = () => {
                 <Heart className="h-8 w-8 text-primary-foreground" fill="currentColor" />
               </div>
               <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-                Support <span className="gradient-pride-text">Pride Foundation</span>
+                Support <span className="gradient-pride-text">PRIDE Lab Foundation</span>
               </h1>
               <p className="text-lg text-muted-foreground">
                 Your contribution helps us build and maintain a safe, inclusive 

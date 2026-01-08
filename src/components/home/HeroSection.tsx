@@ -31,7 +31,7 @@ const HeroSection = () => {
             
             <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0">
               Connect, share, and celebrate together on a platform designed with love, 
-              operated by Pride Foundation to support and uplift our community.
+              operated by PRIDE Lab Foundation to support and uplift our community.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -39,7 +39,7 @@ const HeroSection = () => {
                 <Link to="/signup">Join the Network</Link>
               </Button>
               <Button variant="hero-secondary" size="xl" asChild>
-                <Link to="/support">Support Pride Foundation</Link>
+                <Link to="/support">Support PRIDE Lab Foundation</Link>
               </Button>
             </div>
 

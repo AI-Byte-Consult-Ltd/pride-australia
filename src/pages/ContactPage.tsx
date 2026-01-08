@@ -11,10 +11,10 @@ const ContactPage = () => {
 
   const contactInfo = {
     AU: {
-      address: 'Pride Foundation Australia Ltd.\nLevel 10, 123 Pride Street\nSydney, NSW 2000\nAustralia',
+      address: 'PRIDE Lab Foundation Australia Ltd.\nLevel 10, 123 Pride Street\nSydney, NSW 2000\nAustralia',
     },
     US: {
-      address: 'Pride Foundation USA Inc.\n100 Rainbow Avenue, Suite 500\nSan Francisco, CA 94102\nUnited States',
+      address: 'PRIDE Lab Foundation USA Inc.\n100 Rainbow Avenue, Suite 500\nSan Francisco, CA 94102\nUnited States',
     },
   };
 
@@ -22,7 +22,7 @@ const ContactPage = () => {
     <>
       <Helmet>
         <title>Contact Us | Pride Social Network</title>
-        <meta name="description" content="Get in touch with Pride Foundation. We're here to help with any questions about Pride Social Network." />
+        <meta name="description" content="Get in touch with PRIDE Lab Foundation. We're here to help with any questions about Pride Social Network." />
       </Helmet>
 
       <Layout>

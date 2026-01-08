@@ -10,12 +10,12 @@ const AboutPage = () => {
 
   const foundationInfo = {
     AU: {
-      name: 'Pride Foundation Australia Ltd.',
+      name: 'PRIDE Lab Foundation Australia Ltd.',
       registration: 'ABN: soon',
       regulator: 'Australian Charities and Not-for-profits Commission (ACNC)',
     },
     US: {
-      name: 'Pride Foundation USA Inc.',
+      name: 'PRIDE Lab Foundation USA Inc.',
       registration: 'EIN: soon',
       regulator: 'Internal Revenue Service (501(c)(3))',
     },
@@ -47,8 +47,8 @@ const AboutPage = () => {
   return (
     <>
       <Helmet>
-        <title>About Pride Foundation | Pride Social Network</title>
-        <meta name="description" content="Learn about Pride Foundation, a non-profit organization operating Pride Social Network in Australia and the United States." />
+        <title>About PRIDE Lab Foundation | Pride Social Network</title>
+        <meta name="description" content="Learn about PRIDE Lab Foundation, a non-profit organization operating Pride Social Network in Australia and the United States." />
       </Helmet>
 
       <Layout>
@@ -60,7 +60,7 @@ const AboutPage = () => {
                 {countryEmoji} Operating in {countryName}
               </span>
               <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-                About <span className="gradient-pride-text">Pride Foundation</span>
+                About <span className="gradient-pride-text">PRIDE Lab Foundation</span>
               </h1>
               <p className="text-lg text-muted-foreground">
                 A non-profit organization dedicated to building technology that 
@@ -82,7 +82,7 @@ const AboutPage = () => {
                   <h2 className="font-display text-3xl font-bold">Our Mission</h2>
                 </div>
                 <p className="text-lg text-muted-foreground mb-6">
-                  Pride Foundation exists to create safe, inclusive digital spaces 
+                  PRIDE Lab Foundation exists to create safe, inclusive digital spaces 
                   where the LGBTQ+ community can connect, express themselves, and 
                   thrive without fear of discrimination or harassment.
                 </p>
@@ -147,7 +147,7 @@ const AboutPage = () => {
                   </p>
                   <p>
                     <strong className="text-foreground">Non-Profit Status:</strong>{' '}
-                    Pride Foundation is a registered charity and non-profit organization. 
+                    PRIDE Lab Foundation is a registered charity and non-profit organization. 
                     All revenue goes directly toward platform development and community programs.
                   </p>
                   <p>

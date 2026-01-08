@@ -67,7 +67,7 @@ const TermsPage = () => {
                 <p className="text-muted-foreground">
                   Users who sell on our marketplace agree to provide accurate product 
                   descriptions, fulfill orders promptly, and comply with all applicable 
-                  consumer protection laws. Pride Foundation takes a commission on 
+                  consumer protection laws. PRIDE Lab Foundation takes a commission on 
                   marketplace sales to support platform operations.
                 </p>
               </section>

@@ -21,6 +21,10 @@ import CookiesPage from "./pages/CookiesPage";
 import GuidelinesPage from "./pages/GuidelinesPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import MissionPage from "./pages/MissionPage";
+import ValuesPage from "./pages/ValuesPage";
+import NewsPage from "./pages/NewsPage";
+import EventsPage from "./pages/EventsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +52,10 @@ const App = () => (
                 <Route path="/guidelines" element={<GuidelinesPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/admin" element={<AdminDashboardPage />} />
+                <Route path="/mission" element={<MissionPage />} />
+                <Route path="/values" element={<ValuesPage />} />
+                <Route path="/news" element={<NewsPage />} />
+                <Route path="/events" element={<EventsPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
