@@ -106,8 +106,8 @@ const CookiesPage = () => {
                   <h2 className="font-display text-2xl font-semibold mb-4">Contact Us</h2>
                   <p className="text-muted-foreground">
                     If you have questions about our use of cookies, please contact us at{' '}
-                    <a href="mailto:privacy@pridesocial.network" className="text-primary hover:underline">
-                      privacy@pridesocial.network
+                    <a href="mailto:info@pridesocial.org" className="text-primary hover:underline">
+                      info@pridesocial.org
                     </a>
                   </p>
                 </section>
