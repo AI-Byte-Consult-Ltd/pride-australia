@@ -7,7 +7,7 @@ const teamMembers = [
     name: 'Alexander Lunin',
     role: 'Co-founder & CEO',
     linkedIn: 'https://linkedin.com/in/luntick',
-    photo: 'https://ipfs.io/ipfs/bafybeiejhpcvxce4ouohrl6icumquxusgr2kvl2mhu4ydp4x2il7hoiq4i',
+    photo: 'https://ipfs.io/ipfs/bafybeigj24eoitxw4xafuwxtmhls65nxm7pekt4wwby5yjmtzbzhshnqb4',
     description: 'Visionary leader driving the PRIDE Lab Foundation mission and global initiatives.',
   },
   {
