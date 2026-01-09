@@ -28,6 +28,7 @@ const Footer = () => {
     foundation: [
       { name: "About PRIDE Lab Foundation", href: "/about" },
       { name: "Mission", href: "/mission" },
+      { name: "Goals", href: "/goals" },
       { name: "Values", href: "/values" },
       { name: "Transparency & Costs", href: "/transparency-and-costs" },
       { name: "Contact", href: "/contact" },

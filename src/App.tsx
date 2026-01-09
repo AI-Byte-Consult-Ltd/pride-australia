@@ -22,6 +22,7 @@ import GuidelinesPage from "./pages/GuidelinesPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import MissionPage from "./pages/MissionPage";
+import GoalsPage from "./pages/GoalsPage";
 import ValuesPage from "./pages/ValuesPage";
 import NewsPage from "./pages/NewsPage";
 import EventsPage from "./pages/EventsPage";
@@ -59,6 +60,7 @@ const App = () => {
                   <Route path="/signup" element={<SignupPage />} />
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/mission" element={<MissionPage />} />
+                  <Route path="/goals" element={<GoalsPage />} />
                   <Route path="/values" element={<ValuesPage />} />
                   <Route path="/support" element={<SupportPage />} />
                   <Route path="/marketplace" element={<MarketplacePage />} />
