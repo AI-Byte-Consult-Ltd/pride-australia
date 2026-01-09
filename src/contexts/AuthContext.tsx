@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, displayName: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, displayName: string, dateOfBirth?: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
@@ -20,10 +20,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      // Update profile with date_of_birth if it was passed during signup
+      if (event === 'SIGNED_IN' && session?.user) {
+        const dateOfBirth = session.user.user_metadata?.date_of_birth;
+        if (dateOfBirth) {
+          // Use setTimeout to avoid blocking the auth state change
+          setTimeout(async () => {
+            await supabase
+              .from('profiles')
+              .update({ date_of_birth: dateOfBirth })
+              .eq('user_id', session.user.id);
+          }, 100);
+        }
+      }
     });
 
     // THEN check for existing session
@@ -36,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, displayName: string) => {
+  const signUp = async (email: string, password: string, displayName: string, dateOfBirth?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
@@ -46,6 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         emailRedirectTo: redirectUrl,
         data: {
           display_name: displayName,
+          date_of_birth: dateOfBirth,
         },
       },
     });
