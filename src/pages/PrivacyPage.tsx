@@ -91,7 +91,10 @@ const PrivacyPage = () => {
                 <h2 className="font-display text-2xl font-semibold mb-4">6. Contact Us</h2>
                 <p className="text-muted-foreground">
                   If you have questions about this Privacy Policy or our practices, 
-                  please contact us at privacy@pridesocial.network
+                  please contact us at{' '}
+                  <a href="mailto:info@pridesocial.org" className="text-primary hover:underline">
+                    info@pridesocial.org
+                  </a>
                 </p>
               </section>
             </div>

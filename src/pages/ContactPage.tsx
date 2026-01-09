@@ -51,10 +51,10 @@ const ContactPage = () => {
                     For general inquiries and support
                   </p>
                   <a 
-                    href="mailto:hello@pridesocial.network" 
+                    href="mailto:info@pridesocial.org" 
                     className="text-primary hover:underline font-medium"
                   >
-                    hello@pridesocial.network
+                    info@pridesocial.org
                   </a>
                 </CardContent>
               </Card>

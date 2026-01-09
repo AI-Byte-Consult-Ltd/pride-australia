@@ -136,8 +136,8 @@ const GuidelinesPage = () => {
                   <p className="text-muted-foreground">
                     If you believe your content was removed or your account was actioned in error, 
                     you may appeal by contacting{' '}
-                    <a href="mailto:appeals@pridesocial.network" className="text-primary hover:underline">
-                      appeals@pridesocial.network
+                    <a href="mailto:info@pridesocial.org" className="text-primary hover:underline">
+                      info@pridesocial.org
                     </a>
                     . Appeals are reviewed within 7 business days.
                   </p>

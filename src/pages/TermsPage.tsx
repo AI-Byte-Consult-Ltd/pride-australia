@@ -93,7 +93,10 @@ const TermsPage = () => {
               <section className="mb-8">
                 <h2 className="font-display text-2xl font-semibold mb-4">7. Contact</h2>
                 <p className="text-muted-foreground">
-                  For questions about these Terms, please contact legal@pridesocial.network
+                  For questions about these Terms, please contact{' '}
+                  <a href="mailto:info@pridesocial.org" className="text-primary hover:underline">
+                    info@pridesocial.org
+                  </a>
                 </p>
               </section>
             </div>
