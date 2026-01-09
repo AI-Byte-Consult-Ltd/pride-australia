@@ -14,7 +14,7 @@ const teamMembers = [
     name: 'Aleksandr Tochilov',
     role: 'Co-founder & Product Director',
     linkedIn: 'https://linkedin.com/in/alekstoch',
-    photo: 'https://ipfs.io/ipfs/bafybeihefdmoyuyigycx4mkh6zo4suycrgbtcfl7grhsbyz3qkcqnppahq',
+    photo: 'https://ipfs.io/ipfs/bafkreigz6iqq74v54bta5hjnipdpjn4j2z6tzlkre4gk2uil3xbjtslz6q',
     description: 'Leading product strategy and innovation, ensuring the platform meets user needs.',
   },
   {
