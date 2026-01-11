@@ -26,6 +26,7 @@ import GoalsPage from "./pages/GoalsPage";
 import ValuesPage from "./pages/ValuesPage";
 import NewsPage from "./pages/NewsPage";
 import EventsPage from "./pages/EventsPage";
+import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
 // NEW PAGE
@@ -79,6 +80,7 @@ const App = () => {
 
                   {/* App */}
                   <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/dashboard/settings" element={<SettingsPage />} />
                   <Route path="/admin" element={<AdminDashboardPage />} />
 
                   {/* Catch-all */}

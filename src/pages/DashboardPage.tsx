@@ -30,11 +30,15 @@ interface PostWithProfile {
   created_at: string;
   user_id: string;
   author_name: string;
+  author_username: string | null;
+  like_count: number;
+  user_has_liked: boolean;
 }
 
 interface Profile {
   pride_coins: number;
   display_name: string | null;
+  username: string | null;
 }
 
 const MAX_POST_LENGTH = 5000;
@@ -45,6 +49,7 @@ const DashboardPage = () => {
   const [isPosting, setIsPosting] = useState(false);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [userProfile, setUserProfile] = useState<Profile | null>(null);
+  const [likingPostId, setLikingPostId] = useState<string | null>(null);
   const { toast } = useToast();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -56,7 +61,7 @@ const DashboardPage = () => {
     }
   }, [user, loading, navigate]);
 
-  // Fetch posts with author names
+  // Fetch posts with author names and likes
   useEffect(() => {
     if (!user) return;
 
@@ -82,24 +87,54 @@ const DashboardPage = () => {
 
       // Get unique user IDs
       const userIds = [...new Set(postsData.map(p => p.user_id))];
+      const postIds = postsData.map(p => p.id);
 
       // Fetch profiles for these users
       const { data: profilesData } = await supabase
         .from('profiles')
-        .select('user_id, display_name')
+        .select('user_id, display_name, username')
         .in('user_id', userIds);
 
-      // Create a map of user_id to display_name
-      const profileMap = new Map<string, string>();
+      // Fetch like counts for all posts
+      const { data: likesData } = await supabase
+        .from('post_likes')
+        .select('post_id')
+        .in('post_id', postIds);
+
+      // Fetch user's likes
+      const { data: userLikesData } = await supabase
+        .from('post_likes')
+        .select('post_id')
+        .eq('user_id', user.id)
+        .in('post_id', postIds);
+
+      // Create maps
+      const profileMap = new Map<string, { display_name: string; username: string | null }>();
       profilesData?.forEach(p => {
-        profileMap.set(p.user_id, p.display_name || 'Anonymous');
+        profileMap.set(p.user_id, { 
+          display_name: p.display_name || 'Anonymous',
+          username: p.username
+        });
       });
 
-      // Combine posts with author names
-      const postsWithProfiles: PostWithProfile[] = postsData.map(post => ({
-        ...post,
-        author_name: profileMap.get(post.user_id) || 'Anonymous'
-      }));
+      const likeCountMap = new Map<string, number>();
+      likesData?.forEach(l => {
+        likeCountMap.set(l.post_id, (likeCountMap.get(l.post_id) || 0) + 1);
+      });
+
+      const userLikedSet = new Set(userLikesData?.map(l => l.post_id) || []);
+
+      // Combine posts with author names and likes
+      const postsWithProfiles: PostWithProfile[] = postsData.map(post => {
+        const profile = profileMap.get(post.user_id);
+        return {
+          ...post,
+          author_name: profile?.display_name || 'Anonymous',
+          author_username: profile?.username || null,
+          like_count: likeCountMap.get(post.id) || 0,
+          user_has_liked: userLikedSet.has(post.id)
+        };
+      });
 
       setPosts(postsWithProfiles);
       setIsLoadingPosts(false);
@@ -107,8 +142,8 @@ const DashboardPage = () => {
 
     fetchPosts();
 
-    // Subscribe to realtime updates
-    const channel = supabase
+    // Subscribe to realtime updates for posts
+    const postsChannel = supabase
       .channel('posts-channel')
       .on(
         'postgres_changes',
@@ -123,13 +158,16 @@ const DashboardPage = () => {
           // Fetch the author's profile
           const { data: profileData } = await supabase
             .from('profiles')
-            .select('display_name')
+            .select('display_name, username')
             .eq('user_id', newPostData.user_id)
             .maybeSingle();
           
           const newPost: PostWithProfile = {
             ...newPostData,
-            author_name: profileData?.display_name || 'Anonymous'
+            author_name: profileData?.display_name || 'Anonymous',
+            author_username: profileData?.username || null,
+            like_count: 0,
+            user_has_liked: false
           };
           
           setPosts(prev => [newPost, ...prev]);
@@ -137,8 +175,47 @@ const DashboardPage = () => {
       )
       .subscribe();
 
+    // Subscribe to realtime updates for likes
+    const likesChannel = supabase
+      .channel('likes-channel')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'post_likes'
+        },
+        (payload) => {
+          const postId = (payload.new as { post_id?: string })?.post_id || (payload.old as { post_id?: string })?.post_id;
+          const likeUserId = (payload.new as { user_id?: string })?.user_id || (payload.old as { user_id?: string })?.user_id;
+          
+          if (!postId) return;
+          
+          setPosts(prev => prev.map(post => {
+            if (post.id !== postId) return post;
+            
+            if (payload.eventType === 'INSERT') {
+              return {
+                ...post,
+                like_count: post.like_count + 1,
+                user_has_liked: likeUserId === user.id ? true : post.user_has_liked
+              };
+            } else if (payload.eventType === 'DELETE') {
+              return {
+                ...post,
+                like_count: Math.max(0, post.like_count - 1),
+                user_has_liked: likeUserId === user.id ? false : post.user_has_liked
+              };
+            }
+            return post;
+          }));
+        }
+      )
+      .subscribe();
+
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(postsChannel);
+      supabase.removeChannel(likesChannel);
     };
   }, [user]);
 
@@ -149,7 +226,7 @@ const DashboardPage = () => {
     const fetchProfile = async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('pride_coins, display_name')
+        .select('pride_coins, display_name, username')
         .eq('user_id', user.id)
         .maybeSingle();
 
@@ -174,10 +251,11 @@ const DashboardPage = () => {
           filter: `user_id=eq.${user.id}`
         },
         (payload) => {
-          const updated = payload.new as { pride_coins: number; display_name: string | null };
+          const updated = payload.new as { pride_coins: number; display_name: string | null; username: string | null };
           setUserProfile({
             pride_coins: updated.pride_coins,
-            display_name: updated.display_name
+            display_name: updated.display_name,
+            username: updated.username
           });
         }
       )
@@ -187,6 +265,41 @@ const DashboardPage = () => {
       supabase.removeChannel(profileChannel);
     };
   }, [user]);
+
+  // Handle like/unlike
+  const handleLike = async (postId: string, hasLiked: boolean) => {
+    if (!user || likingPostId) return;
+    
+    setLikingPostId(postId);
+    
+    try {
+      if (hasLiked) {
+        // Remove like
+        await supabase
+          .from('post_likes')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', user.id);
+      } else {
+        // Add like
+        await supabase
+          .from('post_likes')
+          .insert({
+            post_id: postId,
+            user_id: user.id
+          });
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update like. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLikingPostId(null);
+    }
+  };
 
   const handlePost = async () => {
     if (!postContent.trim() || !user) return;
@@ -431,15 +544,28 @@ const DashboardPage = () => {
                                   <span className="font-semibold">
                                     {post.author_name}
                                   </span>
+                                  {post.author_username && (
+                                    <span className="text-muted-foreground text-sm">
+                                      {post.author_username}
+                                    </span>
+                                  )}
                                   <span className="text-muted-foreground text-sm">
                                     · {formatTimeAgo(post.created_at)}
                                   </span>
                                 </div>
                                 <p className="text-foreground mb-4 whitespace-pre-wrap">{post.content}</p>
                                 <div className="flex items-center gap-6">
-                                  <button className="flex items-center gap-2 text-muted-foreground hover:text-pride-pink transition-colors">
-                                    <Heart className="h-4 w-4" />
-                                    <span className="text-sm">0</span>
+                                  <button 
+                                    onClick={() => handleLike(post.id, post.user_has_liked)}
+                                    disabled={likingPostId === post.id}
+                                    className={`flex items-center gap-2 transition-colors ${
+                                      post.user_has_liked 
+                                        ? 'text-pride-pink' 
+                                        : 'text-muted-foreground hover:text-pride-pink'
+                                    }`}
+                                  >
+                                    <Heart className={`h-4 w-4 ${post.user_has_liked ? 'fill-current' : ''}`} />
+                                    <span className="text-sm">{post.like_count}</span>
                                   </button>
                                   <button className="flex items-center gap-2 text-muted-foreground hover:text-pride-blue transition-colors">
                                     <MessageCircle className="h-4 w-4" />
