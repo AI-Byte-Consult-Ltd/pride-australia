@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           content: string
@@ -49,6 +78,7 @@ export type Database = {
           pride_coins: number
           updated_at: string
           user_id: string
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -60,6 +90,7 @@ export type Database = {
           pride_coins?: number
           updated_at?: string
           user_id: string
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -71,6 +102,7 @@ export type Database = {
           pride_coins?: number
           updated_at?: string
           user_id?: string
+          username?: string | null
         }
         Relationships: []
       }

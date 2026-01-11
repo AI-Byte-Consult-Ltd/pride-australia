@@ -13,6 +13,32 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Creative username generator
+const generateCreativeUsername = (): string => {
+  const adjectives = [
+    'Radiant', 'Brave', 'Cosmic', 'Dazzling', 'Euphoric', 'Fierce', 'Glowing',
+    'Harmonious', 'Infinite', 'Jubilant', 'Kindred', 'Luminous', 'Majestic',
+    'Noble', 'Opulent', 'Proud', 'Quirky', 'Resilient', 'Sparkling', 'Triumphant',
+    'Unified', 'Vibrant', 'Wonderful', 'Xtraordinary', 'Youthful', 'Zealous',
+    'Authentic', 'Bold', 'Creative', 'Divine', 'Elegant', 'Fabulous', 'Graceful',
+    'Hopeful', 'Inspiring', 'Joyful', 'Kaleidoscopic', 'Loving', 'Magical'
+  ];
+  
+  const nouns = [
+    'Phoenix', 'Star', 'Rainbow', 'Spirit', 'Heart', 'Soul', 'Dream',
+    'Flame', 'Wave', 'Light', 'Moon', 'Sun', 'Bloom', 'Spark', 'Gem',
+    'Pride', 'Unity', 'Harmony', 'Freedom', 'Joy', 'Peace', 'Hope',
+    'Butterfly', 'Unicorn', 'Dragon', 'Eagle', 'Lion', 'Tiger', 'Dolphin',
+    'Crystal', 'Diamond', 'Opal', 'Ruby', 'Sapphire', 'Emerald', 'Aurora'
+  ];
+  
+  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  const number = Math.floor(Math.random() * 9999) + 1;
+  
+  return `@${adjective}${noun}${number}`;
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -25,16 +51,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(session?.user ?? null);
       setLoading(false);
       
-      // Update profile with date_of_birth if it was passed during signup
+      // Update profile with date_of_birth and username if it was passed during signup
       if (event === 'SIGNED_IN' && session?.user) {
         const dateOfBirth = session.user.user_metadata?.date_of_birth;
-        if (dateOfBirth) {
+        const isNewUser = session.user.user_metadata?.is_new_user;
+        
+        if (dateOfBirth || isNewUser) {
           // Use setTimeout to avoid blocking the auth state change
           setTimeout(async () => {
-            await supabase
-              .from('profiles')
-              .update({ date_of_birth: dateOfBirth })
-              .eq('user_id', session.user.id);
+            const updates: { date_of_birth?: string; username?: string } = {};
+            
+            if (dateOfBirth) {
+              updates.date_of_birth = dateOfBirth;
+            }
+            
+            // Generate username for new users
+            if (isNewUser) {
+              let username = generateCreativeUsername();
+              let attempts = 0;
+              
+              // Try to find a unique username
+              while (attempts < 5) {
+                const { data: existing } = await supabase
+                  .from('profiles')
+                  .select('username')
+                  .eq('username', username)
+                  .maybeSingle();
+                
+                if (!existing) {
+                  updates.username = username;
+                  break;
+                }
+                username = generateCreativeUsername();
+                attempts++;
+              }
+              
+              if (!updates.username) {
+                // Fallback with timestamp
+                updates.username = `@Pride${Date.now()}`;
+              }
+            }
+            
+            if (Object.keys(updates).length > 0) {
+              await supabase
+                .from('profiles')
+                .update(updates)
+                .eq('user_id', session.user.id);
+            }
           }, 100);
         }
       }
@@ -61,6 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: {
           display_name: displayName,
           date_of_birth: dateOfBirth,
+          is_new_user: true,
         },
       },
     });
