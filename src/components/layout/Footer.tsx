@@ -6,14 +6,11 @@ const Footer = () => {
   const { jurisdiction, countryName, countryEmoji } = useJurisdiction();
   const currentYear = new Date().getFullYear();
 
+  // Only Australia for now - US hidden but kept for future
   const legalInfo = {
     AU: {
       registration: "PRIDE Lab Foundation Australia Ltd. ABN: pending",
       nonprofit: "Australian non-profit organization (registration in progress)",
-    },
-    US: {
-      registration: "PRIDE Lab Foundation USA Inc. EIN: pending",
-      nonprofit: "501(c)(3) non-profit organization (planned)",
     },
   };
 
@@ -130,10 +127,10 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
             <p className="text-sm text-muted-foreground">
-              {legalInfo[jurisdiction].registration}
+              {legalInfo.AU.registration}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              {legalInfo[jurisdiction].nonprofit}
+              {legalInfo.AU.nonprofit}
             </p>
           </div>
 

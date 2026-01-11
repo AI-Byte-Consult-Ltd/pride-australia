@@ -63,23 +63,11 @@ const Header = () => {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          {/* Jurisdiction Switcher */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-2">
-                <span className="text-lg">{countryEmoji}</span>
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setJurisdiction('AU')} className={jurisdiction === 'AU' ? 'bg-muted' : ''}>
-                <span className="mr-2">🇦🇺</span> Australia
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setJurisdiction('US')} className={jurisdiction === 'US' ? 'bg-muted' : ''}>
-                <span className="mr-2">🇺🇸</span> United States
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Jurisdiction Indicator - Only Australia for now */}
+          <div className="flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground">
+            <span className="text-lg">🇦🇺</span>
+            <span className="hidden sm:inline">Australia</span>
+          </div>
 
           {/* Auth Buttons / User Menu */}
           {!loading && (
