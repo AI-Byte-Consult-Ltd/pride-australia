@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Crown, Star, Heart, CreditCard, RefreshCcw, Wallet, Coins } from 'lucide-react';
+import { Sparkles, Crown, Star, Heart, CreditCard, RefreshCcw, Wallet, Coins, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,45 +12,61 @@ interface SupportPackage {
   id: 'early' | 'founding' | 'vip';
   name: string;
   description: string;
-  prideCoins: number | 'custom';
   price: number | 'custom';
   icon: React.ReactNode;
   featured?: boolean;
+  benefits: string[];
+  unitsLevel: string;
 }
 
 const AUD_SYMBOL = 'A$';
 const VIP_MIN = 199;
-
-// Updated coin bonuses
-const EARLY_BONUS = 2_000_000;
-const FOUNDING_BONUS = 5_000_000;
-const VIP_BONUS_FROM = 20_000_000;
 
 const packages: SupportPackage[] = [
   {
     id: 'early',
     name: 'Early Supporter',
     description: 'Be among the first to support our community platform and help us grow.',
-    prideCoins: EARLY_BONUS,
     price: 19,
     icon: <Star className="h-6 w-6" />,
+    unitsLevel: 'Starter Level',
+    benefits: [
+      'Early Supporter badge on your profile',
+      'Access to exclusive supporter-only stickers',
+      'Priority access to new features during Alpha',
+      'Your name listed on the "Early Supporters" wall',
+    ],
   },
   {
     id: 'founding',
     name: 'Founding Member',
     description: 'Join as a founding member and shape the future of Pride Social Network.',
-    prideCoins: FOUNDING_BONUS,
     price: 49,
     icon: <Sparkles className="h-6 w-6" />,
     featured: true,
+    unitsLevel: 'Founder Level',
+    benefits: [
+      'Founding Member badge on your profile',
+      'All Early Supporter benefits included',
+      'Exclusive founding member sticker pack',
+      'Direct input on platform features',
+      'Your name on the "Founding Members" wall',
+    ],
   },
   {
     id: 'vip',
     name: 'VIP Supporter',
-    description: 'Choose your own contribution amount and receive Pride Coins based on your generosity.',
-    prideCoins: 'custom',
+    description: 'Choose your own contribution amount and make a bigger impact.',
     price: 'custom',
     icon: <Crown className="h-6 w-6" />,
+    unitsLevel: 'VIP Level',
+    benefits: [
+      'VIP Supporter badge on your profile',
+      'All Founding Member benefits included',
+      'Exclusive VIP sticker collection',
+      'Priority support and feedback channel',
+      'Special recognition on VIP wall',
+    ],
   },
 ];
 
@@ -58,7 +74,6 @@ const SupportPackagesSection = () => {
   const [customAmount, setCustomAmount] = useState<number>(VIP_MIN);
 
   const buildFinalLink = (baseUrl: string, pkgId: SupportPackage['id']) => {
-    // VIP: append amount param (ignored if provider doesn't support it)
     if (pkgId !== 'vip') return baseUrl;
 
     const amount = Math.max(VIP_MIN, customAmount);
@@ -85,7 +100,7 @@ const SupportPackagesSection = () => {
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Your support helps us build a safe, inclusive platform for the Pride community.
-            Choose a package and receive PRIDE Coins as a thank you.
+            Choose a package and receive <span className="gradient-pride-text font-semibold">PRIDE Units</span> as a thank you.
           </p>
         </div>
 
@@ -153,28 +168,40 @@ const SupportPackagesSection = () => {
                     <div>
                       <div className="flex items-center justify-center gap-2">
                         <Heart className="h-5 w-5 text-pride-pink" />
-                        <span className="text-2xl font-display font-bold gradient-pride-text">
-                          {VIP_BONUS_FROM.toLocaleString()}+
+                        <span className="text-lg font-display font-bold gradient-pride-text">
+                          PRIDE Units
                         </span>
+                        <span className="text-sm text-muted-foreground">- {pkg.unitsLevel}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">PRIDE Coins Bonus (from)</p>
+                      <p className="text-sm text-muted-foreground mt-1">Included</p>
                     </div>
                   </div>
                 ) : (
                   <div className="py-4">
-                    <div className="mb-2">
+                    <div className="mb-4">
                       <span className="text-3xl font-display font-bold">
                         {AUD_SYMBOL}{pkg.price}
                       </span>
                     </div>
                     <div className="flex items-center justify-center gap-2">
-                      <span className="text-2xl font-display font-bold gradient-pride-text">
-                        {(pkg.prideCoins as number).toLocaleString()}
+                      <span className="text-lg font-display font-bold gradient-pride-text">
+                        PRIDE Units
                       </span>
+                      <span className="text-sm text-muted-foreground">- {pkg.unitsLevel}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">PRIDE Coins Bonus</p>
+                    <p className="text-sm text-muted-foreground mt-1">Included</p>
                   </div>
                 )}
+
+                {/* Benefits List */}
+                <div className="mt-6 text-left space-y-2">
+                  {pkg.benefits.map((benefit, i) => (
+                    <div key={i} className="flex items-start gap-2 text-sm">
+                      <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      <span className="text-muted-foreground">{benefit}</span>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
 
               {/* 4 donation buttons - stacked */}
