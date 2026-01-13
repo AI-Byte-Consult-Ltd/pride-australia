@@ -27,6 +27,7 @@ import ValuesPage from "./pages/ValuesPage";
 import NewsPage from "./pages/NewsPage";
 import EventsPage from "./pages/EventsPage";
 import SettingsPage from "./pages/SettingsPage";
+import EarlySupportersPage from "./pages/EarlySupportersPage";
 import NotFound from "./pages/NotFound";
 
 // NEW PAGE
@@ -64,6 +65,7 @@ const App = () => {
                   <Route path="/goals" element={<GoalsPage />} />
                   <Route path="/values" element={<ValuesPage />} />
                   <Route path="/support" element={<SupportPage />} />
+                  <Route path="/early-supporters" element={<EarlySupportersPage />} />
                   <Route path="/marketplace" element={<MarketplacePage />} />
                   <Route path="/news" element={<NewsPage />} />
                   <Route path="/events" element={<EventsPage />} />

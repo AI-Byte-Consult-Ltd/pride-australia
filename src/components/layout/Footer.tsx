@@ -21,6 +21,7 @@ const Footer = () => {
       { name: "News", href: "/news" },
       { name: "Events", href: "/events" },
       { name: "Support Us", href: "/support" },
+      { name: "Early Supporters", href: "/early-supporters" },
     ],
     foundation: [
       { name: "About PRIDE Lab Foundation", href: "/about" },
