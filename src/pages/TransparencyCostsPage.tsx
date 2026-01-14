@@ -1,8 +1,6 @@
 import { Helmet } from "react-helmet-async";
-import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Globe, Cloud, Shield, Brain, Building2, Laptop } from "lucide-react";
 
 const TransparencyCostsPage = () => {
@@ -11,12 +9,17 @@ const TransparencyCostsPage = () => {
   const description =
     "Transparency and cost breakdown for PRIDE Lab Foundation Australia: registration, compliance, operations, and how early supporter contributions are used.";
 
-  const [customAmount, setCustomAmount] = useState("");
+  const stripeLinks: Record<number, string> = {
+    10: "https://buy.stripe.com/5kQ3cu8bA1j66axfZHaVa16",
+    25: "https://buy.stripe.com/aFabJ0crQaTG7eB3cVaVa17",
+    50: "https://buy.stripe.com/28EfZg63s7Hu42p6p7aVa18",
+  };
 
-  const handleDonate = (amount: number | string) => {
-    // For now, redirect to PayPal with the amount
-    const paypalUrl = `https://www.paypal.com/donate/?business=PRIDE&amount=${amount}&currency_code=AUD`;
-    window.open(paypalUrl, "_blank");
+  const handleDonate = (amount: number) => {
+    const url = stripeLinks[amount];
+    if (url) {
+      window.open(url, "_blank");
+    }
   };
 
   const donationAmounts = [
@@ -149,29 +152,11 @@ const TransparencyCostsPage = () => {
                   ))}
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3 items-center justify-center pt-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Or enter custom amount:</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">AUD</span>
-                      <Input
-                        type="number"
-                        min="1"
-                        placeholder="Amount"
-                        value={customAmount}
-                        onChange={(e) => setCustomAmount(e.target.value)}
-                        className="w-24"
-                      />
-                    </div>
-                  </div>
-                  <Button
-                    variant="pride"
-                    size="lg"
-                    onClick={() => customAmount && handleDonate(customAmount)}
-                    disabled={!customAmount}
-                  >
-                    Donate Custom Amount
-                  </Button>
+                <div className="text-center pt-4">
+                  <p className="text-sm text-muted-foreground">
+                    For custom amounts, please visit our{" "}
+                    <a href="/support" className="text-primary hover:underline">Support page</a>.
+                  </p>
                 </div>
               </div>
 

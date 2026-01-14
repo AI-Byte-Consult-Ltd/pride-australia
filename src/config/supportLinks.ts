@@ -1,6 +1,6 @@
 export const SUPPORT_LINKS = {
   early: {
-    stripe: 'https://donate.stripe.com/bJe8wOdvU0f29mJ5l3aVa13',
+    stripe: 'https://buy.stripe.com/5kQ3cu8bA1j66axfZHaVa16',
     revolut: 'https://checkout.revolut.com/pay/ec702497-bab3-4fd3-81be-6ff8926b3bb3',
     paypal: 'https://www.paypal.com/ncp/payment/9F48QUYZ5D42G',
     coinbase: 'https://commerce.coinbase.com/checkout/468f3710-4fb6-48cd-b6b5-f547fc89cf29',

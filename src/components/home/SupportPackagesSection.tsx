@@ -27,7 +27,7 @@ const packages: SupportPackage[] = [
     id: 'early',
     name: 'Early Supporter',
     description: 'Be among the first to support our community platform and help us grow.',
-    price: 19,
+    price: 10,
     icon: <Star className="h-6 w-6" />,
     unitsLevel: 'Starter Level',
     benefits: [
