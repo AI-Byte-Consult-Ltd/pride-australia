@@ -32,6 +32,7 @@ import NotFound from "./pages/NotFound";
 
 // NEW PAGE
 import TransparencyCostsPage from "./pages/TransparencyCostsPage";
+import GDPRPage from "./pages/GDPRPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -79,6 +80,7 @@ const App = () => {
                     path="/transparency-and-costs"
                     element={<TransparencyCostsPage />}
                   />
+                  <Route path="/gdpr" element={<GDPRPage />} />
 
                   {/* App */}
                   <Route path="/dashboard" element={<DashboardPage />} />
