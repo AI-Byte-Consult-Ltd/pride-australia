@@ -35,6 +35,7 @@ const Footer = () => {
       { name: "Privacy Policy", href: "/privacy" },
       { name: "Terms of Service", href: "/terms" },
       { name: "Cookie Policy", href: "/cookies" },
+      { name: "GDPR & Data Protection", href: "/gdpr" },
       { name: "Community Guidelines", href: "/guidelines" },
     ],
   };
