@@ -140,6 +140,9 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground">
               © {currentYear} PRIDE Lab Foundation. All rights reserved.
             </p>
+            <p className="text-xs text-muted-foreground">
+              PRIDE Social Network v1.1.38
+            </p>
             <a
               href="https://aibyteconsult.com"
               target="_blank"
