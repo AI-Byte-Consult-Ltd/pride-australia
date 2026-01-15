@@ -1,43 +1,64 @@
 import { Helmet } from 'react-helmet-async';
-import { Target, Compass, Heart, Users, Globe, Shield } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Target, Heart, Shield, Users, Globe, MessageCircle, Sparkles, Building2, Calendar, GraduationCap, Lightbulb, ArrowRight } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
+import { Button } from '@/components/ui/button';
 
 const MissionPage = () => {
-  const missionPoints = [
-    {
-      icon: <Heart className="h-6 w-6" />,
-      title: 'Community Empowerment',
-      description: 'Building technology that empowers the LGBTQ+ community to connect, express, and thrive authentically.',
-    },
+  const socialNetworkValues = [
     {
       icon: <Shield className="h-6 w-6" />,
-      title: 'Safe Digital Spaces',
-      description: 'Creating moderated, inclusive online environments free from discrimination and harassment.',
+      title: 'Every identity is respected',
     },
     {
-      icon: <Globe className="h-6 w-6" />,
-      title: 'Global Connection',
-      description: 'Connecting Pride communities across Australia, the United States, and beyond.',
+      icon: <MessageCircle className="h-6 w-6" />,
+      title: 'Voices are heard without fear',
     },
     {
       icon: <Users className="h-6 w-6" />,
-      title: 'Amplifying Voices',
-      description: 'Providing a platform where marginalized voices can be heard and celebrated.',
+      title: 'Community comes before algorithms',
+    },
+    {
+      icon: <Heart className="h-6 w-6" />,
+      title: 'Technology supports people, not replaces them',
+    },
+  ];
+
+  const foundationFocus = [
+    {
+      icon: <Calendar className="h-6 w-6" />,
+      title: 'Community events and safe spaces',
+      description: 'Creating opportunities for connection and celebration',
+    },
+    {
+      icon: <GraduationCap className="h-6 w-6" />,
+      title: 'Educational and skills-based programs',
+      description: 'Empowering through knowledge and professional development',
+    },
+    {
+      icon: <Sparkles className="h-6 w-6" />,
+      title: 'Support for creators, activists, and local initiatives',
+      description: 'Amplifying voices and funding grassroots efforts',
+    },
+    {
+      icon: <Lightbulb className="h-6 w-6" />,
+      title: 'Responsible use of technology',
+      description: 'Expanding access and opportunity through innovation',
     },
   ];
 
   return (
     <>
       <Helmet>
-        <title>Our Mission | PRIDE Lab Foundation</title>
-        <meta name="description" content="Learn about PRIDE Lab Foundation's mission to create safe, inclusive digital spaces for the LGBTQ+ community worldwide." />
+        <title>Our Mission | Pride Social Network & Pride Lab Foundation</title>
+        <meta name="description" content="Discover the missions of Pride Social Network and Pride Lab Foundation — empowering LGBTQ+ communities through connection, visibility, education, and innovation." />
       </Helmet>
 
       <Layout>
         {/* Hero */}
         <section className="py-20 lg:py-28 gradient-hero">
           <div className="container">
-            <div className="max-w-3xl mx-auto text-center animate-fade-in">
+            <div className="max-w-4xl mx-auto text-center animate-fade-in">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-pride mb-6">
                 <Target className="h-8 w-8 text-primary-foreground" />
               </div>
@@ -45,72 +66,121 @@ const MissionPage = () => {
                 Our <span className="gradient-pride-text">Mission</span>
               </h1>
               <p className="text-xl text-muted-foreground">
-                PRIDE Lab Foundation exists to create safe, inclusive digital spaces 
-                where the LGBTQ+ community can connect, express themselves, and 
-                thrive without fear of discrimination or harassment.
+                Two complementary missions, one shared purpose: empowering the LGBTQ+ community
               </p>
             </div>
           </div>
         </section>
 
-        {/* Mission Statement */}
+        {/* Pride Social Network Mission */}
         <section className="py-20 lg:py-28">
           <div className="container">
-            <div className="max-w-3xl mx-auto text-center mb-16 animate-fade-in">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="h-12 w-12 rounded-xl gradient-pride flex items-center justify-center">
-                  <Compass className="h-6 w-6 text-primary-foreground" />
+            <div className="max-w-5xl mx-auto">
+              <div className="grid lg:grid-cols-2 gap-12 items-start">
+                <div className="animate-fade-in">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Heart className="h-7 w-7 text-primary" fill="currentColor" />
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-primary">Mission of</span>
+                      <h2 className="font-display text-2xl lg:text-3xl font-bold">Pride Social Network</h2>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    <p className="text-lg text-muted-foreground leading-relaxed">
+                      Pride Social Network exists to empower LGBTQ+ individuals through connection, visibility, and participation in a safe and inclusive digital environment.
+                    </p>
+                    
+                    <div className="p-6 rounded-xl bg-muted/50 border">
+                      <h3 className="font-display font-semibold mb-4">We aim to create a social platform where:</h3>
+                      <ul className="space-y-4">
+                        {socialNetworkValues.map((value, index) => (
+                          <li key={index} className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                              {value.icon}
+                            </div>
+                            <span className="font-medium">{value.title}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <p className="text-muted-foreground leading-relaxed">
+                      We believe social networks should serve communities — not exploit them. Pride Social Network is built with intention, care, and transparency.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="h-14 w-14 rounded-xl gradient-pride flex items-center justify-center">
+                      <Building2 className="h-7 w-7 text-primary-foreground" />
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-primary">Mission of</span>
+                      <h2 className="font-display text-2xl lg:text-3xl font-bold">Pride Lab Foundation</h2>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    <p className="text-lg text-muted-foreground leading-relaxed">
+                      Pride Lab Foundation is dedicated to supporting LGBTQ+ communities through education, innovation, and community-led initiatives.
+                    </p>
+                    
+                    <div className="p-6 rounded-xl bg-muted/50 border">
+                      <h3 className="font-display font-semibold mb-4">Starting in Australia, the Foundation focuses on:</h3>
+                      <ul className="space-y-4">
+                        {foundationFocus.map((item, index) => (
+                          <li key={index} className="flex items-start gap-3">
+                            <div className="h-10 w-10 rounded-lg gradient-pride text-primary-foreground flex items-center justify-center shrink-0 mt-0.5">
+                              {item.icon}
+                            </div>
+                            <div>
+                              <span className="font-medium block">{item.title}</span>
+                              <span className="text-sm text-muted-foreground">{item.description}</span>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <p className="text-muted-foreground leading-relaxed">
+                      Our mission is not only to support Pride — but to build systems that help Pride sustain itself.
+                    </p>
+                  </div>
                 </div>
               </div>
-              <h2 className="font-display text-3xl font-bold mb-6">What We Stand For</h2>
-              <p className="text-lg text-muted-foreground">
-                We believe technology should bring people together, celebrate 
-                diversity, and amplify marginalized voices. That's why we built 
-                Pride Social Network – a platform by the community, for the community.
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {missionPoints.map((point, index) => (
-                <div
-                  key={point.title}
-                  className="p-8 rounded-2xl bg-muted/50 animate-fade-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="h-14 w-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-                    {point.icon}
-                  </div>
-                  <h3 className="font-display text-xl font-semibold mb-2">{point.title}</h3>
-                  <p className="text-muted-foreground">{point.description}</p>
-                </div>
-              ))}
             </div>
           </div>
         </section>
 
-        {/* Impact */}
+        {/* Unified Vision */}
         <section className="py-20 lg:py-28 bg-muted/30">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center animate-fade-in">
-              <h2 className="font-display text-3xl font-bold mb-6">Our Impact</h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                As a non-profit organization, every decision we make centers on 
-                community benefit. We're committed to transparency, accountability, 
-                and putting the needs of the LGBTQ+ community first.
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-pride mb-6">
+                <Globe className="h-8 w-8 text-primary-foreground" />
+              </div>
+              <h2 className="font-display text-3xl lg:text-4xl font-bold mb-6">
+                One Unified Vision
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+                Together, Pride Social Network and Pride Lab Foundation form a complete ecosystem — 
+                combining digital connection with real-world impact to create lasting positive change 
+                for LGBTQ+ communities worldwide.
               </p>
-              <div className="grid grid-cols-3 gap-8">
-                <div>
-                  <p className="font-display text-4xl font-bold gradient-pride-text">2</p>
-                  <p className="text-muted-foreground">Countries</p>
-                </div>
-                <div>
-                  <p className="font-display text-4xl font-bold gradient-pride-text">100%</p>
-                  <p className="text-muted-foreground">Non-Profit</p>
-                </div>
-                <div>
-                  <p className="font-display text-4xl font-bold gradient-pride-text">∞</p>
-                  <p className="text-muted-foreground">Pride</p>
-                </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button variant="pride" size="lg" asChild>
+                  <Link to="/goals">
+                    View Our Goals
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button variant="outline" size="lg" asChild>
+                  <Link to="/roadmap">See the Roadmap</Link>
+                </Button>
               </div>
             </div>
           </div>

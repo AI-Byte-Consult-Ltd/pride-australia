@@ -1,7 +1,8 @@
 import { Helmet } from "react-helmet-async";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { Globe, Cloud, Shield, Brain, Building2, Laptop } from "lucide-react";
+import { Globe, Cloud, Shield, Brain, Building2, Laptop, Eye, Coins, Scale, Calculator, Calendar, Users, Server, Wrench, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const TransparencyCostsPage = () => {
   const siteUrl = "https://pridesocial.org";
@@ -9,24 +10,96 @@ const TransparencyCostsPage = () => {
   const description =
     "Transparency and cost breakdown for PRIDE Lab Foundation Australia: registration, compliance, operations, and how early supporter contributions are used.";
 
-  const stripeLinks: Record<number, string> = {
+  const stripeLinks = {
     10: "https://buy.stripe.com/5kQ3cu8bA1j66axfZHaVa16",
     25: "https://buy.stripe.com/aFabJ0crQaTG7eB3cVaVa17",
     50: "https://buy.stripe.com/28EfZg63s7Hu42p6p7aVa18",
   };
 
-  const handleDonate = (amount: number) => {
-    const url = stripeLinks[amount];
+  const supportButtons = [
+    {
+      label: "Support Hosting",
+      description: "Help keep our servers running",
+      amount: 10,
+      icon: <Server className="h-5 w-5" />,
+    },
+    {
+      label: "Support Foundation Registration",
+      description: "Help with legal setup costs",
+      amount: 25,
+      icon: <Building2 className="h-5 w-5" />,
+    },
+    {
+      label: "Support Community Tools",
+      description: "Fund platform development",
+      amount: 50,
+      icon: <Wrench className="h-5 w-5" />,
+    },
+  ];
+
+  const currentCosts = [
+    {
+      icon: <Building2 className="h-6 w-6" />,
+      title: "Foundation registration (Australia)",
+      amount: "AU $1,000",
+      type: "one-off",
+    },
+    {
+      icon: <Globe className="h-6 w-6" />,
+      title: "Hosting & infrastructure (GitHub Pages)",
+      amount: "AU $100",
+      type: "one-off",
+    },
+    {
+      icon: <Cloud className="h-6 w-6" />,
+      title: "Website platform & tools (Lovable)",
+      amount: "AU $60 / month",
+      type: "recurring",
+    },
+    {
+      icon: <Brain className="h-6 w-6" />,
+      title: "Technology & automation tools (AI-based services)",
+      amount: "AU $60 / month",
+      type: "recurring",
+    },
+    {
+      icon: <Laptop className="h-6 w-6" />,
+      title: "Laptop & equipment",
+      amount: "AU $2,950",
+      type: "one-off",
+    },
+    {
+      icon: <Calculator className="h-6 w-6" />,
+      title: "Accounting & legal services",
+      amount: "ongoing",
+      type: "ongoing",
+    },
+    {
+      icon: <Building2 className="h-6 w-6" />,
+      title: "Office & administration",
+      amount: "ongoing",
+      type: "ongoing",
+    },
+    {
+      icon: <Scale className="h-6 w-6" />,
+      title: "Registration agents & compliance services",
+      amount: "required for setup",
+      type: "one-off",
+    },
+    {
+      icon: <Calendar className="h-6 w-6" />,
+      title: "Event preparation & community activities",
+      amount: "planned",
+      type: "planned",
+    },
+  ];
+
+  const handleSupport = (amount: number) => {
+    const url = stripeLinks[amount as keyof typeof stripeLinks];
     if (url) {
       window.open(url, "_blank");
     }
   };
-
-  const donationAmounts = [
-    { amount: 10, label: "AUD 10", description: "helps keep the platform online" },
-    { amount: 25, label: "AUD 25", description: "covers a week of infrastructure" },
-    { amount: 50, label: "AUD 50", description: "supports platform stability and operations" },
-  ];
 
   return (
     <>
@@ -34,7 +107,6 @@ const TransparencyCostsPage = () => {
         <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={`${siteUrl}/transparency-and-costs`} />
-
         <meta property="og:type" content="website" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
@@ -42,135 +114,189 @@ const TransparencyCostsPage = () => {
       </Helmet>
 
       <Layout>
-        <main className="mx-auto w-full max-w-4xl px-4 py-16 lg:py-24">
-          <header className="mb-12 animate-fade-in">
-            <h1 className="font-display text-4xl font-bold mb-4">Transparency & Costs</h1>
-            <p className="text-lg text-muted-foreground">
-              PRIDE Social Network is a community-driven platform operated by Pride Lab Foundation.
-            </p>
-          </header>
-
-          <div className="space-y-12 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            <section className="space-y-4">
-              <p className="text-muted-foreground">
-                We believe transparency is essential to trust, especially in projects built by and for the community.
-                Below are our current and upcoming operational costs.
+        {/* Hero */}
+        <section className="py-20 lg:py-28 gradient-hero">
+          <div className="container">
+            <div className="max-w-3xl mx-auto text-center animate-fade-in">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-pride mb-6">
+                <Eye className="h-8 w-8 text-primary-foreground" />
+              </div>
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+                Transparency & <span className="gradient-pride-text">Costs</span>
+              </h1>
+              <p className="text-xl text-muted-foreground">
+                We believe trust is built through transparency
               </p>
-              <p className="text-muted-foreground">
-                Donations support the project as a whole and help ensure its long-term sustainability.
-              </p>
-            </section>
+            </div>
+          </div>
+        </section>
 
-            {/* Current operational costs */}
-            <section className="space-y-6">
-              <h2 className="font-display text-2xl font-semibold">Current operational costs</h2>
+        {/* Introduction */}
+        <section className="py-16 lg:py-20">
+          <div className="container">
+            <div className="max-w-3xl mx-auto text-center animate-fade-in">
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Below is an example of how costs are openly shared with the community. 
+                This list is continuously updated as the Foundation progresses.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Current & Planned Costs */}
+        <section className="py-16 lg:py-20 bg-muted/30">
+          <div className="container">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12 animate-fade-in">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+                  <Coins className="h-4 w-4" />
+                  Financial Breakdown
+                </div>
+                <h2 className="font-display text-3xl font-bold mb-4">Current & Planned Costs</h2>
+              </div>
+
               <div className="grid gap-4">
-                <div className="flex items-start gap-4 p-4 rounded-lg border bg-card">
-                  <Globe className="h-6 w-6 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <p className="font-medium">Domain & DNS</p>
-                    <p className="text-sm text-muted-foreground">approx. AUD 25 / month</p>
+                {currentCosts.map((cost, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-4 p-5 rounded-xl bg-card border shadow-card animate-fade-in"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      {cost.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium">{cost.title}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-primary font-semibold">{cost.amount}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          cost.type === 'one-off' ? 'bg-blue-500/10 text-blue-600' :
+                          cost.type === 'recurring' ? 'bg-green-500/10 text-green-600' :
+                          cost.type === 'ongoing' ? 'bg-purple-500/10 text-purple-600' :
+                          'bg-muted text-muted-foreground'
+                        }`}>
+                          {cost.type}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 rounded-lg border bg-card">
-                  <Cloud className="h-6 w-6 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <p className="font-medium">Hosting & infrastructure</p>
-                    <p className="text-sm text-muted-foreground">approx. AUD 65–90 / month</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 rounded-lg border bg-card">
-                  <Shield className="h-6 w-6 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <p className="font-medium">Security, backups & monitoring</p>
-                    <p className="text-sm text-muted-foreground">approx. AUD 15 / month</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 p-4 rounded-lg border bg-card">
-                  <Brain className="h-6 w-6 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <p className="font-medium">Development & maintenance</p>
-                    <p className="text-sm text-muted-foreground">volunteer-based (unpaid)</p>
-                  </div>
-                </div>
+                ))}
               </div>
-            </section>
+            </div>
+          </div>
+        </section>
 
-            {/* Foundation setup & compliance */}
-            <section className="space-y-6">
-              <h2 className="font-display text-2xl font-semibold">Foundation setup & compliance</h2>
-              <div className="flex items-start gap-4 p-4 rounded-lg border bg-card">
-                <Building2 className="h-6 w-6 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="font-medium">Pride Lab Foundation registration & initial compliance</p>
-                  <p className="text-sm text-muted-foreground">approx. AUD 1,100 (one-off)</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    (legal setup, registration fees, required compliance steps)
-                  </p>
+        {/* Support Buttons */}
+        <section className="py-20 lg:py-28">
+          <div className="container">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12 animate-fade-in">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+                  <Users className="h-4 w-4" />
+                  Support PRIDE
                 </div>
-              </div>
-            </section>
-
-            {/* Administrative & operational equipment */}
-            <section className="space-y-6">
-              <h2 className="font-display text-2xl font-semibold">Administrative & operational equipment</h2>
-              <div className="flex items-start gap-4 p-4 rounded-lg border bg-card">
-                <Laptop className="h-6 w-6 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="font-medium">Laptop for administrative and operational use</p>
-                  <p className="text-sm text-muted-foreground">approx. AUD 1,200 (one-off)</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    This equipment is required for day-to-day foundation administration, documentation, communications, and platform operations.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* Support PRIDE section */}
-            <section className="space-y-6 p-8 rounded-2xl gradient-pride-soft border">
-              <div className="text-center">
-                <h2 className="font-display text-2xl font-semibold mb-2">Support PRIDE</h2>
-                <p className="text-muted-foreground">
-                  You can support PRIDE Social Network with a donation of any amount.
+                <h2 className="font-display text-3xl font-bold mb-4">Choose What to Support</h2>
+                <p className="text-lg text-muted-foreground">
+                  Select exactly what you want to contribute to — full transparency, full control
                 </p>
               </div>
 
-              <div className="space-y-4">
-                <p className="text-sm font-medium text-center">Suggested contributions:</p>
-                <div className="grid sm:grid-cols-3 gap-4">
-                  {donationAmounts.map((item) => (
+              <div className="grid sm:grid-cols-3 gap-6 mb-12">
+                {supportButtons.map((button, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSupport(button.amount)}
+                    className="group p-6 rounded-2xl bg-card border shadow-card hover:shadow-elevated hover:border-primary transition-all duration-300 text-left animate-fade-in"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors flex items-center justify-center mb-4">
+                      {button.icon}
+                    </div>
+                    <h3 className="font-display font-semibold mb-1">{button.label}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{button.description}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-lg text-primary">AU ${button.amount}</span>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Contribute to Events */}
+              <div className="p-8 rounded-2xl gradient-pride-soft border text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <div className="h-14 w-14 rounded-xl gradient-pride flex items-center justify-center mx-auto mb-4">
+                  <Calendar className="h-7 w-7 text-primary-foreground" />
+                </div>
+                <h3 className="font-display text-xl font-bold mb-2">Contribute to Events</h3>
+                <p className="text-muted-foreground mb-6">
+                  Help fund community events, workshops, and gatherings
+                </p>
+                <Button variant="pride" size="lg" asChild>
+                  <Link to="/support">
+                    View All Support Options
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Legacy Donation Options */}
+        <section className="py-16 lg:py-20 bg-muted/30">
+          <div className="container">
+            <div className="max-w-3xl mx-auto">
+              <div className="p-8 rounded-2xl bg-card border shadow-card animate-fade-in">
+                <div className="text-center mb-8">
+                  <h2 className="font-display text-2xl font-semibold mb-2">Quick Donations</h2>
+                  <p className="text-muted-foreground">
+                    General contributions to support the project as a whole
+                  </p>
+                </div>
+
+                <div className="grid sm:grid-cols-3 gap-4 mb-6">
+                  {[10, 25, 50].map((amount) => (
                     <Button
-                      key={item.amount}
+                      key={amount}
                       variant="outline"
                       size="lg"
                       className="h-auto py-4 flex flex-col items-center gap-1 hover:border-primary hover:bg-primary/5"
-                      onClick={() => handleDonate(item.amount)}
+                      onClick={() => handleSupport(amount)}
                     >
-                      <span className="font-bold text-lg">{item.label}</span>
-                      <span className="text-xs text-muted-foreground text-center">{item.description}</span>
+                      <span className="font-bold text-lg">AU ${amount}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {amount === 10 && "helps keep the platform online"}
+                        {amount === 25 && "covers a week of infrastructure"}
+                        {amount === 50 && "supports platform stability"}
+                      </span>
                     </Button>
                   ))}
                 </div>
 
-                <div className="text-center pt-4">
+                <div className="text-center pt-4 border-t">
                   <p className="text-sm text-muted-foreground">
                     For custom amounts, please visit our{" "}
-                    <a href="/support" className="text-primary hover:underline">Support page</a>.
+                    <Link to="/support" className="text-primary hover:underline">Support page</Link>.
                   </p>
                 </div>
               </div>
-
-              <div className="text-center space-y-2 pt-4">
-                <p className="text-sm text-muted-foreground">
-                  Every contribution helps keep PRIDE independent, inclusive, and community-owned.
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Donations are used to support the ongoing operation and development of PRIDE Social Network.
-                </p>
-              </div>
-            </section>
+            </div>
           </div>
-        </main>
+        </section>
+
+        {/* Trust Statement */}
+        <section className="py-16 lg:py-20">
+          <div className="container">
+            <div className="max-w-3xl mx-auto text-center animate-fade-in">
+              <Shield className="h-12 w-12 text-primary mx-auto mb-6" />
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Every contribution helps keep PRIDE independent, inclusive, and community-owned. 
+                Donations are used to support the ongoing operation and development of PRIDE Social Network 
+                and Pride Lab Foundation's community initiatives.
+              </p>
+            </div>
+          </div>
+        </section>
       </Layout>
     </>
   );

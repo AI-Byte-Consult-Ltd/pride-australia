@@ -30,9 +30,10 @@ import SettingsPage from "./pages/SettingsPage";
 import EarlySupportersPage from "./pages/EarlySupportersPage";
 import NotFound from "./pages/NotFound";
 
-// NEW PAGE
+// NEW PAGES
 import TransparencyCostsPage from "./pages/TransparencyCostsPage";
 import GDPRPage from "./pages/GDPRPage";
+import RoadmapPage from "./pages/RoadmapPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,6 +71,9 @@ const App = () => {
                   <Route path="/marketplace" element={<MarketplacePage />} />
                   <Route path="/news" element={<NewsPage />} />
                   <Route path="/events" element={<EventsPage />} />
+
+                  {/* Foundation */}
+                  <Route path="/roadmap" element={<RoadmapPage />} />
 
                   {/* Legal */}
                   <Route path="/privacy" element={<PrivacyPage />} />
