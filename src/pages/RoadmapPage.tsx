@@ -1,6 +1,7 @@
 
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import { Sparkles } from 'lucide-react';
 import {
   Map,
   Heart,
