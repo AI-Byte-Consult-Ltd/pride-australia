@@ -1,6 +1,7 @@
+
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { Heart, Building2, Globe, Users, ArrowRight, Sparkles, Target, Network } from 'lucide-react';
+import { Heart, Building2, Globe, ArrowRight, Sparkles, Target, Network } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 
@@ -9,7 +10,10 @@ const AboutPage = () => {
     <>
       <Helmet>
         <title>About | Pride Social Network & Pride Lab Foundation</title>
-        <meta name="description" content="Learn how Pride Social Network and Pride Lab Foundation are connected — one ecosystem, one mission, transparent structure." />
+        <meta
+          name="description"
+          content="Learn how Pride Social Network and Pride Lab Foundation are connected — one ecosystem, one mission, transparent structure."
+        />
       </Helmet>
 
       <Layout>
@@ -44,12 +48,22 @@ const AboutPage = () => {
                     <div>
                       <h2 className="font-display text-2xl font-bold mb-2">Pride Social Network</h2>
                       <p className="text-muted-foreground text-lg">
-                        An independent LGBTQIA+ social platform created to give individuals a safe, open, and meaningful space for connection, self-expression, and community growth.
+                        Pride Social Network is an independent LGBTQIA+ social platform designed to give people a safe,
+                        open, and meaningful space for connection, self-expression, and community growth.
                       </p>
                     </div>
                   </div>
+
                   <p className="text-muted-foreground leading-relaxed">
-                    The platform is owned and developed by a European technology company, which is also the founder and primary sponsor of Pride Lab Foundation, a nonprofit organization currently in the process of registration in Australia.
+                    The platform is owned and developed by a European technology company. The same company is also the
+                    founder behind Pride Lab Foundation — a nonprofit initiative currently in the process of registration
+                    in Australia.
+                  </p>
+
+                  <p className="text-muted-foreground leading-relaxed mt-4">
+                    Pride Social Network is already live with core functionality and begins its journey in Australia. Our
+                    long-term goal is to expand globally — including the USA, Europe, and other countries where we can
+                    operate responsibly and in alignment with local requirements.
                   </p>
                 </div>
               </div>
@@ -62,59 +76,102 @@ const AboutPage = () => {
           <div className="container">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12 animate-fade-in">
-                <h2 className="font-display text-3xl lg:text-4xl font-bold mb-4">
-                  The Foundation Connection
-                </h2>
+                <h2 className="font-display text-3xl lg:text-4xl font-bold mb-4">The Foundation Connection</h2>
                 <p className="text-lg text-muted-foreground">
-                  Pride Lab Foundation exists as the ideological, community, and social extension of Pride Social Network.
+                  One ecosystem with two parts: a digital platform and a real-world foundation.
                 </p>
               </div>
 
               <div className="grid lg:grid-cols-2 gap-8">
-                <div className="bg-card border rounded-2xl p-8 shadow-card animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                <div
+                  className="bg-card border rounded-2xl p-8 shadow-card animate-fade-in"
+                  style={{ animationDelay: '0.1s' }}
+                >
                   <div className="flex items-center gap-4 mb-6">
                     <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
                       <Globe className="h-6 w-6 text-primary" />
                     </div>
-                    <h3 className="font-display text-xl font-semibold">While the Social Network focuses on:</h3>
+                    <h3 className="font-display text-xl font-semibold">Pride Social Network focuses on:</h3>
                   </div>
                   <ul className="space-y-3 text-muted-foreground">
                     <li className="flex items-start gap-3">
                       <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                      <span>Digital connection and communication</span>
+                      <span>Digital connection, communication, and community-first social features</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                      <span>Safe online spaces for self-expression</span>
+                      <span>Safe online spaces for identity, self-expression, and belonging</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                      <span>Community-first platform experience</span>
+                      <span>Transparent product development shaped by real community feedback</span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="bg-card border rounded-2xl p-8 shadow-card animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                <div
+                  className="bg-card border rounded-2xl p-8 shadow-card animate-fade-in"
+                  style={{ animationDelay: '0.2s' }}
+                >
                   <div className="flex items-center gap-4 mb-6">
                     <div className="h-12 w-12 rounded-xl gradient-pride flex items-center justify-center">
                       <Building2 className="h-6 w-6 text-primary-foreground" />
                     </div>
-                    <h3 className="font-display text-xl font-semibold">The Foundation focuses on:</h3>
+                    <h3 className="font-display text-xl font-semibold">Pride Lab Foundation focuses on:</h3>
                   </div>
                   <ul className="space-y-3 text-muted-foreground">
                     <li className="flex items-start gap-3">
                       <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                      <span>Real-world impact and community events</span>
+                      <span>Ideological support and advocacy for Pride community interests in Australia</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                      <span>Education and skills-based programs</span>
+                      <span>Community programs, grants, and educational initiatives (as the Foundation grows)</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <Sparkles className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                      <span>Sponsorships and long-term community support</span>
+                      <span>Building long-term partnerships that support safe and inclusive communities</span>
                     </li>
                   </ul>
+                </div>
+              </div>
+
+              <div className="bg-card border rounded-2xl p-8 shadow-card mt-8 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                <div className="flex items-start gap-4">
+                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <Target className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-xl font-semibold mb-2">Why we built it this way</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Pride Social Network is built by a European technology team that develops its own AI from the ground
+                      up. This innovation is a key part of the platform’s long-term direction: not just social features,
+                      but supportive digital companions designed for learning, guidance, and meaningful conversation.
+                    </p>
+                    <p className="text-muted-foreground leading-relaxed mt-3">
+                      The Foundation exists to ensure the ecosystem can grow with purpose — supporting the community
+                      beyond the screen, while the platform focuses on building safe digital space.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-card border rounded-2xl p-8 shadow-card mt-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <div className="flex items-start gap-4">
+                  <div className="h-12 w-12 rounded-xl gradient-pride flex items-center justify-center shrink-0">
+                    <Globe className="h-6 w-6 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-xl font-semibold mb-2">Roadmap and global expansion</h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      We begin in Australia because the Foundation is being registered here first. As the platform and
+                      community mature, we plan to expand Pride Social Network to the USA, Europe, and other regions.
+                    </p>
+                    <p className="text-muted-foreground leading-relaxed mt-3">
+                      Our intent is to develop local foundations where it makes sense — starting with the USA — and
+                      potentially in Europe later, depending on legal frameworks, partnerships, and community readiness.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -130,20 +187,26 @@ const AboutPage = () => {
               </div>
 
               <div className="grid md:grid-cols-2 gap-8 mb-12">
-                <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                <div
+                  className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border animate-fade-in"
+                  style={{ animationDelay: '0.1s' }}
+                >
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
                     <Heart className="h-8 w-8 text-primary" fill="currentColor" />
                   </div>
                   <h3 className="font-display text-2xl font-bold mb-2">Pride Social Network</h3>
-                  <p className="text-lg text-muted-foreground">Digital home for the community</p>
+                  <p className="text-lg text-muted-foreground">The digital home for the community</p>
                 </div>
 
-                <div className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                <div
+                  className="text-center p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border animate-fade-in"
+                  style={{ animationDelay: '0.2s' }}
+                >
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-pride mb-4">
                     <Building2 className="h-8 w-8 text-primary-foreground" />
                   </div>
                   <h3 className="font-display text-2xl font-bold mb-2">Pride Lab Foundation</h3>
-                  <p className="text-lg text-muted-foreground">Real-world action, education, and support</p>
+                  <p className="text-lg text-muted-foreground">Real-world support, advocacy, and programs</p>
                 </div>
               </div>
 
@@ -161,12 +224,10 @@ const AboutPage = () => {
         <section className="py-20 lg:py-28 bg-muted/30">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center animate-fade-in">
-              <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4">
-                Join Our Ecosystem
-              </h2>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4">Join Our Ecosystem</h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Whether you connect through our social platform or support the Foundation's real-world initiatives, 
-                you're part of something meaningful for the LGBTQIA+ community.
+                Whether you connect through our social platform or support the Foundation’s real-world initiatives, you’re
+                part of something meaningful for the LGBTQIA+ community.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="pride" size="lg" asChild>
