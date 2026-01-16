@@ -50,7 +50,7 @@ const SupportPage = () => {
   ];
 
   const bankDetails: BankDetails = {
-    accountName: 'ALEKSANDR Tochilov',
+    accountName: 'Aleksandr Tochilov',
     bsb: '774-001',
     accountNumber: '226558266',
     swiftBic: 'TRWIAUS1XXX',
