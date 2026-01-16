@@ -117,7 +117,7 @@ const ValuesPage = () => {
               <p className="text-lg text-muted-foreground">
                 If you ever feel we’re falling short of these values, we want to hear from you. Reach out to us at{' '}
                 <a href="mailto:hello@pridesocial.network" className="text-primary hover:underline">
-                  hello@pridesocial.network
+                  info@pridesocial.org
                 </a>
                 .
               </p>
