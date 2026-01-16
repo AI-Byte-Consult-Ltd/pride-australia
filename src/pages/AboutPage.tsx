@@ -44,7 +44,7 @@ const AboutPage = () => {
                     <div>
                       <h2 className="font-display text-2xl font-bold mb-2">Pride Social Network</h2>
                       <p className="text-muted-foreground text-lg">
-                        An independent LGBTQ+ social platform created to give individuals a safe, open, and meaningful space for connection, self-expression, and community growth.
+                        An independent LGBTQIA+ social platform created to give individuals a safe, open, and meaningful space for connection, self-expression, and community growth.
                       </p>
                     </div>
                   </div>
@@ -166,7 +166,7 @@ const AboutPage = () => {
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
                 Whether you connect through our social platform or support the Foundation's real-world initiatives, 
-                you're part of something meaningful for the LGBTQ+ community.
+                you're part of something meaningful for the LGBTQIA+ community.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="pride" size="lg" asChild>

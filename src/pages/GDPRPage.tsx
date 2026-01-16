@@ -57,7 +57,7 @@ const GDPRPage = () => {
                 </p>
                 <div className="p-4 rounded-lg border bg-card">
                   <p className="font-medium">Pride Lab Foundation Australia</p>
-                  <p className="text-muted-foreground">Email: privacy@pridesocial.org</p>
+                  <p className="text-muted-foreground">Email: info@pridesocial.org</p>
                   <p className="text-muted-foreground">Website: pridesocial.org</p>
                 </div>
               </section>
@@ -228,7 +228,7 @@ const GDPRPage = () => {
                   To exercise any of your data protection rights, you can:
                 </p>
                 <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-                  <li>Email us at <a href="mailto:privacy@pridesocial.org" className="text-primary hover:underline">privacy@pridesocial.org</a></li>
+                  <li>Email us at <a href="mailto:info@pridesocial.org" className="text-primary hover:underline">info@pridesocial.org</a></li>
                   <li>Use the privacy settings in your account dashboard</li>
                   <li>Contact us through our <Link to="/contact" className="text-primary hover:underline">Contact page</Link></li>
                 </ul>

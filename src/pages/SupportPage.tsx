@@ -3,14 +3,18 @@ import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import SupportPackagesSection from '@/components/home/SupportPackagesSection';
 import { Button } from '@/components/ui/button';
-import { Heart, Gift, Trophy, Sparkles } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Heart, Gift, Trophy, Sparkles, Building2, Copy } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const SupportPage = () => {
+  const { toast } = useToast();
+
   const benefits = [
     {
       icon: <Gift className="h-5 w-5" />,
-      title: 'Pride Coins',
-      description: 'Earn Pride Coins to use in our marketplace and unlock special features.',
+      title: 'PRIDE Units',
+      description: 'Earn PRIDE Units — our internal platform tokens — to use in our marketplace and unlock special features.',
     },
     {
       icon: <Trophy className="h-5 w-5" />,
@@ -28,6 +32,22 @@ const SupportPage = () => {
       description: 'Your support directly funds platform development and community programs.',
     },
   ];
+
+  const bankDetails = {
+    accountName: 'Pride Lab Foundation',
+    bsb: '000-000',
+    accountNumber: '00000000',
+    bank: 'Bank Name',
+    reference: 'PRIDE-DONATION',
+  };
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied!",
+      description: `${label} copied to clipboard.`,
+    });
+  };
 
   return (
     <>
@@ -80,6 +100,103 @@ const SupportPage = () => {
 
         {/* Packages */}
         <SupportPackagesSection />
+
+        {/* Bank Transfer Section */}
+        <section className="py-20 lg:py-28 bg-muted/30">
+          <div className="container">
+            <div className="max-w-2xl mx-auto">
+              <div className="text-center mb-8 animate-fade-in">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl gradient-pride mb-4">
+                  <Building2 className="h-7 w-7 text-primary-foreground" />
+                </div>
+                <h2 className="font-display text-3xl font-bold mb-4">
+                  Donate via Bank Transfer
+                </h2>
+                <p className="text-muted-foreground">
+                  For Australian supporters who prefer to donate directly via bank transfer.
+                </p>
+              </div>
+
+              <Card className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+                <CardHeader>
+                  <CardTitle className="text-lg">Australian Bank Account Details</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid gap-4">
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Account Name</p>
+                        <p className="font-medium">{bankDetails.accountName}</p>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => copyToClipboard(bankDetails.accountName, 'Account name')}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                      <div>
+                        <p className="text-sm text-muted-foreground">BSB</p>
+                        <p className="font-medium font-mono">{bankDetails.bsb}</p>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => copyToClipboard(bankDetails.bsb, 'BSB')}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Account Number</p>
+                        <p className="font-medium font-mono">{bankDetails.accountNumber}</p>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => copyToClipboard(bankDetails.accountNumber, 'Account number')}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Bank</p>
+                        <p className="font-medium">{bankDetails.bank}</p>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => copyToClipboard(bankDetails.bank, 'Bank name')}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Reference</p>
+                        <p className="font-medium font-mono">{bankDetails.reference}</p>
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => copyToClipboard(bankDetails.reference, 'Reference')}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground text-center pt-4 border-t">
+                    Please use the reference when making your transfer so we can track your donation.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
 
         {/* Additional Ways */}
         <section className="py-20 lg:py-28">
