@@ -12,9 +12,9 @@ import CTASection from "@/components/home/CTASection";
 
 const Index = () => {
   const siteUrl = "https://pridesocial.org";
-  const title = "Pride Social Network | LGBTQ+ Community, Marketplace & Support";
+  const title = "Pride Social Network | LGBTQIA+ Community, Marketplace & Support";
   const description =
-    "Pride Social Network is a community-first LGBTQ+ social platform built by and for the Pride community. Connect safely, share updates, discover events, support creators, and explore a community marketplace — powered by PRIDE Lab Foundation.";
+    "Pride Social Network is a community-first LGBTQIA+ social platform built by and for the Pride community. Connect safely, share updates, discover events, support creators, and explore a community marketplace — powered by PRIDE Lab Foundation.";
 
   // NOTE: If you have a real social preview image, replace this URL.
   const ogImage = `${siteUrl}/og/pridesocial-og.png`;
@@ -27,7 +27,7 @@ const Index = () => {
         <meta name="description" content={description} />
         <meta
           name="keywords"
-          content="pride social network, lgbtq social network, LGBTQ+ community, queer community, gay community, lesbian community, transgender community, non-profit social platform, safe social app, inclusive community, pride events, LGBTQ events, pride foundation, LGBTQ nonprofit, community marketplace, LGBTQ marketplace, digital goods, pride badges, supporter badge, early supporter, founding member, VIP supporter, Australia LGBTQ, Pride Lab Foundation"
+          content="pride social network, lgbtqia social network, LGBTQIA+ community, queer community, gay community, lesbian community, transgender community, non-profit social platform, safe social app, inclusive community, pride events, LGBTQIA+ events, pride foundation, LGBTQIA+ nonprofit, community marketplace, LGBTQIA+ marketplace, digital goods, pride badges, supporter badge, early supporter, founding member, VIP supporter, Australia LGBTQIA+, Pride Lab Foundation"
         />
         <link rel="canonical" href={siteUrl} />
 

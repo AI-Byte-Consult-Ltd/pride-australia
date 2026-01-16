@@ -18,7 +18,7 @@ const events = [
   {
     id: 2,
     title: 'Cinema on the Grass',
-    description: 'An outdoor movie night celebrating LGBTQ+ stories. Bring your blankets, snacks, and loved ones to enjoy award-winning films under the stars. Free entry for all community members.',
+    description: 'An outdoor movie night celebrating LGBTQIA+ stories. Bring your blankets, snacks, and loved ones to enjoy award-winning films under the stars. Free entry for all community members.',
     date: 'June 14, 2026',
     time: '7:30 PM AEST',
     location: 'Centennial Park, Sydney, Australia',
@@ -44,7 +44,7 @@ const EventsPage = () => {
     <>
       <Helmet>
         <title>Events | PRIDE Lab Foundation</title>
-        <meta name="description" content="Join PRIDE Lab Foundation community events. Online and in-person gatherings celebrating the LGBTQ+ community in Australia and the United States." />
+        <meta name="description" content="Join PRIDE Lab Foundation community events. Online and in-person gatherings celebrating the LGBTQIA+ community in Australia and the United States." />
       </Helmet>
 
       <Layout>
@@ -125,7 +125,7 @@ const EventsPage = () => {
                 Whether it's online or in-person, we can help make it happen.
               </p>
               <Button variant="outline" size="lg" asChild>
-                <a href="mailto:events@pridesocial.network">Contact Us</a>
+                <a href="mailto:info@pridesocial.org">Contact Us</a>
               </Button>
             </div>
           </div>

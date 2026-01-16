@@ -102,7 +102,7 @@ const AdminDashboardPage = () => {
     if (isNaN(amount) || amount === 0) {
       toast({
         title: "Invalid amount",
-        description: "Please enter a valid number of coins to add.",
+        description: "Please enter a valid number of units to add.",
         variant: "destructive",
       });
       return;
@@ -119,14 +119,14 @@ const AdminDashboardPage = () => {
     if (error) {
       toast({
         title: "Error",
-        description: error.message || "Failed to update PRIDE coins.",
+        description: error.message || "Failed to update PRIDE Units.",
         variant: "destructive",
       });
     } else {
       const newTotal = profile.pride_coins + amount;
       toast({
         title: "Success",
-        description: `Added ${amount} PRIDE coins. New balance: ${newTotal.toLocaleString()}`,
+        description: `Added ${amount} PRIDE Units. New balance: ${newTotal.toLocaleString()}`,
       });
       setCoinsToAdd({ ...coinsToAdd, [userId]: '' });
       fetchData();
@@ -249,7 +249,7 @@ const AdminDashboardPage = () => {
                 Admin Dashboard
               </h1>
               <p className="text-muted-foreground mt-1">
-                Manage users, roles, and PRIDE coins
+                Manage users, roles, and PRIDE Units
               </p>
             </div>
             <Button onClick={fetchData} variant="outline" size="sm">
@@ -275,7 +275,7 @@ const AdminDashboardPage = () => {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Total PRIDE Coins
+                  Total PRIDE Units
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -313,8 +313,8 @@ const AdminDashboardPage = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>User</TableHead>
-                      <TableHead>PRIDE Coins</TableHead>
-                      <TableHead>Add Coins</TableHead>
+                      <TableHead>PRIDE Units</TableHead>
+                      <TableHead>Add Units</TableHead>
                       <TableHead>Roles</TableHead>
                       <TableHead>Assign Role</TableHead>
                     </TableRow>

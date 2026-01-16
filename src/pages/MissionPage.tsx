@@ -51,7 +51,7 @@ const MissionPage = () => {
     <>
       <Helmet>
         <title>Our Mission | Pride Social Network & Pride Lab Foundation</title>
-        <meta name="description" content="Discover the missions of Pride Social Network and Pride Lab Foundation — empowering LGBTQ+ communities through connection, visibility, education, and innovation." />
+        <meta name="description" content="Discover the missions of Pride Social Network and Pride Lab Foundation — empowering LGBTQIA+ communities through connection, visibility, education, and innovation." />
       </Helmet>
 
       <Layout>
@@ -66,7 +66,7 @@ const MissionPage = () => {
                 Our <span className="gradient-pride-text">Mission</span>
               </h1>
               <p className="text-xl text-muted-foreground">
-                Two complementary missions, one shared purpose: empowering the LGBTQ+ community
+                Two complementary missions, one shared purpose: empowering the LGBTQIA+ community
               </p>
             </div>
           </div>
@@ -90,7 +90,7 @@ const MissionPage = () => {
                   
                   <div className="space-y-6">
                     <p className="text-lg text-muted-foreground leading-relaxed">
-                      Pride Social Network exists to empower LGBTQ+ individuals through connection, visibility, and participation in a safe and inclusive digital environment.
+                      Pride Social Network exists to empower LGBTQIA+ individuals through connection, visibility, and participation in a safe and inclusive digital environment.
                     </p>
                     
                     <div className="p-6 rounded-xl bg-muted/50 border">
@@ -126,7 +126,7 @@ const MissionPage = () => {
                   
                   <div className="space-y-6">
                     <p className="text-lg text-muted-foreground leading-relaxed">
-                      Pride Lab Foundation is dedicated to supporting LGBTQ+ communities through education, innovation, and community-led initiatives.
+                      Pride Lab Foundation is dedicated to supporting LGBTQIA+ communities through education, innovation, and community-led initiatives.
                     </p>
                     
                     <div className="p-6 rounded-xl bg-muted/50 border">
@@ -169,7 +169,7 @@ const MissionPage = () => {
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 Together, Pride Social Network and Pride Lab Foundation form a complete ecosystem — 
                 combining digital connection with real-world impact to create lasting positive change 
-                for LGBTQ+ communities worldwide.
+                for LGBTQIA+ communities worldwide.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="pride" size="lg" asChild>
