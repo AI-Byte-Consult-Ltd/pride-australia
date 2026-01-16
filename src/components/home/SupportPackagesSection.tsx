@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Crown, Star, Heart, CreditCard, RefreshCcw, Wallet, Coins, Check } from 'lucide-react';
+import { Sparkles, Crown, Star, Heart, CreditCard, Wallet, Coins, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -98,12 +98,10 @@ const SupportPackagesSection = () => {
           <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm font-medium mb-4">
             Support Our Mission
           </span>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            Become a Supporter
-          </h2>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Become a Supporter</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Your support helps us build a safe, inclusive platform for the Pride community.
-            Choose a package and receive <span className="gradient-pride-text font-semibold">PRIDE Units</span> as a thank you.
+            Your support helps us build a safe, inclusive platform for the Pride community. Choose a package and receive{' '}
+            <span className="gradient-pride-text font-semibold">PRIDE Units</span> as a thank you.
           </p>
         </div>
 
@@ -164,16 +162,15 @@ const SupportPackagesSection = () => {
                         />
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Minimum {AUD_SYMBOL}{VIP_MIN}
+                        Minimum {AUD_SYMBOL}
+                        {VIP_MIN}
                       </p>
                     </div>
 
                     <div>
                       <div className="flex items-center justify-center gap-2">
                         <Heart className="h-5 w-5 text-pride-pink" />
-                        <span className="text-lg font-display font-bold gradient-pride-text">
-                          PRIDE Units
-                        </span>
+                        <span className="text-lg font-display font-bold gradient-pride-text">PRIDE Units</span>
                         <span className="text-sm text-muted-foreground">- {pkg.unitsLevel}</span>
                       </div>
                       <p className="text-sm text-muted-foreground mt-1">Included</p>
@@ -183,13 +180,12 @@ const SupportPackagesSection = () => {
                   <div className="py-4">
                     <div className="mb-4">
                       <span className="text-3xl font-display font-bold">
-                        {AUD_SYMBOL}{pkg.price}
+                        {AUD_SYMBOL}
+                        {pkg.price}
                       </span>
                     </div>
                     <div className="flex items-center justify-center gap-2">
-                      <span className="text-lg font-display font-bold gradient-pride-text">
-                        PRIDE Units
-                      </span>
+                      <span className="text-lg font-display font-bold gradient-pride-text">PRIDE Units</span>
                       <span className="text-sm text-muted-foreground">- {pkg.unitsLevel}</span>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1">Included</p>
@@ -209,8 +205,20 @@ const SupportPackagesSection = () => {
 
               {/* 4 donation buttons - stacked */}
               <CardFooter className="flex flex-col gap-3">
+                {/* 1) Revolut FIRST, renamed to Donate with Card */}
                 <Button
                   variant={pkg.featured ? 'pride' : 'default'}
+                  size="lg"
+                  className="w-full gap-2"
+                  onClick={() => handleDonate(pkg, 'revolut')}
+                >
+                  <CreditCard className="h-4 w-4" />
+                  Donate with Card
+                </Button>
+
+                {/* 2) Stripe */}
+                <Button
+                  variant="outline"
                   size="lg"
                   className="w-full gap-2"
                   onClick={() => handleDonate(pkg, 'stripe')}
@@ -219,16 +227,7 @@ const SupportPackagesSection = () => {
                   Donate with Stripe
                 </Button>
 
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full gap-2"
-                  onClick={() => handleDonate(pkg, 'revolut')}
-                >
-                  <RefreshCcw className="h-4 w-4" />
-                  Donate with Revolut
-                </Button>
-
+                {/* 3) PayPal */}
                 <Button
                   variant="outline"
                   size="lg"
@@ -239,6 +238,7 @@ const SupportPackagesSection = () => {
                   Donate with PayPal
                 </Button>
 
+                {/* 4) Crypto */}
                 <Button
                   variant="outline"
                   size="lg"
