@@ -4,6 +4,7 @@ import { Menu, X, Heart, ChevronDown, LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useJurisdiction } from '@/contexts/JurisdictionContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { NotificationBell } from '@/components/NotificationBell';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,7 +74,9 @@ const Header = () => {
           {!loading && (
             <div className="hidden sm:flex items-center gap-2">
               {user ? (
-                <DropdownMenu>
+                <>
+                  <NotificationBell />
+                  <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="gap-2">
                       <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
@@ -96,6 +99,7 @@ const Header = () => {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                </>
               ) : (
                 <>
                   <Button variant="ghost" size="sm" asChild>

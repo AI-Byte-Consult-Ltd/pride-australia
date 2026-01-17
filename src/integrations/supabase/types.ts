@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      notifications: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          post_id: string | null
+          recipient_id: string
+          reply_id: string | null
+          sender_id: string
+          type: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          post_id?: string | null
+          recipient_id: string
+          reply_id?: string | null
+          sender_id: string
+          type: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          post_id?: string | null
+          recipient_id?: string
+          reply_id?: string | null
+          sender_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_reply_id_fkey"
+            columns: ["reply_id"]
+            isOneToOne: false
+            referencedRelation: "post_replies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_echoes: {
         Row: {
           created_at: string
