@@ -44,6 +44,12 @@ interface PostWithProfile {
   like_count: number;
   user_has_liked: boolean;
   reply_count: number;
+  echo_count: number;
+  user_has_echoed: boolean;
+  is_echo?: boolean;
+  echoed_by_name?: string;
+  echoed_by_username?: string | null;
+  original_post_id?: string;
 }
 
 interface Profile {
@@ -106,6 +112,7 @@ const DashboardPage = () => {
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [userProfile, setUserProfile] = useState<Profile | null>(null);
   const [likingPostId, setLikingPostId] = useState<string | null>(null);
+  const [echoingPostId, setEchoingPostId] = useState<string | null>(null);
   const [replyingToPost, setReplyingToPost] = useState<PostWithProfile | null>(null);
   const [replyContent, setReplyContent] = useState('');
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
@@ -170,6 +177,19 @@ const DashboardPage = () => {
         .select('post_id')
         .in('post_id', postIds);
 
+      // Fetch echo counts
+      const { data: echoesData } = await supabase
+        .from('post_echoes')
+        .select('post_id')
+        .in('post_id', postIds);
+
+      // Fetch user's echoes
+      const { data: userEchoesData } = await supabase
+        .from('post_echoes')
+        .select('post_id')
+        .eq('user_id', user.id)
+        .in('post_id', postIds);
+
       const profileMap = new Map<string, { display_name: string; username: string | null }>();
       profilesData?.forEach(p => {
         profileMap.set(p.user_id, { 
@@ -188,7 +208,13 @@ const DashboardPage = () => {
         replyCountMap.set(r.post_id, (replyCountMap.get(r.post_id) || 0) + 1);
       });
 
+      const echoCountMap = new Map<string, number>();
+      echoesData?.forEach(e => {
+        echoCountMap.set(e.post_id, (echoCountMap.get(e.post_id) || 0) + 1);
+      });
+
       const userLikedSet = new Set(userLikesData?.map(l => l.post_id) || []);
+      const userEchoedSet = new Set(userEchoesData?.map(e => e.post_id) || []);
 
       const postsWithProfiles: PostWithProfile[] = postsData.map(post => {
         const profile = profileMap.get(post.user_id);
@@ -198,7 +224,9 @@ const DashboardPage = () => {
           author_username: profile?.username || null,
           like_count: likeCountMap.get(post.id) || 0,
           user_has_liked: userLikedSet.has(post.id),
-          reply_count: replyCountMap.get(post.id) || 0
+          reply_count: replyCountMap.get(post.id) || 0,
+          echo_count: echoCountMap.get(post.id) || 0,
+          user_has_echoed: userEchoedSet.has(post.id)
         };
       });
 
@@ -225,7 +253,9 @@ const DashboardPage = () => {
             author_username: profileData?.username || null,
             like_count: 0,
             user_has_liked: false,
-            reply_count: 0
+            reply_count: 0,
+            echo_count: 0,
+            user_has_echoed: false
           };
           setPosts(prev => [newPost, ...prev]);
         }
@@ -253,9 +283,31 @@ const DashboardPage = () => {
       )
       .subscribe();
 
+    const echoesChannel = supabase
+      .channel('echoes-channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'post_echoes' },
+        (payload) => {
+          const postId = (payload.new as { post_id?: string })?.post_id || (payload.old as { post_id?: string })?.post_id;
+          const echoUserId = (payload.new as { user_id?: string })?.user_id;
+          if (!postId) return;
+          
+          setPosts(prev => prev.map(post => {
+            if (post.id !== postId) return post;
+            if (payload.eventType === 'INSERT') {
+              return { ...post, echo_count: post.echo_count + 1, user_has_echoed: echoUserId === user.id ? true : post.user_has_echoed };
+            } else if (payload.eventType === 'DELETE') {
+              return { ...post, echo_count: Math.max(0, post.echo_count - 1), user_has_echoed: echoUserId === user.id ? false : post.user_has_echoed };
+            }
+            return post;
+          }));
+        }
+      )
+      .subscribe();
+
     return () => {
       supabase.removeChannel(postsChannel);
       supabase.removeChannel(likesChannel);
+      supabase.removeChannel(echoesChannel);
     };
   }, [user]);
 
@@ -356,6 +408,24 @@ const DashboardPage = () => {
       toast({ title: "Error", description: "Failed to update like.", variant: "destructive" });
     } finally {
       setLikingPostId(null);
+    }
+  };
+
+  const handleEcho = async (postId: string, hasEchoed: boolean) => {
+    if (!user || echoingPostId) return;
+    setEchoingPostId(postId);
+    try {
+      if (hasEchoed) {
+        await supabase.from('post_echoes').delete().eq('post_id', postId).eq('user_id', user.id);
+        toast({ title: "Echo removed", description: "Your echo has been removed." });
+      } else {
+        await supabase.from('post_echoes').insert({ post_id: postId, user_id: user.id });
+        toast({ title: "Echoed!", description: "You amplified this voice." });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to update echo.", variant: "destructive" });
+    } finally {
+      setEchoingPostId(null);
     }
   };
 
@@ -489,7 +559,15 @@ const DashboardPage = () => {
                                   <button onClick={() => openReplyThread(post)} className="flex items-center gap-2 text-muted-foreground hover:text-pride-blue transition-colors">
                                     <MessageCircle className="h-4 w-4" /><span className="text-sm">{post.reply_count}</span>
                                   </button>
-                                  <button className="flex items-center gap-2 text-muted-foreground hover:text-pride-green transition-colors"><Repeat2 className="h-4 w-4" /><span className="text-sm">0</span></button>
+                                  <button 
+                                    onClick={() => handleEcho(post.id, post.user_has_echoed)} 
+                                    disabled={echoingPostId === post.id} 
+                                    className={`flex items-center gap-2 transition-colors ${post.user_has_echoed ? 'text-pride-green' : 'text-muted-foreground hover:text-pride-green'}`}
+                                    title="Echo - Amplify this voice"
+                                  >
+                                    <Repeat2 className={`h-4 w-4 ${post.user_has_echoed ? 'text-pride-green' : ''}`} />
+                                    <span className="text-sm">{post.echo_count}</span>
+                                  </button>
                                 </div>
                               </div>
                             </div>
