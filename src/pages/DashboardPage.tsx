@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/MentionInput';
 import { 
   Home, 
   ShoppingBag, 
@@ -59,29 +60,6 @@ interface Profile {
 }
 
 const MAX_POST_LENGTH = 5000;
-
-// Function to render content with clickable links
-const renderContentWithLinks = (content: string) => {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const parts = content.split(urlRegex);
-  
-  return parts.map((part, index) => {
-    if (part.match(urlRegex)) {
-      return (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-pink-500 hover:text-pink-600 hover:underline break-all"
-        >
-          {part}
-        </a>
-      );
-    }
-    return part;
-  });
-};
 
 // Rainbow username component
 const RainbowUsername = ({ username }: { username: string }) => {
@@ -510,7 +488,7 @@ const DashboardPage = () => {
                     <div className="flex gap-4">
                       <Avatar className="h-10 w-10"><AvatarFallback className="gradient-pride text-primary-foreground">{userInitial}</AvatarFallback></Avatar>
                       <div className="flex-1">
-                        <Textarea placeholder="What's on your mind?" value={postContent} onChange={(e) => setPostContent(e.target.value)} maxLength={MAX_POST_LENGTH} className="min-h-[80px] resize-none border-0 focus-visible:ring-0 p-0 text-base" />
+                        <MentionInput value={postContent} onChange={setPostContent} placeholder="What's on your mind? Use @ to mention users" maxLength={MAX_POST_LENGTH} />
                         <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
                           <div className="flex items-center gap-4">
                             <div className="flex gap-2">
@@ -551,7 +529,7 @@ const DashboardPage = () => {
                                   {post.author_username && <RainbowUsername username={post.author_username} />}
                                   <span className="text-muted-foreground text-sm">· {formatTimeAgo(post.created_at)}</span>
                                 </div>
-                                <p className="text-foreground mb-4 whitespace-pre-wrap">{renderContentWithLinks(post.content)}</p>
+                                <p className="text-foreground mb-4 whitespace-pre-wrap">{renderContentWithMentionsAndLinks(post.content)}</p>
                                 <div className="flex items-center gap-6">
                                   <button onClick={() => handleLike(post.id, post.user_has_liked)} disabled={likingPostId === post.id} className={`flex items-center gap-2 transition-colors ${post.user_has_liked ? 'text-pride-pink' : 'text-muted-foreground hover:text-pride-pink'}`}>
                                     <Heart className={`h-4 w-4 ${post.user_has_liked ? 'fill-current' : ''}`} /><span className="text-sm">{post.like_count}</span>
@@ -620,7 +598,7 @@ const DashboardPage = () => {
                     <span className="font-semibold text-sm">{replyingToPost.author_name}</span>
                     {replyingToPost.author_username && <RainbowUsername username={replyingToPost.author_username} />}
                   </div>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{renderContentWithLinks(replyingToPost.content)}</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{renderContentWithMentionsAndLinks(replyingToPost.content)}</p>
                 </div>
                 {/* Replies */}
                 {isLoadingReplies ? (
@@ -636,7 +614,7 @@ const DashboardPage = () => {
                             {reply.author_username && <RainbowUsername username={reply.author_username} />}
                             <span className="text-xs text-muted-foreground">· {formatTimeAgo(reply.created_at)}</span>
                           </div>
-                          <p className="text-sm whitespace-pre-wrap">{renderContentWithLinks(reply.content)}</p>
+                          <p className="text-sm whitespace-pre-wrap">{renderContentWithMentionsAndLinks(reply.content)}</p>
                         </div>
                       </div>
                     ))}
@@ -647,7 +625,7 @@ const DashboardPage = () => {
               </CardContent>
               <div className="border-t p-4">
                 <div className="flex gap-3">
-                  <Textarea placeholder="Write a reply..." value={replyContent} onChange={(e) => setReplyContent(e.target.value)} className="min-h-[60px] resize-none" maxLength={MAX_POST_LENGTH} />
+                  <MentionInput value={replyContent} onChange={setReplyContent} placeholder="Write a reply... Use @ to mention users" maxLength={MAX_POST_LENGTH} minHeight="60px" className="border rounded-md p-2" />
                   <Button variant="pride" size="sm" onClick={handleSubmitReply} disabled={!replyContent.trim() || isSubmittingReply}>
                     {isSubmittingReply ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   </Button>
