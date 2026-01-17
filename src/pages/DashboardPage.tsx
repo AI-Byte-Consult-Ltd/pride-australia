@@ -25,6 +25,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { createMentionNotifications } from '@/hooks/useNotifications';
 
 interface PostReply {
   id: string;
@@ -356,13 +357,19 @@ const DashboardPage = () => {
     if (!replyContent.trim() || !user || !replyingToPost) return;
     setIsSubmittingReply(true);
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('post_replies')
-      .insert({ post_id: replyingToPost.id, user_id: user.id, content: replyContent.trim() });
+      .insert({ post_id: replyingToPost.id, user_id: user.id, content: replyContent.trim() })
+      .select('id')
+      .single();
 
     if (error) {
       toast({ title: "Error", description: "Failed to post reply.", variant: "destructive" });
     } else {
+      // Create notifications for mentions
+      if (data) {
+        await createMentionNotifications(user.id, replyContent.trim(), replyingToPost.id, data.id);
+      }
       setReplyContent('');
       toast({ title: "Reply posted!", description: "Your reply has been added." });
       // Refresh replies
@@ -414,10 +421,19 @@ const DashboardPage = () => {
       return;
     }
     setIsPosting(true);
-    const { error } = await supabase.from('posts').insert({ content: postContent.trim(), user_id: user.id });
+    const { data, error } = await supabase
+      .from('posts')
+      .insert({ content: postContent.trim(), user_id: user.id })
+      .select('id')
+      .single();
+    
     if (error) {
       toast({ title: "Error", description: "Failed to create post.", variant: "destructive" });
     } else {
+      // Create notifications for mentions
+      if (data) {
+        await createMentionNotifications(user.id, postContent.trim(), data.id);
+      }
       setPostContent('');
       toast({ title: "Posted!", description: "Your post has been shared." });
     }
