@@ -2,26 +2,23 @@ import { supabase } from '@/integrations/supabase/client';
 
 // Extract @mentions from content and find matching user IDs
 export const extractMentions = async (content: string): Promise<string[]> => {
-  // Allow usernames like: john_doe, john-doe
-  const mentionRegex = /@([\w-]+)/g;
+  const mentionRegex = /@(\w+)/g;
   const mentions: string[] = [];
   let match;
 
   while ((match = mentionRegex.exec(content)) !== null) {
-    mentions.push(match[1].toLowerCase());
+    mentions.push(match[1]);
   }
 
-  const uniqueMentions = [...new Set(mentions)];
-  if (uniqueMentions.length === 0) return [];
+  if (mentions.length === 0) return [];
 
-  // Look up user IDs by username (case-insensitive)
+  // Look up user IDs by username
   const { data: profiles } = await supabase
     .from('profiles')
     .select('user_id, username')
-    .not('username', 'is', null)
-    .or(uniqueMentions.map((u) => `username.ilike.${u}`).join(','));
+    .in('username', mentions);
 
-  return profiles?.map((p) => p.user_id) || [];
+  return profiles?.map(p => p.user_id) || [];
 };
 
 // Create notifications for mentioned users
@@ -59,8 +56,7 @@ export const createNotification = async (
   senderId: string,
   type: 'like' | 'echo' | 'reply',
   postId?: string,
-  content?: string,
-  replyId?: string
+  content?: string
 ): Promise<void> => {
   // Don't notify yourself
   if (recipientId === senderId) return;
@@ -70,7 +66,6 @@ export const createNotification = async (
     sender_id: senderId,
     type,
     post_id: postId || null,
-    reply_id: replyId || null,
     content: content?.slice(0, 100) || null
   });
 };

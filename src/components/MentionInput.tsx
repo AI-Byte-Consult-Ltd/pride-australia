@@ -39,7 +39,7 @@ export const MentionInput = ({
   // Detect @ mentions while typing
   const detectMention = useCallback((text: string, cursorPos: number) => {
     const textBeforeCursor = text.slice(0, cursorPos);
-    const mentionMatch = textBeforeCursor.match(/@([\w-]*)$/);
+    const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
     
     if (mentionMatch) {
       const query = mentionMatch[1];
@@ -216,7 +216,7 @@ export const MentionInput = ({
 // Function to render content with mentions and links
 export const renderContentWithMentionsAndLinks = (content: string) => {
   // Combined regex for URLs and mentions
-  const combinedRegex = /(https?:\/\/[^\s]+)|(@[\w-]+)/g;
+  const combinedRegex = /(https?:\/\/[^\s]+)|(@\w+)/g;
   const parts: Array<{ type: 'text' | 'url' | 'mention'; content: string }> = [];
   let lastIndex = 0;
   let match;
