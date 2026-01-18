@@ -25,7 +25,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { createMentionNotifications } from '@/hooks/useNotifications';
+import { createMentionNotifications, createNotification } from '@/hooks/useNotifications';
 
 interface PostReply {
   id: string;
@@ -112,8 +112,8 @@ const DashboardPage = () => {
   const fetchPosts = useCallback(async () => {
     if (!user) return;
     
-    // Fetch original posts
-    const { data: postsData, error: postsError } = await supabase
+    // Fetch latest posts (original posts)
+    const { data: latestPostsData, error: postsError } = await supabase
       .from('posts')
       .select('id, content, created_at, user_id')
       .order('created_at', { ascending: false })
@@ -125,59 +125,43 @@ const DashboardPage = () => {
       return;
     }
 
-    // Fetch all echoes to show in feed (like retweets)
+    // Fetch recent echoes to show in feed (like retweets)
     const { data: allEchoesData } = await supabase
       .from('post_echoes')
       .select('id, post_id, user_id, created_at')
       .order('created_at', { ascending: false })
       .limit(50);
 
-    if (!postsData || postsData.length === 0) {
+    const postsData = latestPostsData || [];
+    const latestPostIds = postsData.map(p => p.id);
+
+    // IMPORTANT: An echoed post may be older than our latest 50 posts.
+    // Fetch any missing original posts so everyone can see echoed items in the feed.
+    const echoPostIds = [...new Set((allEchoesData || []).map(e => e.post_id))];
+    const missingEchoPostIds = echoPostIds.filter(id => !latestPostIds.includes(id));
+
+    const { data: echoedPostsData } = missingEchoPostIds.length
+      ? await supabase
+          .from('posts')
+          .select('id, content, created_at, user_id')
+          .in('id', missingEchoPostIds)
+      : { data: [] as Array<{ id: string; content: string; created_at: string; user_id: string }> };
+
+    const allPostsForLookup = [...postsData, ...(echoedPostsData || [])];
+
+    if (allPostsForLookup.length === 0) {
       setPosts([]);
       setIsLoadingPosts(false);
       return;
     }
 
     // Collect all user IDs (post authors + echo authors)
-    const postUserIds = postsData.map(p => p.user_id);
+    const postUserIds = allPostsForLookup.map(p => p.user_id);
     const echoUserIds = allEchoesData?.map(e => e.user_id) || [];
     const userIds = [...new Set([...postUserIds, ...echoUserIds])];
-    const postIds = postsData.map(p => p.id);
 
-    const { data: profilesData } = await supabase
-      .from('profiles')
-      .select('user_id, display_name, username')
-      .in('user_id', userIds);
-
-    const { data: likesData } = await supabase
-      .from('post_likes')
-      .select('post_id')
-      .in('post_id', postIds);
-
-    const { data: userLikesData } = await supabase
-      .from('post_likes')
-      .select('post_id')
-      .eq('user_id', user.id)
-      .in('post_id', postIds);
-
-    // Fetch reply counts
-    const { data: repliesData } = await supabase
-      .from('post_replies')
-      .select('post_id')
-      .in('post_id', postIds);
-
-    // Fetch echo counts for each post
-    const { data: echoCountsData } = await supabase
-      .from('post_echoes')
-      .select('post_id')
-      .in('post_id', postIds);
-
-    // Fetch user's echoes
-    const { data: userEchoesData } = await supabase
-      .from('post_echoes')
-      .select('post_id')
-      .eq('user_id', user.id)
-      .in('post_id', postIds);
+    // Posts we need counts/flags for = (latest posts) ∪ (echoed original posts)
+    const postIds = [...new Set([...latestPostIds, ...echoPostIds])];
 
     const profileMap = new Map<string, { display_name: string; username: string | null }>();
     profilesData?.forEach(p => {
@@ -205,9 +189,9 @@ const DashboardPage = () => {
     const userLikedSet = new Set(userLikesData?.map(l => l.post_id) || []);
     const userEchoedSet = new Set(userEchoesData?.map(e => e.post_id) || []);
 
-    // Create a map of posts for quick lookup
+    // Create a map of posts for quick lookup (includes echoed original posts that might be older than the latest 50)
     const postsMap = new Map<string, typeof postsData[0]>();
-    postsData.forEach(p => postsMap.set(p.id, p));
+    allPostsForLookup.forEach(p => postsMap.set(p.id, p));
 
     // Build feed items: original posts + echoed posts (like Twitter retweets)
     type FeedItem = { type: 'post' | 'echo'; timestamp: string; post: typeof postsData[0]; echoedBy?: { name: string; username: string | null } };
@@ -430,10 +414,22 @@ const DashboardPage = () => {
     if (error) {
       toast({ title: "Error", description: "Failed to post reply.", variant: "destructive" });
     } else {
-      // Create notifications for mentions
       if (data) {
-        await createMentionNotifications(user.id, replyContent.trim(), replyingToPost.id, data.id);
+        await Promise.all([
+          // Notify mentioned users
+          createMentionNotifications(user.id, replyContent.trim(), replyingToPost.id, data.id),
+          // Notify the original post author
+          createNotification(
+            replyingToPost.user_id,
+            user.id,
+            'reply',
+            replyingToPost.id,
+            replyContent.trim(),
+            data.id
+          )
+        ]);
       }
+
       setReplyContent('');
       toast({ title: "Reply posted!", description: "Your reply has been added." });
       // Refresh replies
@@ -462,15 +458,22 @@ const DashboardPage = () => {
 
   const handleEcho = async (postId: string, hasEchoed: boolean) => {
     if (!user || echoingPostId) return;
-    // Use original post ID for echoes (strip the echo- prefix if present)
-    const actualPostId = postId.startsWith('echo-') ? postId.split('-')[1] : postId;
+
+    const actualPostId = postId;
     setEchoingPostId(postId);
+
     try {
       if (hasEchoed) {
         await supabase.from('post_echoes').delete().eq('post_id', actualPostId).eq('user_id', user.id);
         toast({ title: "Echo removed", description: "Your echo has been removed." });
       } else {
         await supabase.from('post_echoes').insert({ post_id: actualPostId, user_id: user.id });
+
+        const echoedPost = posts.find(p => (p.original_post_id || p.id) === actualPostId);
+        if (echoedPost) {
+          await createNotification(echoedPost.user_id, user.id, 'echo', actualPostId, echoedPost.content);
+        }
+
         toast({ title: "Echoed!", description: "You amplified this voice." });
       }
     } catch (error) {
