@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -108,110 +108,165 @@ const DashboardPage = () => {
     }
   }, [user, loading, navigate]);
 
-  // Fetch posts with author names and likes
+  // Fetch posts with author names and likes (including echoes in feed like Twitter retweets)
+  const fetchPosts = useCallback(async () => {
+    if (!user) return;
+    
+    // Fetch original posts
+    const { data: postsData, error: postsError } = await supabase
+      .from('posts')
+      .select('id, content, created_at, user_id')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (postsError) {
+      console.error('Error fetching posts:', postsError);
+      setIsLoadingPosts(false);
+      return;
+    }
+
+    // Fetch all echoes to show in feed (like retweets)
+    const { data: allEchoesData } = await supabase
+      .from('post_echoes')
+      .select('id, post_id, user_id, created_at')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (!postsData || postsData.length === 0) {
+      setPosts([]);
+      setIsLoadingPosts(false);
+      return;
+    }
+
+    // Collect all user IDs (post authors + echo authors)
+    const postUserIds = postsData.map(p => p.user_id);
+    const echoUserIds = allEchoesData?.map(e => e.user_id) || [];
+    const userIds = [...new Set([...postUserIds, ...echoUserIds])];
+    const postIds = postsData.map(p => p.id);
+
+    const { data: profilesData } = await supabase
+      .from('profiles')
+      .select('user_id, display_name, username')
+      .in('user_id', userIds);
+
+    const { data: likesData } = await supabase
+      .from('post_likes')
+      .select('post_id')
+      .in('post_id', postIds);
+
+    const { data: userLikesData } = await supabase
+      .from('post_likes')
+      .select('post_id')
+      .eq('user_id', user.id)
+      .in('post_id', postIds);
+
+    // Fetch reply counts
+    const { data: repliesData } = await supabase
+      .from('post_replies')
+      .select('post_id')
+      .in('post_id', postIds);
+
+    // Fetch echo counts for each post
+    const { data: echoCountsData } = await supabase
+      .from('post_echoes')
+      .select('post_id')
+      .in('post_id', postIds);
+
+    // Fetch user's echoes
+    const { data: userEchoesData } = await supabase
+      .from('post_echoes')
+      .select('post_id')
+      .eq('user_id', user.id)
+      .in('post_id', postIds);
+
+    const profileMap = new Map<string, { display_name: string; username: string | null }>();
+    profilesData?.forEach(p => {
+      profileMap.set(p.user_id, { 
+        display_name: p.display_name || 'Anonymous',
+        username: p.username
+      });
+    });
+
+    const likeCountMap = new Map<string, number>();
+    likesData?.forEach(l => {
+      likeCountMap.set(l.post_id, (likeCountMap.get(l.post_id) || 0) + 1);
+    });
+
+    const replyCountMap = new Map<string, number>();
+    repliesData?.forEach(r => {
+      replyCountMap.set(r.post_id, (replyCountMap.get(r.post_id) || 0) + 1);
+    });
+
+    const echoCountMap = new Map<string, number>();
+    echoCountsData?.forEach(e => {
+      echoCountMap.set(e.post_id, (echoCountMap.get(e.post_id) || 0) + 1);
+    });
+
+    const userLikedSet = new Set(userLikesData?.map(l => l.post_id) || []);
+    const userEchoedSet = new Set(userEchoesData?.map(e => e.post_id) || []);
+
+    // Create a map of posts for quick lookup
+    const postsMap = new Map<string, typeof postsData[0]>();
+    postsData.forEach(p => postsMap.set(p.id, p));
+
+    // Build feed items: original posts + echoed posts (like Twitter retweets)
+    type FeedItem = { type: 'post' | 'echo'; timestamp: string; post: typeof postsData[0]; echoedBy?: { name: string; username: string | null } };
+    const feedItems: FeedItem[] = [];
+
+    // Add original posts
+    postsData.forEach(post => {
+      feedItems.push({ type: 'post', timestamp: post.created_at, post });
+    });
+
+    // Add echoes as separate feed items (showing the original post with "Echoed by" header)
+    allEchoesData?.forEach(echo => {
+      const originalPost = postsMap.get(echo.post_id);
+      if (originalPost) {
+        const echoerProfile = profileMap.get(echo.user_id);
+        feedItems.push({
+          type: 'echo',
+          timestamp: echo.created_at,
+          post: originalPost,
+          echoedBy: {
+            name: echoerProfile?.display_name || 'Anonymous',
+            username: echoerProfile?.username || null
+          }
+        });
+      }
+    });
+
+    // Sort by timestamp (newest first)
+    feedItems.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+    // Convert to PostWithProfile format
+    const postsWithProfiles: PostWithProfile[] = feedItems.map((item, index) => {
+      const post = item.post;
+      const profile = profileMap.get(post.user_id);
+      return {
+        id: item.type === 'echo' ? `echo-${post.id}-${index}` : post.id,
+        content: post.content,
+        created_at: post.created_at,
+        user_id: post.user_id,
+        author_name: profile?.display_name || 'Anonymous',
+        author_username: profile?.username || null,
+        like_count: likeCountMap.get(post.id) || 0,
+        user_has_liked: userLikedSet.has(post.id),
+        reply_count: replyCountMap.get(post.id) || 0,
+        echo_count: echoCountMap.get(post.id) || 0,
+        user_has_echoed: userEchoedSet.has(post.id),
+        is_echo: item.type === 'echo',
+        echoed_by_name: item.echoedBy?.name,
+        echoed_by_username: item.echoedBy?.username,
+        original_post_id: post.id
+      };
+    });
+
+    setPosts(postsWithProfiles);
+    setIsLoadingPosts(false);
+  }, [user]);
+
   useEffect(() => {
     if (!user) return;
-
-    const fetchPosts = async () => {
-      const { data: postsData, error: postsError } = await supabase
-        .from('posts')
-        .select('id, content, created_at, user_id')
-        .order('created_at', { ascending: false })
-        .limit(50);
-
-      if (postsError) {
-        console.error('Error fetching posts:', postsError);
-        setIsLoadingPosts(false);
-        return;
-      }
-
-      if (!postsData || postsData.length === 0) {
-        setPosts([]);
-        setIsLoadingPosts(false);
-        return;
-      }
-
-      const userIds = [...new Set(postsData.map(p => p.user_id))];
-      const postIds = postsData.map(p => p.id);
-
-      const { data: profilesData } = await supabase
-        .from('profiles')
-        .select('user_id, display_name, username')
-        .in('user_id', userIds);
-
-      const { data: likesData } = await supabase
-        .from('post_likes')
-        .select('post_id')
-        .in('post_id', postIds);
-
-      const { data: userLikesData } = await supabase
-        .from('post_likes')
-        .select('post_id')
-        .eq('user_id', user.id)
-        .in('post_id', postIds);
-
-      // Fetch reply counts
-      const { data: repliesData } = await supabase
-        .from('post_replies')
-        .select('post_id')
-        .in('post_id', postIds);
-
-      // Fetch echo counts
-      const { data: echoesData } = await supabase
-        .from('post_echoes')
-        .select('post_id')
-        .in('post_id', postIds);
-
-      // Fetch user's echoes
-      const { data: userEchoesData } = await supabase
-        .from('post_echoes')
-        .select('post_id')
-        .eq('user_id', user.id)
-        .in('post_id', postIds);
-
-      const profileMap = new Map<string, { display_name: string; username: string | null }>();
-      profilesData?.forEach(p => {
-        profileMap.set(p.user_id, { 
-          display_name: p.display_name || 'Anonymous',
-          username: p.username
-        });
-      });
-
-      const likeCountMap = new Map<string, number>();
-      likesData?.forEach(l => {
-        likeCountMap.set(l.post_id, (likeCountMap.get(l.post_id) || 0) + 1);
-      });
-
-      const replyCountMap = new Map<string, number>();
-      repliesData?.forEach(r => {
-        replyCountMap.set(r.post_id, (replyCountMap.get(r.post_id) || 0) + 1);
-      });
-
-      const echoCountMap = new Map<string, number>();
-      echoesData?.forEach(e => {
-        echoCountMap.set(e.post_id, (echoCountMap.get(e.post_id) || 0) + 1);
-      });
-
-      const userLikedSet = new Set(userLikesData?.map(l => l.post_id) || []);
-      const userEchoedSet = new Set(userEchoesData?.map(e => e.post_id) || []);
-
-      const postsWithProfiles: PostWithProfile[] = postsData.map(post => {
-        const profile = profileMap.get(post.user_id);
-        return {
-          ...post,
-          author_name: profile?.display_name || 'Anonymous',
-          author_username: profile?.username || null,
-          like_count: likeCountMap.get(post.id) || 0,
-          user_has_liked: userLikedSet.has(post.id),
-          reply_count: replyCountMap.get(post.id) || 0,
-          echo_count: echoCountMap.get(post.id) || 0,
-          user_has_echoed: userEchoedSet.has(post.id)
-        };
-      });
-
-      setPosts(postsWithProfiles);
-      setIsLoadingPosts(false);
-    };
 
     fetchPosts();
 
@@ -249,8 +304,10 @@ const DashboardPage = () => {
           const likeUserId = (payload.new as { user_id?: string })?.user_id;
           if (!postId) return;
           
+          // Update both original posts and echoes (which have original_post_id)
           setPosts(prev => prev.map(post => {
-            if (post.id !== postId) return post;
+            const actualPostId = post.original_post_id || post.id;
+            if (actualPostId !== postId) return post;
             if (payload.eventType === 'INSERT') {
               return { ...post, like_count: post.like_count + 1, user_has_liked: likeUserId === user.id ? true : post.user_has_liked };
             } else if (payload.eventType === 'DELETE') {
@@ -270,8 +327,10 @@ const DashboardPage = () => {
           const echoUserId = (payload.new as { user_id?: string })?.user_id;
           if (!postId) return;
           
+          // Update echo counts for both original posts and echoes
           setPosts(prev => prev.map(post => {
-            if (post.id !== postId) return post;
+            const actualPostId = post.original_post_id || post.id;
+            if (actualPostId !== postId) return post;
             if (payload.eventType === 'INSERT') {
               return { ...post, echo_count: post.echo_count + 1, user_has_echoed: echoUserId === user.id ? true : post.user_has_echoed };
             } else if (payload.eventType === 'DELETE') {
@@ -279,6 +338,11 @@ const DashboardPage = () => {
             }
             return post;
           }));
+
+          // Refetch the feed when echoes change to show/hide echoed posts
+          if (payload.eventType === 'INSERT' || payload.eventType === 'DELETE') {
+            fetchPosts();
+          }
         }
       )
       .subscribe();
@@ -398,13 +462,15 @@ const DashboardPage = () => {
 
   const handleEcho = async (postId: string, hasEchoed: boolean) => {
     if (!user || echoingPostId) return;
+    // Use original post ID for echoes (strip the echo- prefix if present)
+    const actualPostId = postId.startsWith('echo-') ? postId.split('-')[1] : postId;
     setEchoingPostId(postId);
     try {
       if (hasEchoed) {
-        await supabase.from('post_echoes').delete().eq('post_id', postId).eq('user_id', user.id);
+        await supabase.from('post_echoes').delete().eq('post_id', actualPostId).eq('user_id', user.id);
         toast({ title: "Echo removed", description: "Your echo has been removed." });
       } else {
-        await supabase.from('post_echoes').insert({ post_id: postId, user_id: user.id });
+        await supabase.from('post_echoes').insert({ post_id: actualPostId, user_id: user.id });
         toast({ title: "Echoed!", description: "You amplified this voice." });
       }
     } catch (error) {
@@ -537,6 +603,13 @@ const DashboardPage = () => {
                       posts.map((post) => (
                         <Card key={post.id}>
                           <CardContent className="p-4">
+                            {/* Echo Header - like Twitter retweet header */}
+                            {post.is_echo && post.echoed_by_name && (
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3 -mt-1">
+                                <Repeat2 className="h-4 w-4" />
+                                <span>{post.echoed_by_name} echoed</span>
+                              </div>
+                            )}
                             <div className="flex gap-4">
                               <Avatar className="h-10 w-10"><AvatarFallback className="bg-primary/10 text-primary">{post.author_name[0].toUpperCase()}</AvatarFallback></Avatar>
                               <div className="flex-1">
@@ -547,15 +620,15 @@ const DashboardPage = () => {
                                 </div>
                                 <p className="text-foreground mb-4 whitespace-pre-wrap">{renderContentWithMentionsAndLinks(post.content)}</p>
                                 <div className="flex items-center gap-6">
-                                  <button onClick={() => handleLike(post.id, post.user_has_liked)} disabled={likingPostId === post.id} className={`flex items-center gap-2 transition-colors ${post.user_has_liked ? 'text-pride-pink' : 'text-muted-foreground hover:text-pride-pink'}`}>
+                                  <button onClick={() => handleLike(post.original_post_id || post.id, post.user_has_liked)} disabled={likingPostId === post.id || likingPostId === post.original_post_id} className={`flex items-center gap-2 transition-colors ${post.user_has_liked ? 'text-pride-pink' : 'text-muted-foreground hover:text-pride-pink'}`}>
                                     <Heart className={`h-4 w-4 ${post.user_has_liked ? 'fill-current' : ''}`} /><span className="text-sm">{post.like_count}</span>
                                   </button>
-                                  <button onClick={() => openReplyThread(post)} className="flex items-center gap-2 text-muted-foreground hover:text-pride-blue transition-colors">
+                                  <button onClick={() => openReplyThread({ ...post, id: post.original_post_id || post.id })} className="flex items-center gap-2 text-muted-foreground hover:text-pride-blue transition-colors">
                                     <MessageCircle className="h-4 w-4" /><span className="text-sm">{post.reply_count}</span>
                                   </button>
                                   <button 
-                                    onClick={() => handleEcho(post.id, post.user_has_echoed)} 
-                                    disabled={echoingPostId === post.id} 
+                                    onClick={() => handleEcho(post.original_post_id || post.id, post.user_has_echoed)} 
+                                    disabled={echoingPostId === post.id || echoingPostId === post.original_post_id} 
                                     className={`flex items-center gap-2 transition-colors ${post.user_has_echoed ? 'text-pride-green' : 'text-muted-foreground hover:text-pride-green'}`}
                                     title="Echo - Amplify this voice"
                                   >
