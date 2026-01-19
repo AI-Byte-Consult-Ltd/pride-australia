@@ -20,7 +20,7 @@ interface SupportPackage {
 }
 
 const AUD_SYMBOL = 'A$';
-const VIP_MIN = 199;
+const VIP_MIN = 200;
 
 const packages: SupportPackage[] = [
   {
@@ -35,13 +35,14 @@ const packages: SupportPackage[] = [
       'Access to exclusive supporter-only stickers',
       'Priority access to new features during Alpha',
       'Your name listed on the "Early Supporters" wall',
+      'Website/project audit to explore AI automation & growth opportunities',
     ],
   },
   {
     id: 'founding',
     name: 'Founding Member',
     description: 'Join as a founding member and shape the future of Pride Social Network.',
-    price: 49,
+    price: 50,
     icon: <Sparkles className="h-6 w-6" />,
     featured: true,
     unitsLevel: 'Founding Level',
@@ -52,6 +53,7 @@ const packages: SupportPackage[] = [
       'Ability to participate in community polls and early decisions',
       'Special recognition as a Founding Member',
       'Digital certificate confirming Founding Member status',
+      'In-depth website/project audit with AI automation & autoreply recommendations',
     ],
   },
   {
@@ -69,6 +71,7 @@ const packages: SupportPackage[] = [
       'Direct feedback channel with PRIDE team',
       'Recognition as a PRIDE Patron',
       'Official paper certificate confirming VIP Supporter status',
+      'Comprehensive audit of your website, project, or business with tailored AI strategies to save time, grow your business, and better serve your customers',
     ],
   },
 ];
