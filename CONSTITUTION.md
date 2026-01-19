@@ -23,7 +23,7 @@ No income or property may be distributed to members, directors, or officers, exc
 
 5. Members
 The company must have at least one member.
-The initial and sole member of the company is AI Byte Consult Ltd, a company incorporated in Bulgaria.
+The initial and sole member of the company is AI Byte Consult Ltd, a company incorporated in Bulgaria, European Union.
 Additional members may be admitted in accordance with this Constitution.
 
 6. Guarantee

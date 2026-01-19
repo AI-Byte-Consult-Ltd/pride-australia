@@ -87,7 +87,7 @@ const SupportPackagesSection = () => {
     return `${baseUrl}${joiner}amount=${encodeURIComponent(String(amount))}`;
   };
 
-  const handleDonate = (pkg: SupportPackage, provider: Provider) => {
+  const handleSupport = (pkg: SupportPackage, provider: Provider) => {
     const baseUrl = SUPPORT_LINKS[pkg.id][provider];
     const finalUrl = buildFinalLink(baseUrl, pkg.id);
     window.open(finalUrl, '_blank', 'noopener,noreferrer');
@@ -206,17 +206,17 @@ const SupportPackagesSection = () => {
                 </div>
               </CardContent>
 
-              {/* 4 donation buttons - stacked */}
+              {/* 4 support buttons - stacked */}
               <CardFooter className="flex flex-col gap-3">
-                {/* 1) Revolut FIRST, renamed to Donate with Card */}
+                {/* 1) Revolut FIRST */}
                 <Button
                   variant={pkg.featured ? 'pride' : 'default'}
                   size="lg"
                   className="w-full gap-2"
-                  onClick={() => handleDonate(pkg, 'revolut')}
+                  onClick={() => handleSupport(pkg, 'revolut')}
                 >
                   <CreditCard className="h-4 w-4" />
-                  Donate with Card
+                  Support with Card
                 </Button>
 
                 {/* 2) Stripe */}
@@ -224,10 +224,10 @@ const SupportPackagesSection = () => {
                   variant="outline"
                   size="lg"
                   className="w-full gap-2"
-                  onClick={() => handleDonate(pkg, 'stripe')}
+                  onClick={() => handleSupport(pkg, 'stripe')}
                 >
                   <CreditCard className="h-4 w-4" />
-                  Donate with Stripe
+                  Support with Stripe
                 </Button>
 
                 {/* 3) PayPal */}
@@ -235,10 +235,10 @@ const SupportPackagesSection = () => {
                   variant="outline"
                   size="lg"
                   className="w-full gap-2"
-                  onClick={() => handleDonate(pkg, 'paypal')}
+                  onClick={() => handleSupport(pkg, 'paypal')}
                 >
                   <Wallet className="h-4 w-4" />
-                  Donate with PayPal
+                  Support with PayPal
                 </Button>
 
                 {/* 4) Crypto */}
@@ -246,10 +246,10 @@ const SupportPackagesSection = () => {
                   variant="outline"
                   size="lg"
                   className="w-full gap-2"
-                  onClick={() => handleDonate(pkg, 'coinbase')}
+                  onClick={() => handleSupport(pkg, 'coinbase')}
                 >
                   <Coins className="h-4 w-4" />
-                  Donate with Crypto
+                  Support with Crypto
                 </Button>
               </CardFooter>
             </Card>

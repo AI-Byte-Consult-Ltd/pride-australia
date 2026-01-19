@@ -1,4 +1,3 @@
-
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
@@ -12,7 +11,6 @@ import {
   ArrowRight,
   MessageCircle,
   Link2,
-  Smile,
   Share2,
   Hash,
   Shield,
@@ -51,6 +49,21 @@ const RoadmapPage = () => {
       title: 'Replies to posts',
       subtitle: 'Members can respond and continue conversations directly under posts',
     },
+    {
+      icon: <CheckCircle className="h-5 w-5" />,
+      title: 'Echo (reposts)',
+      subtitle: 'Share a post to amplify voices you support (our version of repost/retweet)',
+    },
+    {
+      icon: <CheckCircle className="h-5 w-5" />,
+      title: 'User mentions (@tagging)',
+      subtitle: 'Mention users inside posts and replies to bring them into the conversation',
+    },
+    {
+      icon: <CheckCircle className="h-5 w-5" />,
+      title: 'Mention alerts',
+      subtitle: 'Users can see when they are mentioned to help keep conversations connected',
+    },
     { icon: <CheckCircle className="h-5 w-5" />, title: 'Community feed' },
     {
       icon: <CheckCircle className="h-5 w-5" />,
@@ -67,11 +80,16 @@ const RoadmapPage = () => {
       title: 'Expanded support options',
       subtitle: 'Added an Australian bank account option for supporters who prefer a direct transfer',
     },
+    {
+      icon: <CheckCircle className="h-5 w-5" />,
+      title: 'Support packages for PRIDE Social Network & Pride Lab Foundation',
+      subtitle:
+        'Support tiers are available, including an optional project/business audit: improvement plan, AI & automation opportunities, time-saving workflows, user activity growth, and scaling recommendations',
+    },
   ];
 
   // Pride Social Network — short-term
   const socialNetworkShortTerm = [
-    { icon: <MessageCircle className="h-5 w-5" />, title: 'User mentions (@tagging)' },
     { icon: <Link2 className="h-5 w-5" />, title: 'Active links in posts' },
     {
       icon: <FileText className="h-5 w-5" />,
@@ -183,23 +201,49 @@ const RoadmapPage = () => {
   // Pride Lab Foundation — Phase 1
   const foundationPhase1 = [
     {
-      icon: <Building2 className="h-5 w-5" />,
-      title: 'Legal registration in Australia',
-      subtitle: 'Establishing a compliant foundation structure to support community initiatives',
+      icon: <CheckCircle className="h-5 w-5" />,
+      title: 'Documentation prepared',
+      subtitle: 'Core documentation is completed and ready for the registration process',
     },
     {
-      icon: <Coins className="h-5 w-5" />,
-      title: 'Accounting & compliance setup',
-      subtitle: 'Ensuring responsible operations, reporting, and long-term sustainability',
+      icon: <CheckCircle className="h-5 w-5" />,
+      title: 'Sydney virtual office secured',
+      subtitle: 'Virtual office lease agreement signed to support formal setup and operations',
     },
     {
-      icon: <FileText className="h-5 w-5" />,
+      icon: <CheckCircle className="h-5 w-5" />,
+      title: 'Sydney selected as headquarters',
+      subtitle: 'Sydney is confirmed as the Foundation’s HQ for Australia',
+    },
+    {
+      icon: <Clock className="h-5 w-5" />,
+      title: 'ASIC registration submission',
+      subtitle: 'Submitting the legal registration filing in Australia (ASIC)',
+    },
+    {
+      icon: <Clock className="h-5 w-5" />,
+      title: 'ABN application',
+      subtitle: 'Applying for an ABN after registration submission/approval',
+    },
+    {
+      icon: <Clock className="h-5 w-5" />,
+      title: 'GST registration (if required)',
+      subtitle: 'Registering for GST if/when required by operational thresholds and activity',
+    },
+    {
+      icon: <Clock className="h-5 w-5" />,
+      title: 'Tax-deductible donation pathway',
+      subtitle:
+        'Preparing the compliance steps needed for eligible tax-deductible donations (e.g., ACNC charity registration and ATO endorsement where applicable)',
+    },
+    {
+      icon: <CheckCircle className="h-5 w-5" />,
       title: 'Transparent cost tracking page',
       subtitle: 'Clear visibility on costs, priorities, and what community support enables',
     },
     {
-      icon: <CreditCard className="h-5 w-5" />,
-      title: 'Payment infrastructure for donations',
+      icon: <CheckCircle className="h-5 w-5" />,
+      title: 'Payment infrastructure for voluntary support',
       subtitle: 'Multiple support options, including bank transfer and card-based contributions',
     },
   ];
