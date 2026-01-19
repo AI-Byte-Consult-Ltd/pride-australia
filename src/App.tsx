@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -34,6 +35,9 @@ import NotFound from "./pages/NotFound";
 import TransparencyCostsPage from "./pages/TransparencyCostsPage";
 import GDPRPage from "./pages/GDPRPage";
 import RoadmapPage from "./pages/RoadmapPage";
+
+// NEW: Constitution page
+import ConstitutionPage from "./pages/ConstitutionPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -74,17 +78,16 @@ const App = () => {
 
                   {/* Foundation */}
                   <Route path="/roadmap" element={<RoadmapPage />} />
+                  <Route path="/transparency-and-costs" element={<TransparencyCostsPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
 
                   {/* Legal */}
                   <Route path="/privacy" element={<PrivacyPage />} />
                   <Route path="/terms" element={<TermsPage />} />
                   <Route path="/cookies" element={<CookiesPage />} />
                   <Route path="/guidelines" element={<GuidelinesPage />} />
-                  <Route
-                    path="/transparency-and-costs"
-                    element={<TransparencyCostsPage />}
-                  />
                   <Route path="/gdpr" element={<GDPRPage />} />
+                  <Route path="/constitution" element={<ConstitutionPage />} />
 
                   {/* App */}
                   <Route path="/dashboard" element={<DashboardPage />} />

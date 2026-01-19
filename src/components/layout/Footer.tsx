@@ -38,6 +38,7 @@ const Footer = () => {
       { name: "Cookie Policy", href: "/cookies" },
       { name: "GDPR & Data Protection", href: "/gdpr" },
       { name: "Community Guidelines", href: "/guidelines" },
+      { name: "Constitution", href: "/constitution" }, // NEW
     ],
   };
 
@@ -50,19 +51,13 @@ const Footer = () => {
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl gradient-pride">
-                <Heart
-                  className="h-5 w-5 text-primary-foreground"
-                  fill="currentColor"
-                />
+                <Heart className="h-5 w-5 text-primary-foreground" fill="currentColor" />
               </div>
-              <span className="font-display text-xl font-bold">
-                Pride Social
-              </span>
+              <span className="font-display text-xl font-bold">Pride Social</span>
             </Link>
 
             <p className="text-sm text-muted-foreground mb-4">
-              A community-first social network built by and for the PRIDE
-              community.
+              A community-first social network built by and for the PRIDE community.
             </p>
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -129,21 +124,13 @@ const Footer = () => {
         {/* Bottom */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
-            <p className="text-sm text-muted-foreground">
-              {legalInfo.AU.registration}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {legalInfo.AU.nonprofit}
-            </p>
+            <p className="text-sm text-muted-foreground">{legalInfo.AU.registration}</p>
+            <p className="text-xs text-muted-foreground mt-1">{legalInfo.AU.nonprofit}</p>
           </div>
 
           <div className="flex flex-col items-center md:items-end gap-2">
-            <p className="text-sm text-muted-foreground">
-              © {currentYear} PRIDE Lab Foundation. All rights reserved.
-            </p>
-            <p className="text-xs text-muted-foreground">
-              PRIDE Social Network v1.1.39
-            </p>
+            <p className="text-sm text-muted-foreground">© {currentYear} PRIDE Lab Foundation. All rights reserved.</p>
+            <p className="text-xs text-muted-foreground">PRIDE Social Network v1.1.39</p>
             <a
               href="https://aibyteconsult.com"
               target="_blank"
