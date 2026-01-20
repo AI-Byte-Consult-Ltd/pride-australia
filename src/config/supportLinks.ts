@@ -6,7 +6,7 @@ export const SUPPORT_LINKS = {
     coinbase: 'https://commerce.coinbase.com/checkout/468f3710-4fb6-48cd-b6b5-f547fc89cf29',
   },
   founding: {
-    stripe: 'https://donate.stripe.com/00w4gyajI0f26ax28RaVa1b',
+    stripe: 'https://donate.stripe.com/eVq4gyezYbXK2Yl14NaVa1d',
     revolut: 'https://checkout.revolut.com/pay/e0dd516f-47da-4436-9262-0ba33d428012',
     paypal: 'https://www.paypal.com/ncp/payment/KFYULFX7SMC8Y',
     coinbase: 'https://commerce.coinbase.com/checkout/03152a38-7bc1-410d-a3f6-7a4586054557',
