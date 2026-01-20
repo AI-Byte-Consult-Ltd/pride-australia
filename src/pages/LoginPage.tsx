@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import Layout from '@/components/layout/Layout';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -55,13 +56,13 @@ const LoginPage = () => {
   };
 
   return (
-    <>
+    <Layout>
       <Helmet>
         <title>Log In | Pride Social Network</title>
         <meta name="description" content="Log in to your Pride Social Network account and connect with the community." />
       </Helmet>
 
-      <div className="min-h-screen flex items-center justify-center p-4 gradient-hero">
+      <div className="min-h-[calc(100vh-12rem)] flex items-center justify-center p-4 gradient-hero">
         <div className="w-full max-w-md animate-fade-in">
           {/* Logo */}
           <Link to="/" className="flex items-center justify-center gap-2 mb-8">
@@ -147,7 +148,7 @@ const LoginPage = () => {
           </p>
         </div>
       </div>
-    </>
+    </Layout>
   );
 };
 

@@ -9,8 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   Home, 
-  ShoppingBag, 
-  Sparkles, 
+  MapPin, 
   Settings,
   Loader2,
   Save,
@@ -180,8 +179,8 @@ const SettingsPage = () => {
         <meta name="description" content="Manage your Pride Social Network account settings." />
       </Helmet>
 
-      <Layout hideFooter>
-        <div className="min-h-[calc(100vh-4rem)] bg-muted/30">
+      <Layout>
+        <div className="bg-muted/30 pb-12">
           <div className="container py-6">
             <div className="grid lg:grid-cols-[240px_1fr] gap-6">
               {/* Sidebar */}
@@ -208,18 +207,11 @@ const SettingsPage = () => {
                         Feed
                       </Link>
                       <Link 
-                        to="/marketplace"
+                        to="/community-map"
                         className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                       >
-                        <ShoppingBag className="h-5 w-5" />
-                        Marketplace
-                      </Link>
-                      <Link 
-                        to="/dashboard/stickers"
-                        className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                      >
-                        <Sparkles className="h-5 w-5" />
-                        Stickers
+                        <MapPin className="h-5 w-5" />
+                        Community Map
                       </Link>
                       <Link 
                         to="/dashboard/settings"

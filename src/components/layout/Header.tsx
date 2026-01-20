@@ -22,7 +22,7 @@ const Header = () => {
 
   const navItems = [
     { name: 'Home', href: '/' },
-    { name: 'Marketplace', href: '/marketplace' },
+    { name: 'Community Map', href: '/community-map' },
     { name: 'Support', href: '/support' },
     { name: 'About', href: '/about' },
   ];

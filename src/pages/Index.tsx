@@ -6,7 +6,7 @@ import FeaturesSection from "@/components/home/FeaturesSection";
 import TeamSection from "@/components/home/TeamSection";
 import EventsSection from "@/components/home/EventsSection";
 import NewsSection from "@/components/home/NewsSection";
-import MarketplaceSection from "@/components/home/MarketplaceSection";
+import CommunityMapSection from "@/components/home/CommunityMapSection";
 import SupportPackagesSection from "@/components/home/SupportPackagesSection";
 import CTASection from "@/components/home/CTASection";
 
@@ -56,7 +56,7 @@ const Index = () => {
         <TeamSection />
         <EventsSection />
         <NewsSection />
-        <MarketplaceSection />
+        <CommunityMapSection />
         <SupportPackagesSection />
         <CTASection />
       </Layout>

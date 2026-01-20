@@ -10,8 +10,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/MentionInput';
 import { 
   Home, 
-  ShoppingBag, 
-  Sparkles, 
+  MapPin, 
   Settings, 
   Image, 
   Send,
@@ -20,7 +19,8 @@ import {
   Repeat2,
   Coins,
   Loader2,
-  X
+  X,
+  Sparkles
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -554,8 +554,7 @@ const DashboardPage = () => {
                     </div>
                     <nav className="space-y-1">
                       <Link to="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary font-medium"><Home className="h-5 w-5" />Feed</Link>
-                      <Link to="/marketplace" className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"><ShoppingBag className="h-5 w-5" />Marketplace</Link>
-                      <Link to="/dashboard/stickers" className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"><Sparkles className="h-5 w-5" />Stickers</Link>
+                      <Link to="/community-map" className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"><MapPin className="h-5 w-5" />Community Map</Link>
                       <Link to="/dashboard/settings" className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"><Settings className="h-5 w-5" />Settings</Link>
                     </nav>
                   </CardContent>

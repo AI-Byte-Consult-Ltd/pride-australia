@@ -191,3 +191,14 @@
     50% { opacity: 0.8; }
   }
 }
+
+/* Leaflet popup styles */
+.leaflet-popup-content-wrapper {
+  @apply bg-background border border-border rounded-lg shadow-lg;
+}
+.leaflet-popup-content {
+  @apply text-foreground m-0;
+}
+.leaflet-popup-tip {
+  @apply bg-background border-l border-b border-border;
+}

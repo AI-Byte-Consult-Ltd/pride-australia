@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      businesses: {
+        Row: {
+          address: string | null
+          category: string
+          city: string
+          contact_email: string | null
+          created_at: string
+          description: string | null
+          id: string
+          instagram: string | null
+          is_approved: boolean
+          latitude: number | null
+          longitude: number | null
+          name: string
+          state: string
+          updated_at: string
+          user_id: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          category: string
+          city: string
+          contact_email?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          instagram?: string | null
+          is_approved?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          state: string
+          updated_at?: string
+          user_id?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          category?: string
+          city?: string
+          contact_email?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          instagram?: string | null
+          is_approved?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          state?: string
+          updated_at?: string
+          user_id?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           content: string | null

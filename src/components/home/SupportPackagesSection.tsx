@@ -1,9 +1,6 @@
-import { useState } from 'react';
 import { Sparkles, Crown, Star, Heart, CreditCard, Wallet, Coins, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { SUPPORT_LINKS } from '@/config/supportLinks';
 
 type Provider = 'stripe' | 'revolut' | 'paypal' | 'coinbase';
@@ -12,7 +9,7 @@ interface SupportPackage {
   id: 'early' | 'founding' | 'vip';
   name: string;
   description: string;
-  price: number | 'custom';
+  price: number;
   icon: React.ReactNode;
   featured?: boolean;
   benefits: string[];
@@ -20,14 +17,13 @@ interface SupportPackage {
 }
 
 const AUD_SYMBOL = 'A$';
-const VIP_MIN = 200;
 
 const packages: SupportPackage[] = [
   {
     id: 'early',
     name: 'Early Supporter',
-    description: 'Be among the first to support our community platform and help us grow.',
-    price: 10,
+    description: 'A meaningful way to support the initiative and join the movement.',
+    price: 40,
     icon: <Star className="h-6 w-6" />,
     unitsLevel: 'Starter Level',
     benefits: [
@@ -41,8 +37,8 @@ const packages: SupportPackage[] = [
   {
     id: 'founding',
     name: 'Founding Member',
-    description: 'Join as a founding member and shape the future of Pride Social Network.',
-    price: 50,
+    description: 'Support the mission and help us build a strong, inclusive community.',
+    price: 80,
     icon: <Sparkles className="h-6 w-6" />,
     featured: true,
     unitsLevel: 'Founding Level',
@@ -59,8 +55,8 @@ const packages: SupportPackage[] = [
   {
     id: 'vip',
     name: 'VIP Supporter',
-    description: 'Choose your own contribution amount and make a bigger impact.',
-    price: 'custom',
+    description: 'Make a lasting impact and be recognized as a founding supporter of the foundation.',
+    price: 480,
     icon: <Crown className="h-6 w-6" />,
     unitsLevel: 'Patron Level',
     benefits: [
@@ -77,20 +73,9 @@ const packages: SupportPackage[] = [
 ];
 
 const SupportPackagesSection = () => {
-  const [customAmount, setCustomAmount] = useState<number>(VIP_MIN);
-
-  const buildFinalLink = (baseUrl: string, pkgId: SupportPackage['id']) => {
-    if (pkgId !== 'vip') return baseUrl;
-
-    const amount = Math.max(VIP_MIN, customAmount);
-    const joiner = baseUrl.includes('?') ? '&' : '?';
-    return `${baseUrl}${joiner}amount=${encodeURIComponent(String(amount))}`;
-  };
-
   const handleSupport = (pkg: SupportPackage, provider: Provider) => {
     const baseUrl = SUPPORT_LINKS[pkg.id][provider];
-    const finalUrl = buildFinalLink(baseUrl, pkg.id);
-    window.open(finalUrl, '_blank', 'noopener,noreferrer');
+    window.open(baseUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -142,58 +127,19 @@ const SupportPackagesSection = () => {
               </CardHeader>
 
               <CardContent className="text-center flex-1">
-                {pkg.id === 'vip' ? (
-                  <div className="py-4 space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="custom-amount" className="text-sm text-muted-foreground">
-                        Choose your amount (AUD)
-                      </Label>
-                      <div className="relative max-w-[190px] mx-auto">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
-                          {AUD_SYMBOL}
-                        </span>
-                        <Input
-                          id="custom-amount"
-                          type="number"
-                          min={VIP_MIN}
-                          value={customAmount}
-                          onChange={(e) => {
-                            const val = parseInt(e.target.value) || VIP_MIN;
-                            setCustomAmount(Math.max(VIP_MIN, val));
-                          }}
-                          className="pl-10 text-center text-xl font-bold"
-                        />
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Minimum {AUD_SYMBOL}
-                        {VIP_MIN}
-                      </p>
-                    </div>
-
-                    <div>
-                      <div className="flex items-center justify-center gap-2">
-                        <Heart className="h-5 w-5 text-pride-pink" />
-                        <span className="text-lg font-display font-bold gradient-pride-text">PRIDE Units</span>
-                        <span className="text-sm text-muted-foreground">- {pkg.unitsLevel}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">Included</p>
-                    </div>
+                <div className="py-4">
+                  <div className="mb-4">
+                    <span className="text-3xl font-display font-bold">
+                      {AUD_SYMBOL}
+                      {pkg.price}
+                    </span>
                   </div>
-                ) : (
-                  <div className="py-4">
-                    <div className="mb-4">
-                      <span className="text-3xl font-display font-bold">
-                        {AUD_SYMBOL}
-                        {pkg.price}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="text-lg font-display font-bold gradient-pride-text">PRIDE Units</span>
-                      <span className="text-sm text-muted-foreground">- {pkg.unitsLevel}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-1">Included</p>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-lg font-display font-bold gradient-pride-text">PRIDE Units</span>
+                    <span className="text-sm text-muted-foreground">- {pkg.unitsLevel}</span>
                   </div>
-                )}
+                  <p className="text-sm text-muted-foreground mt-1">Included</p>
+                </div>
 
                 {/* Benefits List */}
                 <div className="mt-6 text-left space-y-2">

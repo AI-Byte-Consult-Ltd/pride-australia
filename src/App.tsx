@@ -14,7 +14,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import AboutPage from "./pages/AboutPage";
 import SupportPage from "./pages/SupportPage";
-import MarketplacePage from "./pages/MarketplacePage";
+import CommunityMapPage from "./pages/CommunityMapPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import ContactPage from "./pages/ContactPage";
@@ -72,7 +72,7 @@ const App = () => {
                   <Route path="/values" element={<ValuesPage />} />
                   <Route path="/support" element={<SupportPage />} />
                   <Route path="/early-supporters" element={<EarlySupportersPage />} />
-                  <Route path="/marketplace" element={<MarketplacePage />} />
+                  <Route path="/community-map" element={<CommunityMapPage />} />
                   <Route path="/news" element={<NewsPage />} />
                   <Route path="/events" element={<EventsPage />} />
 

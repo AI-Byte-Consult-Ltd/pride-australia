@@ -17,7 +17,7 @@ const Footer = () => {
   const footerLinks = {
     platform: [
       { name: "Home", href: "/" },
-      { name: "Marketplace", href: "/marketplace" },
+      { name: "Community Map", href: "/community-map" },
       { name: "News", href: "/news" },
       { name: "Events", href: "/events" },
       { name: "Support Us", href: "/support" },
