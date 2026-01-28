@@ -1,4 +1,4 @@
-import { Sparkles, Crown, Star, Heart, CreditCard, Wallet, Coins, Check } from 'lucide-react';
+import { Sparkles, Crown, Star, CreditCard, Wallet, Coins, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { SUPPORT_LINKS } from '@/config/supportLinks';
@@ -16,7 +16,8 @@ interface SupportPackage {
   unitsLevel: string;
 }
 
-const AUD_SYMBOL = 'A$';
+// ✅ EURO instead of AUD
+const EUR_SYMBOL = '€';
 
 const packages: SupportPackage[] = [
   {
@@ -55,7 +56,7 @@ const packages: SupportPackage[] = [
   {
     id: 'vip',
     name: 'VIP Supporter',
-    description: 'Make a lasting impact and be recognized as a founding supporter of the foundation.',
+    description: 'Make a lasting impact and be recognized as a founding supporter of the community.',
     price: 480,
     icon: <Crown className="h-6 w-6" />,
     unitsLevel: 'Patron Level',
@@ -67,7 +68,7 @@ const packages: SupportPackage[] = [
       'Direct feedback channel with PRIDE team',
       'Recognition as a PRIDE Patron',
       'Official paper certificate confirming VIP Supporter status',
-      'Comprehensive audit of your website, project, or business with tailored AI strategies to save time, grow your business, and better serve your customers',
+      'Comprehensive audit of your website, project, or business with tailored AI strategies',
     ],
   },
 ];
@@ -86,10 +87,13 @@ const SupportPackagesSection = () => {
           <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm font-medium mb-4">
             Support Our Mission
           </span>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Become a Supporter</h2>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            Become a Supporter
+          </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Your support helps us build a safe, inclusive platform for the Pride community. Choose a package and receive{' '}
-            <span className="gradient-pride-text font-semibold">PRIDE Units</span> as a thank you.
+            Your support helps us build a safe, inclusive platform for the Pride community.
+            Choose a package and receive{' '}
+            <span className="gradient-pride-text font-semibold">PRIDE Coins</span> as a thank you.
           </p>
         </div>
 
@@ -116,8 +120,8 @@ const SupportPackagesSection = () => {
                     pkg.featured
                       ? 'gradient-pride text-primary-foreground'
                       : pkg.id === 'vip'
-                        ? 'bg-pride-purple/10 text-pride-purple'
-                        : 'bg-primary/10 text-primary'
+                      ? 'bg-pride-purple/10 text-pride-purple'
+                      : 'bg-primary/10 text-primary'
                   }`}
                 >
                   {pkg.icon}
@@ -130,13 +134,17 @@ const SupportPackagesSection = () => {
                 <div className="py-4">
                   <div className="mb-4">
                     <span className="text-3xl font-display font-bold">
-                      {AUD_SYMBOL}
+                      {EUR_SYMBOL}
                       {pkg.price}
                     </span>
                   </div>
                   <div className="flex items-center justify-center gap-2">
-                    <span className="text-lg font-display font-bold gradient-pride-text">PRIDE Units</span>
-                    <span className="text-sm text-muted-foreground">- {pkg.unitsLevel}</span>
+                    <span className="text-lg font-display font-bold gradient-pride-text">
+                      PRIDE Coins
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      – {pkg.unitsLevel}
+                    </span>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">Included</p>
                 </div>
@@ -152,9 +160,8 @@ const SupportPackagesSection = () => {
                 </div>
               </CardContent>
 
-              {/* 4 support buttons - stacked */}
+              {/* Support buttons */}
               <CardFooter className="flex flex-col gap-3">
-                {/* 1) Revolut FIRST */}
                 <Button
                   variant={pkg.featured ? 'pride' : 'default'}
                   size="lg"
@@ -165,7 +172,6 @@ const SupportPackagesSection = () => {
                   Support with Card
                 </Button>
 
-                {/* 2) Stripe */}
                 <Button
                   variant="outline"
                   size="lg"
@@ -176,7 +182,6 @@ const SupportPackagesSection = () => {
                   Support with Stripe
                 </Button>
 
-                {/* 3) PayPal */}
                 <Button
                   variant="outline"
                   size="lg"
@@ -187,7 +192,6 @@ const SupportPackagesSection = () => {
                   Support with PayPal
                 </Button>
 
-                {/* 4) Crypto */}
                 <Button
                   variant="outline"
                   size="lg"

@@ -1,4 +1,3 @@
-
 import { Helmet } from "react-helmet-async";
 import Layout from "@/components/layout/Layout";
 import HeroSection from "@/components/home/HeroSection";
@@ -12,9 +11,11 @@ import CTASection from "@/components/home/CTASection";
 
 const Index = () => {
   const siteUrl = "https://pridesocial.org";
-  const title = "Pride Social Network | LGBTQIA+ Community, Marketplace & Support";
+
+  // Updated: remove Marketplace positioning, add "List your business", shift focus to EU + global
+  const title = "Pride Social Network | LGBTQIA+ Community, List Your Business & Support";
   const description =
-    "Pride Social Network is a community-first LGBTQIA+ social platform built by and for the Pride community. Connect safely, share updates, discover events, support creators, and explore a community marketplace — powered by PRIDE Lab Foundation.";
+    "Pride Social Network is a community-first LGBTQIA+ social platform built by and for the Pride community. Connect safely, share updates, discover events, support creators, and list your business for the European Union and the world — powered by AI Byte Consult Ltd.";
 
   // NOTE: If you have a real social preview image, replace this URL.
   const ogImage = `${siteUrl}/og/pridesocial-og.png`;
@@ -27,7 +28,7 @@ const Index = () => {
         <meta name="description" content={description} />
         <meta
           name="keywords"
-          content="pride social network, lgbtqia social network, LGBTQIA+ community, queer community, gay community, lesbian community, transgender community, non-profit social platform, safe social app, inclusive community, pride events, LGBTQIA+ events, pride foundation, LGBTQIA+ nonprofit, community marketplace, LGBTQIA+ marketplace, digital goods, pride badges, supporter badge, early supporter, founding member, VIP supporter, Australia LGBTQIA+, Pride Lab Foundation"
+          content="pride social network, lgbtqia social network, LGBTQIA+ community, queer community, gay community, lesbian community, transgender community, safe social app, inclusive community, pride events, LGBTQIA+ events, list your business, LGBTQIA+ business directory, LGBTQIA+ friendly businesses, LGBTQIA+ services, LGBTQIA+ creators, supporter badge, early supporter, founding member, VIP supporter, European Union LGBTQIA+, EU LGBTQIA+, global LGBTQIA+ community, Pride Social"
         />
         <link rel="canonical" href={siteUrl} />
 
@@ -53,11 +54,16 @@ const Index = () => {
       <Layout>
         <HeroSection />
         <FeaturesSection />
+
+        {/* Moved up: Become a supporter right after "Why Pride Social Network" (Features) */}
+        <SupportPackagesSection />
+
+        {/* Then team */}
         <TeamSection />
+
         <EventsSection />
         <NewsSection />
         <CommunityMapSection />
-        <SupportPackagesSection />
         <CTASection />
       </Layout>
     </>

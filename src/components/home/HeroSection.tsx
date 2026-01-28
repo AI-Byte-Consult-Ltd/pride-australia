@@ -8,7 +8,10 @@ const HeroSection = () => {
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-1/2 -right-1/4 w-[600px] h-[600px] rounded-full bg-pride-pink/5 blur-3xl animate-pulse-soft" />
-        <div className="absolute -bottom-1/2 -left-1/4 w-[600px] h-[600px] rounded-full bg-pride-blue/5 blur-3xl animate-pulse-soft" style={{ animationDelay: '1.5s' }} />
+        <div
+          className="absolute -bottom-1/2 -left-1/4 w-[600px] h-[600px] rounded-full bg-pride-blue/5 blur-3xl animate-pulse-soft"
+          style={{ animationDelay: '1.5s' }}
+        />
       </div>
 
       <div className="container relative py-16 lg:py-24">
@@ -20,18 +23,18 @@ const HeroSection = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
               </span>
-              A Non-Profit Social Network
+              Made in EU 🇪🇺 for the World 🗺️
             </div>
-            
+
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
               A joyful social network{' '}
               <span className="gradient-pride-text">built by and for</span>{' '}
               the Pride community
             </h1>
-            
+
             <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0">
-              Connect, share, and celebrate together on a platform designed with love, 
-              operated by PRIDE Lab Foundation to support and uplift our community.
+              Connect, share, and celebrate together on a platform designed with love —
+              built to support and uplift our community worldwide.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -39,7 +42,7 @@ const HeroSection = () => {
                 <Link to="/signup">Join the Network</Link>
               </Button>
               <Button variant="hero-secondary" size="xl" asChild>
-                <Link to="/support">Support PRIDE Lab Foundation</Link>
+                <Link to="/support">Support Pride Social Network</Link>
               </Button>
             </div>
 
@@ -47,7 +50,7 @@ const HeroSection = () => {
             <div className="flex items-center gap-6 justify-center lg:justify-start mt-10 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <span className="text-pride-green">✓</span>
-                Non-Profit
+                Inclusive Worldwide
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-pride-green">✓</span>
@@ -66,7 +69,7 @@ const HeroSection = () => {
               <div className="absolute inset-0 gradient-pride rounded-3xl opacity-20 blur-2xl transform scale-95" />
               <img
                 src={heroImage}
-                alt="Joyful Pride mascots celebrating together - kangaroo, koala, eagle, bear, and raccoon"
+                alt="Joyful Pride mascots celebrating together"
                 className="relative w-full h-auto rounded-3xl shadow-soft animate-float"
               />
             </div>
