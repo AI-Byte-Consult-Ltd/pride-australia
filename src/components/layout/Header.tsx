@@ -13,12 +13,34 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+type JurisdictionOption = {
+  code: 'EU' | 'AU';
+  label: string;
+  emoji: string;
+};
+
+const JURISDICTIONS: JurisdictionOption[] = [
+  { code: 'EU', label: 'European Union', emoji: '🇪🇺' },
+  { code: 'AU', label: 'Australia', emoji: '🇦🇺' },
+];
+
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { jurisdiction, setJurisdiction, countryEmoji } = useJurisdiction();
+
+  const { jurisdiction, setJurisdiction } = useJurisdiction();
   const { user, signOut, loading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // 🔹 UI default = EU, regardless of initial context value
+  const currentJurisdiction =
+    JURISDICTIONS.find(j => j.code === jurisdiction) ??
+    JURISDICTIONS[0]; // fallback EU
+
+  const displayJurisdiction =
+    jurisdiction === 'AU'
+      ? JURISDICTIONS[0] // force EU on first render
+      : currentJurisdiction;
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -64,41 +86,66 @@ const Header = () => {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          {/* Jurisdiction Indicator - Only Australia for now */}
-          <div className="flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground">
-            <span className="text-lg">🇦🇺</span>
-            <span className="hidden sm:inline">Australia</span>
-          </div>
+          {/* Jurisdiction Selector */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 px-3 text-muted-foreground hover:text-foreground"
+              >
+                <span className="text-lg">{displayJurisdiction.emoji}</span>
+                <span className="hidden sm:inline">{displayJurisdiction.label}</span>
+                <ChevronDown className="h-4 w-4 opacity-70" />
+              </Button>
+            </DropdownMenuTrigger>
 
-          {/* Auth Buttons / User Menu */}
+            <DropdownMenuContent align="end" className="w-48">
+              {JURISDICTIONS.map((option) => (
+                <DropdownMenuItem
+                  key={option.code}
+                  onClick={() => setJurisdiction(option.code as any)}
+                  className="cursor-pointer gap-2"
+                >
+                  <span className="text-lg">{option.emoji}</span>
+                  <span>{option.label}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Auth */}
           {!loading && (
             <div className="hidden sm:flex items-center gap-2">
               {user ? (
                 <>
                   <NotificationBell />
                   <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
-                        <User className="h-4 w-4 text-primary" />
-                      </div>
-                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem asChild>
-                      <Link to="/dashboard" className="cursor-pointer">
-                        <User className="mr-2 h-4 w-4" />
-                        Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Log out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="gap-2">
+                        <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
+                          <User className="h-4 w-4 text-primary" />
+                        </div>
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem asChild>
+                        <Link to="/dashboard">
+                          <User className="mr-2 h-4 w-4" />
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={handleSignOut}
+                        className="cursor-pointer text-destructive"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Log out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </>
               ) : (
                 <>
@@ -113,7 +160,7 @@ const Header = () => {
             </div>
           )}
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile */}
           <Button
             variant="ghost"
             size="icon"
@@ -124,49 +171,6 @@ const Header = () => {
           </Button>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-background animate-fade-in">
-          <nav className="container py-4 flex flex-col gap-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                  isActive(item.href)
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
-            <div className="flex gap-2 pt-4 border-t border-border mt-2">
-              {user ? (
-                <>
-                  <Button variant="ghost" className="flex-1" asChild>
-                    <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
-                  </Button>
-                  <Button variant="destructive" className="flex-1" onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}>
-                    Log out
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button variant="ghost" className="flex-1" asChild>
-                    <Link to="/login" onClick={() => setMobileMenuOpen(false)}>Log in</Link>
-                  </Button>
-                  <Button variant="default" className="flex-1" asChild>
-                    <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>Sign up</Link>
-                  </Button>
-                </>
-              )}
-            </div>
-          </nav>
-        </div>
-      )}
     </header>
   );
 };

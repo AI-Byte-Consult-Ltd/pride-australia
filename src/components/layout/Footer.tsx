@@ -1,15 +1,17 @@
 import { Link } from "react-router-dom";
 import { Heart, ExternalLink } from "lucide-react";
-import { useJurisdiction } from "@/contexts/JurisdictionContext";
 
 const Footer = () => {
-  const { jurisdiction, countryName, countryEmoji } = useJurisdiction();
   const currentYear = new Date().getFullYear();
 
-  // Only Australia for now - US hidden but kept for future
+  // Operations (display order matters: IT first, then AU)
   const legalInfo = {
+    IT: {
+      registration: "AI Byte Consult Ltd. (Italian operations) — Tax ID/VAT: pending",
+      nonprofit: "Italian non-profit organization (registration in progress)",
+    },
     AU: {
-      registration: "PRIDE Lab Foundation Australia Ltd. ABN: pending",
+      registration: "AI Byte Consult Ltd. (Australia operations) — ABN: pending",
       nonprofit: "Australian non-profit organization (registration in progress)",
     },
   };
@@ -38,7 +40,7 @@ const Footer = () => {
       { name: "Cookie Policy", href: "/cookies" },
       { name: "GDPR & Data Protection", href: "/gdpr" },
       { name: "Community Guidelines", href: "/guidelines" },
-      { name: "Constitution", href: "/constitution" }, // NEW
+      { name: "Constitution", href: "/constitution" },
     ],
   };
 
@@ -56,13 +58,17 @@ const Footer = () => {
               <span className="font-display text-xl font-bold">Pride Social</span>
             </Link>
 
+            <p className="text-sm font-medium text-foreground mb-2">
+              Made in EU 🇪🇺 for the world 🗺️
+            </p>
+
             <p className="text-sm text-muted-foreground mb-4">
               A community-first social network built by and for the PRIDE community.
             </p>
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{countryEmoji}</span>
-              <span>{countryName}</span>
+              <span>🇪🇺</span>
+              <span>European Union</span>
             </div>
           </div>
 
@@ -124,20 +130,32 @@ const Footer = () => {
         {/* Bottom */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
+            {/* IT first */}
+            <p className="text-sm text-muted-foreground">{legalInfo.IT.registration}</p>
+            <p className="text-xs text-muted-foreground mt-1">{legalInfo.IT.nonprofit}</p>
+
+            {/* Spacer line */}
+            <div className="h-4" />
+
+            {/* AU second */}
             <p className="text-sm text-muted-foreground">{legalInfo.AU.registration}</p>
             <p className="text-xs text-muted-foreground mt-1">{legalInfo.AU.nonprofit}</p>
           </div>
 
           <div className="flex flex-col items-center md:items-end gap-2">
-            <p className="text-sm text-muted-foreground">© {currentYear} PRIDE Lab Foundation. All rights reserved.</p>
+            <p className="text-sm text-muted-foreground">
+              © {currentYear} AI Byte Consult Ltd. All rights reserved.
+            </p>
+
             <p className="text-xs text-muted-foreground">PRIDE Social Network v1.1.39</p>
+
             <a
               href="https://aibyteconsult.com"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
             >
-              Powered by AI Byte Consult Ltd.
+              AI Byte Consult Ltd.
               <ExternalLink className="h-3 w-3" />
             </a>
           </div>
