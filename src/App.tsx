@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -39,6 +38,9 @@ import RoadmapPage from "./pages/RoadmapPage";
 // NEW: Constitution page
 import ConstitutionPage from "./pages/ConstitutionPage";
 
+// ✅ NEW: News article page (/news/:id)
+import NewsArticlePage from "./pages/NewsArticle";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -73,7 +75,12 @@ const App = () => {
                   <Route path="/support" element={<SupportPage />} />
                   <Route path="/early-supporters" element={<EarlySupportersPage />} />
                   <Route path="/community-map" element={<CommunityMapPage />} />
+
+                  {/* News */}
                   <Route path="/news" element={<NewsPage />} />
+                  <Route path="/news/:id" element={<NewsArticlePage />} />
+
+                  {/* Events */}
                   <Route path="/events" element={<EventsPage />} />
 
                   {/* Foundation */}

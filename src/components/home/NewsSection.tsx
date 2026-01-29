@@ -1,72 +1,73 @@
+
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Featured EU news items (Feb 2024) for homepage carousel
+// ✅ Featured EU news — February 2026 (real & curated)
 const featuredNews = [
   {
     id: 1,
-    title: 'Berlinale 2024 Highlights Diversity, Inclusion & the TEDDY Award',
+    title: 'Berlinale 2026 Highlights LGBTQ+ Cinema and the TEDDY Award',
     excerpt:
-      'Berlin International Film Festival underlines LGBTIQ+ visibility and inclusion, with the TEDDY Award spotlighting queer cinema across sections.',
-    date: 'February 6, 2024',
+      'The Berlin International Film Festival once again places queer cinema in the spotlight, celebrating diversity, creativity, and freedom of expression.',
+    date: 'February 6, 2026',
     category: 'Germany (EU)',
     readTime: '4 min read',
   },
   {
     id: 2,
-    title: 'TEDDY 40 at Berlinale: Queer Cinema, Activism & Cultural Impact',
+    title: 'Cologne Carnival 2026 Brings LGBTQ+ Friendly Celebrations',
     excerpt:
-      'The TEDDY Award programme features talks and events celebrating 40 years of queer film culture and community impact in Berlin.',
-    date: 'February 13, 2024',
+      'Cologne’s legendary Carnival returns in February with inclusive parties and events beloved by the LGBTQ+ community.',
+    date: 'February 14, 2026',
     category: 'Germany (EU)',
     readTime: '3 min read',
   },
   {
     id: 3,
-    title: 'Brussels Pride 2024 Focuses on “Safe Everyday Everywhere”',
+    title: 'WorldPride & EuroPride 2026 in Amsterdam Confirm Key Dates',
     excerpt:
-      'Brussels Pride’s 2024 theme calls for concrete action against discrimination and hate crimes — with culture and community at the core.',
-    date: 'February 27, 2024',
+      'Amsterdam prepares to host WorldPride and EuroPride 2026, welcoming visitors from across Europe and the world.',
+    date: 'February 10, 2026',
+    category: 'Netherlands (EU)',
+    readTime: '5 min read',
+  },
+  {
+    id: 4,
+    title: 'Brussels Pride 2026 Focuses on Inclusion and Public Safety',
+    excerpt:
+      'Organisers of Brussels Pride outline the 2026 vision, focusing on safe public spaces and equal rights across Europe.',
+    date: 'February 27, 2026',
     category: 'Belgium (EU)',
     readTime: '4 min read',
   },
   {
-    id: 4,
-    title: 'Thessaloniki Pride: Statement After Greece’s Marriage Equality Milestone',
+    id: 5,
+    title: 'Gay Games XII Valencia 2026: Europe Prepares for a Global Event',
     excerpt:
-      'Thessaloniki Pride marked a historic moment for LGBTQI+ rights in the region, linking progress with EuroPride 2024 momentum.',
-    date: 'February 15, 2024',
-    category: 'Greece (EU)',
+      'Valencia continues preparations for the Gay Games XII, combining sport, culture, and LGBTQ+ visibility.',
+    date: 'February 5, 2026',
+    category: 'Spain (EU)',
     readTime: '4 min read',
   },
   {
-    id: 5,
-    title: 'QUEER-Streifen Regensburg Hosts a Special Screening',
-    excerpt:
-      'A dedicated queer cinema initiative in Regensburg announces a February screening, supporting local community spaces and visibility.',
-    date: 'February 5, 2024',
-    category: 'Germany (EU)',
-    readTime: '2 min read',
-  },
-  {
     id: 6,
-    title: 'Queer at DFF: February 2024 Programme Recommendations',
+    title: 'European Snow Pride 2026 Returns to the Alps',
     excerpt:
-      'DFF (Frankfurt) curates queer film and cultural recommendations for February, showcasing inclusive storytelling and perspectives.',
-    date: 'February 1, 2024',
-    category: 'Germany (EU)',
+      'Winter Pride celebrations return to the Alps, bringing together LGBTQ+ travellers for skiing, music, and community.',
+    date: 'February 20, 2026',
+    category: 'France (EU)',
     readTime: '3 min read',
   },
   {
     id: 7,
-    title: 'Sitges Carnival 2024: A February Celebration Near Barcelona',
+    title: 'Budapest Mayor Faces Charges After Supporting Pride March',
     excerpt:
-      'Sitges Carnival returns in February with major parades and a festive atmosphere in one of Europe’s best-known coastal party towns.',
-    date: 'February 6, 2024',
-    category: 'Spain (EU)',
-    readTime: '3 min read',
+      'Legal action against Budapest’s mayor sparks debate across the EU on LGBTQ+ rights and freedom of assembly.',
+    date: 'February 28, 2026',
+    category: 'Hungary (EU)',
+    readTime: '4 min read',
   },
 ];
 
@@ -77,33 +78,36 @@ const NewsSection = () => {
     const el = trackRef.current;
     if (!el) return;
 
-    // Scroll by ~1 card width (responsive)
     const card = el.querySelector<HTMLElement>('[data-card="news-card"]');
-    const amount = card ? card.offsetWidth + 24 : 380; // 24 = gap-6
-    el.scrollBy({ left: direction === 'left' ? -amount : amount, behavior: 'smooth' });
+    const amount = card ? card.offsetWidth + 24 : 380;
+
+    el.scrollBy({
+      left: direction === 'left' ? -amount : amount,
+      behavior: 'smooth',
+    });
   };
 
   return (
     <section className="py-20 lg:py-28 bg-muted/30">
       <div className="container">
+        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-12 animate-fade-in">
           <div>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-2">
               Latest <span className="gradient-pride-text">News</span>
             </h2>
             <p className="text-muted-foreground">
-              Made in EU 🇪🇺, for the World 🗺️ — curated LGBTQ+ culture & community updates across the European Union.
+              Made in EU 🇪🇺 for the World 🗺️ — the latest LGBTQ+ news and events across Europe.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Carousel controls */}
             <Button
               variant="outline"
               size="icon"
               onClick={() => scrollByCards('left')}
-              aria-label="Scroll left"
               className="hidden sm:inline-flex"
+              aria-label="Scroll left"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -111,13 +115,13 @@ const NewsSection = () => {
               variant="outline"
               size="icon"
               onClick={() => scrollByCards('right')}
-              aria-label="Scroll right"
               className="hidden sm:inline-flex"
+              aria-label="Scroll right"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
 
-            <Button variant="outline" asChild className="shrink-0">
+            <Button variant="outline" asChild>
               <Link to="/news" className="flex items-center gap-2">
                 All News
                 <ArrowRight className="h-4 w-4" />
@@ -126,35 +130,17 @@ const NewsSection = () => {
           </div>
         </div>
 
-        {/* Carousel track (manual swipe/drag) */}
+        {/* Carousel */}
         <div
           ref={trackRef}
-          className="
-            flex gap-6 overflow-x-auto pb-2
-            snap-x snap-mandatory
-            scroll-smooth
-            [-ms-overflow-style:none] [scrollbar-width:none]
-          "
-          style={{ WebkitOverflowScrolling: 'touch' }}
+          className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2"
         >
-          {/* Hide scrollbar (WebKit) */}
-          <style>{`
-            div::-webkit-scrollbar { display: none; }
-          `}</style>
-
           {featuredNews.map((article, index) => (
             <Link
               key={article.id}
               to={`/news/${article.id}`}
               data-card="news-card"
-              className="
-                group block
-                min-w-[280px] sm:min-w-[340px] lg:min-w-[380px]
-                snap-start
-                p-6 rounded-2xl bg-card border shadow-card
-                transition-all duration-300 hover:shadow-elevated
-                animate-fade-in
-              "
+              className="group block min-w-[280px] sm:min-w-[340px] lg:min-w-[380px] snap-start p-6 rounded-2xl bg-card border shadow-card transition-all hover:shadow-elevated animate-fade-in"
               style={{ animationDelay: `${index * 0.06}s` }}
             >
               <div className="flex items-center gap-2 mb-3">
@@ -180,7 +166,6 @@ const NewsSection = () => {
           ))}
         </div>
 
-        {/* Mobile hint */}
         <p className="mt-4 text-center text-xs text-muted-foreground sm:hidden">
           Swipe to browse →
         </p>

@@ -30,8 +30,8 @@ const teamMembers = [
     role: 'Main Company',
     linkedIn: '#',
     website: 'https://aibyteconsult.com',
-    photo: 'https://ipfs.io/ipfs/bafkreib3md4wdo5mksv2sjqjefy5ndxdtayznb3zgppbu6ogtmx5zptzym',
-    description: 'Providing technological expertise and support for PRIDE Lab Foundation projects.',
+    photo: 'https://ipfs.io/ipfs/bafybeibtryfugwl2ux3ka63ihhkvwcgshxqox67jmfk3k2p52s4nuagir4',
+    description: 'Providing technological expertise and support for PRIDE Social Network projects.',
   },
 ];
 

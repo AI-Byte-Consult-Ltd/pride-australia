@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 const events = [
   {
     id: 1,
-    title: 'PRIDE Lab Foundation Virtual Launch',
+    title: 'PRIDE Social Network Virtual Launch',
     description:
       'Join us online for the official launch of Pride Social Network. Connect with community members worldwide.',
     date: 'June 1, 2026',
@@ -18,7 +18,7 @@ const events = [
     id: 2,
     title: 'Cinema on the Grass',
     description:
-      'A romantic open-air movie night celebrating LGBTQ+ stories under the Italian sky. Bring a blanket, enjoy cinema, and feel the magic of Florence.',
+      'A romantic open-air movie night celebrating LGBTQIA+ stories under the Italian sky. Bring a blanket, enjoy cinema, and feel the magic of Florence.',
     date: 'June 14, 2026',
     time: '8:30 PM',
     location: 'Florence, Italy',

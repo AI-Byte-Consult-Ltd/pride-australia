@@ -45,7 +45,7 @@ const FeaturesSection = () => {
               A modern social network created in Europe for a global community.
             </span>
             <span className="block mt-3 font-medium text-foreground">
-              Made in EU 🇪🇺, for the World 🗺️
+              Made in EU 🇪🇺 for the World 🗺️
             </span>
           </p>
         </div>
