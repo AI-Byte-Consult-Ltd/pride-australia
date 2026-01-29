@@ -1,4 +1,3 @@
-
 import { Users, ShoppingBag, Shield, Heart } from 'lucide-react';
 
 const features = [
@@ -40,9 +39,14 @@ const FeaturesSection = () => {
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
             Why Pride Social Network?
           </h2>
+
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            A modern social network created in Europe for a global community.
-            Made in EU 🇪🇺, for the World 🗺️.
+            <span className="block">
+              A modern social network created in Europe for a global community.
+            </span>
+            <span className="block mt-3 font-medium text-foreground">
+              Made in EU 🇪🇺, for the World 🗺️
+            </span>
           </p>
         </div>
 
@@ -58,10 +62,14 @@ const FeaturesSection = () => {
               >
                 {feature.icon}
               </div>
+
               <h3 className="font-display text-xl font-semibold mb-3">
                 {feature.title}
               </h3>
-              <p className="text-muted-foreground">{feature.description}</p>
+
+              <p className="text-muted-foreground">
+                {feature.description}
+              </p>
             </div>
           ))}
         </div>
@@ -71,3 +79,4 @@ const FeaturesSection = () => {
 };
 
 export default FeaturesSection;
+

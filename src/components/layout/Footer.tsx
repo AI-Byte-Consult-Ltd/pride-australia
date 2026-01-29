@@ -59,7 +59,7 @@ const Footer = () => {
             </Link>
 
             <p className="text-sm font-medium text-foreground mb-2">
-              Made in EU 🇪🇺 for the world 🗺️
+              Made in EU 🇪🇺 for the World 🗺️
             </p>
 
             <p className="text-sm text-muted-foreground mb-4">
