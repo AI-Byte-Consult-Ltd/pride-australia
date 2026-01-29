@@ -25,15 +25,36 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, MapPin, CheckCircle2 } from 'lucide-react';
 
-const australianStates = [
-  'Australian Capital Territory',
-  'New South Wales',
-  'Northern Territory',
-  'Queensland',
-  'South Australia',
-  'Tasmania',
-  'Victoria',
-  'Western Australia',
+// ✅ EU countries (as "Region" field)
+// We keep the DB column name "state" to avoid migrations right now.
+const euCountries = [
+  'Austria',
+  'Belgium',
+  'Bulgaria',
+  'Croatia',
+  'Cyprus',
+  'Czechia',
+  'Denmark',
+  'Estonia',
+  'Finland',
+  'France',
+  'Germany',
+  'Greece',
+  'Hungary',
+  'Ireland',
+  'Italy',
+  'Latvia',
+  'Lithuania',
+  'Luxembourg',
+  'Malta',
+  'Netherlands',
+  'Poland',
+  'Portugal',
+  'Romania',
+  'Slovakia',
+  'Slovenia',
+  'Spain',
+  'Sweden',
 ];
 
 const categories = [
@@ -48,30 +69,70 @@ const categories = [
   'Other',
 ];
 
-// City coordinates for approximate placement
+// ✅ EU city coordinates for approximate placement (add more anytime)
 const cityCoordinates: Record<string, { lat: number; lng: number }> = {
-  'Sydney': { lat: -33.8688, lng: 151.2093 },
-  'Melbourne': { lat: -37.8136, lng: 144.9631 },
-  'Brisbane': { lat: -27.4698, lng: 153.0251 },
-  'Perth': { lat: -31.9505, lng: 115.8605 },
-  'Adelaide': { lat: -34.9285, lng: 138.6007 },
-  'Gold Coast': { lat: -28.0167, lng: 153.4000 },
-  'Canberra': { lat: -35.2809, lng: 149.1300 },
-  'Newcastle': { lat: -32.9283, lng: 151.7817 },
-  'Hobart': { lat: -42.8821, lng: 147.3272 },
-  'Darwin': { lat: -12.4634, lng: 130.8456 },
-  'Cairns': { lat: -16.9186, lng: 145.7781 },
-  'Townsville': { lat: -19.2590, lng: 146.8169 },
-  'Geelong': { lat: -38.1499, lng: 144.3617 },
-  'Wollongong': { lat: -34.4278, lng: 150.8931 },
+  // Italy
+  Rome: { lat: 41.9028, lng: 12.4964 },
+  Milan: { lat: 45.4642, lng: 9.19 },
+  Florence: { lat: 43.7696, lng: 11.2558 },
+  Venice: { lat: 45.4408, lng: 12.3155 },
+  Naples: { lat: 40.8518, lng: 14.2681 },
+
+  // France
+  Paris: { lat: 48.8566, lng: 2.3522 },
+  Lyon: { lat: 45.764, lng: 4.8357 },
+  Marseille: { lat: 43.2965, lng: 5.3698 },
+
+  // Germany
+  Berlin: { lat: 52.52, lng: 13.405 },
+  Munich: { lat: 48.1351, lng: 11.582 },
+  Hamburg: { lat: 53.5511, lng: 9.9937 },
+  Cologne: { lat: 50.9375, lng: 6.9603 },
+
+  // Spain
+  Madrid: { lat: 40.4168, lng: -3.7038 },
+  Barcelona: { lat: 41.3851, lng: 2.1734 },
+  Valencia: { lat: 39.4699, lng: -0.3763 },
+  Sitges: { lat: 41.237, lng: 1.805 },
+
+  // Netherlands / Belgium
+  Amsterdam: { lat: 52.3676, lng: 4.9041 },
+  Rotterdam: { lat: 51.9244, lng: 4.4777 },
+  Brussels: { lat: 50.8503, lng: 4.3517 },
+  Antwerp: { lat: 51.2194, lng: 4.4025 },
+
+  // Nordics
+  Stockholm: { lat: 59.3293, lng: 18.0686 },
+  Copenhagen: { lat: 55.6761, lng: 12.5683 },
+  Helsinki: { lat: 60.1699, lng: 24.9384 },
+
+  // Central/Eastern
+  Vienna: { lat: 48.2082, lng: 16.3738 },
+  Prague: { lat: 50.0755, lng: 14.4378 },
+  Warsaw: { lat: 52.2297, lng: 21.0122 },
+  Budapest: { lat: 47.4979, lng: 19.0402 },
+  Bucharest: { lat: 44.4268, lng: 26.1025 },
+  Sofia: { lat: 42.6977, lng: 23.3219 },
+  Athens: { lat: 37.9838, lng: 23.7275 },
+  Lisbon: { lat: 38.7223, lng: -9.1393 },
+  Dublin: { lat: 53.3498, lng: -6.2603 },
 };
 
 const formSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters').max(100, 'Name must be less than 100 characters'),
+  name: z
+    .string()
+    .min(2, 'Name must be at least 2 characters')
+    .max(100, 'Name must be less than 100 characters'),
   category: z.string().min(1, 'Please select a category'),
   description: z.string().max(500, 'Description must be less than 500 characters').optional(),
-  city: z.string().min(2, 'City must be at least 2 characters').max(100, 'City must be less than 100 characters'),
-  state: z.string().min(1, 'Please select a state'),
+  city: z
+    .string()
+    .min(2, 'City must be at least 2 characters')
+    .max(100, 'City must be less than 100 characters'),
+
+  // ✅ Keep field name "state" to match existing DB column, but treat it as EU Country/Region in UI.
+  state: z.string().min(1, 'Please select a country/region'),
+
   address: z.string().max(200, 'Address must be less than 200 characters').optional(),
   contact_email: z.string().email('Please enter a valid email').or(z.literal('')).optional(),
   website: z.string().max(200, 'Website must be less than 200 characters').optional(),
@@ -96,7 +157,6 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
     register,
     handleSubmit,
     setValue,
-    watch,
     reset,
     formState: { errors },
   } = useForm<FormData>({
@@ -115,21 +175,17 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
   });
 
   const getApproximateCoordinates = (city: string): { lat: number; lng: number } | null => {
-    // Try exact match first
-    if (cityCoordinates[city]) {
-      return cityCoordinates[city];
-    }
-    
-    // Try case-insensitive match
+    // Exact match first
+    if (cityCoordinates[city]) return cityCoordinates[city];
+
+    // Case-insensitive match
     const normalizedCity = city.toLowerCase().trim();
     for (const [key, coords] of Object.entries(cityCoordinates)) {
-      if (key.toLowerCase() === normalizedCity) {
-        return coords;
-      }
+      if (key.toLowerCase() === normalizedCity) return coords;
     }
-    
-    // Return Sydney as default for unknown cities
-    return { lat: -33.8688, lng: 151.2093 };
+
+    // ✅ Default to EU centre (approx) to avoid AU bias if city is unknown
+    return { lat: 50.1109, lng: 8.6821 }; // Frankfurt (EU-ish centre)
   };
 
   const onSubmit = async (data: FormData) => {
@@ -137,8 +193,8 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
 
     try {
       const coords = getApproximateCoordinates(data.city);
-      
-      // Add small random offset for privacy and to prevent overlapping pins
+
+      // Small random offset for privacy and to prevent overlapping pins
       const latOffset = (Math.random() - 0.5) * 0.02;
       const lngOffset = (Math.random() - 0.5) * 0.02;
 
@@ -147,7 +203,10 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
         category: data.category,
         description: data.description?.trim() || null,
         city: data.city.trim(),
+
+        // DB column is "state" — we store EU country/region here for now (no DB migration).
         state: data.state,
+
         address: data.address?.trim() || null,
         latitude: coords ? coords.lat + latOffset : null,
         longitude: coords ? coords.lng + lngOffset : null,
@@ -169,7 +228,6 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
         setShowSuccess(false);
         onOpenChange(false);
       }, 3000);
-
     } catch (error: any) {
       console.error('Error submitting business:', error);
       toast({
@@ -196,7 +254,9 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
             <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <h3 className="text-xl font-bold mb-2">Thank You!</h3>
             <p className="text-muted-foreground mb-4">
-              Your business has been submitted for review. We'll notify you once it's approved and visible on the map.
+              Your listing has been submitted for review. We&apos;ll notify you once it&apos;s approved and visible on the map.
+              <br />
+              <span className="font-medium text-foreground">Made in EU 🇪🇺, for the World 🗺️</span>
             </p>
             <Button onClick={handleClose}>Close</Button>
           </div>
@@ -205,10 +265,13 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-primary" />
-                Add Your Business to the Map
+                List Your Business on the Map
               </DialogTitle>
               <DialogDescription>
-                Register your LGBTQ+-friendly business or project. After submission, it will be reviewed before appearing on the map.
+                Submit your LGBTQ+-friendly business or project for the Pride Social Network community map.
+                After submission, it will be reviewed before appearing publicly.
+                <br />
+                <span className="font-medium text-foreground">Made in EU 🇪🇺, for the World 🗺️</span>
               </DialogDescription>
             </DialogHeader>
 
@@ -216,14 +279,8 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
               {/* Business Name */}
               <div className="space-y-2">
                 <Label htmlFor="name">Business / Project Name *</Label>
-                <Input
-                  id="name"
-                  placeholder="e.g., Rainbow Café"
-                  {...register('name')}
-                />
-                {errors.name && (
-                  <p className="text-sm text-destructive">{errors.name.message}</p>
-                )}
+                <Input id="name" placeholder="e.g., Rainbow Café" {...register('name')} />
+                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
               </div>
 
               {/* Category */}
@@ -241,9 +298,7 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.category && (
-                  <p className="text-sm text-destructive">{errors.category.message}</p>
-                )}
+                {errors.category && <p className="text-sm text-destructive">{errors.category.message}</p>}
               </div>
 
               {/* Description */}
@@ -255,41 +310,32 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
                   rows={3}
                   {...register('description')}
                 />
-                {errors.description && (
-                  <p className="text-sm text-destructive">{errors.description.message}</p>
-                )}
+                {errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
               </div>
 
               {/* Location */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="city">City *</Label>
-                  <Input
-                    id="city"
-                    placeholder="e.g., Sydney"
-                    {...register('city')}
-                  />
-                  {errors.city && (
-                    <p className="text-sm text-destructive">{errors.city.message}</p>
-                  )}
+                  <Input id="city" placeholder="e.g., Berlin" {...register('city')} />
+                  {errors.city && <p className="text-sm text-destructive">{errors.city.message}</p>}
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="state">State *</Label>
+                  <Label htmlFor="state">Country / Region (EU) *</Label>
                   <Select onValueChange={(value) => setValue('state', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select state" />
+                      <SelectValue placeholder="Select country" />
                     </SelectTrigger>
                     <SelectContent>
-                      {australianStates.map((state) => (
-                        <SelectItem key={state} value={state}>
-                          {state}
+                      {euCountries.map((country) => (
+                        <SelectItem key={country} value={country}>
+                          {country}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  {errors.state && (
-                    <p className="text-sm text-destructive">{errors.state.message}</p>
-                  )}
+                  {errors.state && <p className="text-sm text-destructive">{errors.state.message}</p>}
                 </div>
               </div>
 
@@ -301,9 +347,7 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
                   placeholder="Street address for more accurate pin placement"
                   {...register('address')}
                 />
-                {errors.address && (
-                  <p className="text-sm text-destructive">{errors.address.message}</p>
-                )}
+                {errors.address && <p className="text-sm text-destructive">{errors.address.message}</p>}
               </div>
 
               {/* Contact Info */}
@@ -323,27 +367,15 @@ const AddBusinessForm = ({ open, onOpenChange, onSuccess }: AddBusinessFormProps
               {/* Website */}
               <div className="space-y-2">
                 <Label htmlFor="website">Website (optional)</Label>
-                <Input
-                  id="website"
-                  placeholder="https://yourbusiness.com"
-                  {...register('website')}
-                />
-                {errors.website && (
-                  <p className="text-sm text-destructive">{errors.website.message}</p>
-                )}
+                <Input id="website" placeholder="https://yourbusiness.com" {...register('website')} />
+                {errors.website && <p className="text-sm text-destructive">{errors.website.message}</p>}
               </div>
 
               {/* Instagram */}
               <div className="space-y-2">
                 <Label htmlFor="instagram">Instagram Handle (optional)</Label>
-                <Input
-                  id="instagram"
-                  placeholder="@yourbusiness"
-                  {...register('instagram')}
-                />
-                {errors.instagram && (
-                  <p className="text-sm text-destructive">{errors.instagram.message}</p>
-                )}
+                <Input id="instagram" placeholder="@yourbusiness" {...register('instagram')} />
+                {errors.instagram && <p className="text-sm text-destructive">{errors.instagram.message}</p>}
               </div>
 
               {/* Submit */}

@@ -44,7 +44,7 @@ const TeamSection = () => {
             Meet Our <span className="gradient-pride-text">Team</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            The passionate leaders behind PRIDE Lab Foundation, working to create a better community for everyone.
+            The passionate leaders behind PRIDE Social Network, working to create a better community for everyone.
           </p>
         </div>
 
