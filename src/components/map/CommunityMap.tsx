@@ -166,7 +166,7 @@ const CommunityMap = ({ onAddBusiness, className = '', compact = false }: Commun
             </p>
             {!compact && (
               <p className="text-xs text-muted-foreground mt-1">
-                Made in EU 🇪🇺, for the World 🗺️
+                Made in EU 🇪🇺 for the World 🗺️
               </p>
             )}
           </div>
@@ -200,7 +200,7 @@ const CommunityMap = ({ onAddBusiness, className = '', compact = false }: Commun
                 No listings on the map yet. Be the first to add yours!
               </p>
               <p className="text-xs text-muted-foreground mb-4">
-                Made in EU 🇪🇺, for the World 🗺️
+                Made in EU 🇪🇺 for the World 🗺️
               </p>
               {onAddBusiness && (
                 <Button variant="pride" onClick={onAddBusiness}>
