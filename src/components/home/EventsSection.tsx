@@ -1,32 +1,35 @@
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Video, Users, Clapperboard } from 'lucide-react';
+import { Calendar, MapPin, MonitorPlay, Users, Clapperboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const events = [
   {
     id: 1,
     title: 'PRIDE Lab Foundation Virtual Launch',
-    description: 'Join us online for the official launch of Pride Social Network. Connect with community members worldwide.',
+    description:
+      'Join us online for the official launch of Pride Social Network. Connect with community members worldwide.',
     date: 'June 1, 2026',
     time: '6:00 PM AEST',
     location: 'Online Event',
     type: 'online',
-    icon: <Video className="h-5 w-5" />,
+    icon: <MonitorPlay className="h-5 w-5" />,
   },
   {
     id: 2,
     title: 'Cinema on the Grass',
-    description: 'An outdoor movie night celebrating LGBTQ+ stories. Bring your blankets and enjoy films under the stars.',
+    description:
+      'A romantic open-air movie night celebrating LGBTQ+ stories under the Italian sky. Bring a blanket, enjoy cinema, and feel the magic of Florence.',
     date: 'June 14, 2026',
-    time: '7:30 PM',
-    location: 'Sydney, Australia',
+    time: '8:30 PM',
+    location: 'Florence, Italy',
     type: 'cinema',
     icon: <Clapperboard className="h-5 w-5" />,
   },
   {
     id: 3,
     title: 'Community Hangout',
-    description: 'A casual meet-up for Pride community members. Make new friends, share stories, and celebrate together.',
+    description:
+      'A casual meet-up for Pride community members. Make new friends, share stories, and celebrate together.',
     date: 'June 28, 2026',
     time: '3:00 PM',
     location: 'San Francisco, USA',
@@ -58,12 +61,16 @@ const EventsSection = () => {
               <div className="h-12 w-12 rounded-xl gradient-pride flex items-center justify-center text-primary-foreground mb-4">
                 {event.icon}
               </div>
+
               <h3 className="font-display text-xl font-semibold mb-2">{event.title}</h3>
               <p className="text-muted-foreground text-sm mb-4">{event.description}</p>
+
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Calendar className="h-4 w-4" />
-                  <span>{event.date} • {event.time}</span>
+                  <span>
+                    {event.date} • {event.time}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <MapPin className="h-4 w-4" />

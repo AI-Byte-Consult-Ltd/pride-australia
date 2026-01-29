@@ -20,9 +20,10 @@ const CommunityMapSection = () => {
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
             Community Map
           </h2>
+
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover LGBTQ+-friendly businesses, artists, and community projects across Australia. 
-            Find safe spaces and support local.
+            Made by European Union 🇪🇺 for the world 🌍 — discover LGBTQ+-friendly businesses, artists,
+            and community projects across the European Union and beyond. Find safe spaces and support local.
           </p>
         </div>
 
@@ -37,7 +38,7 @@ const CommunityMapSection = () => {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Discover cafés, artists, health services, and more that welcome our community.
+                Discover cafés, artists, health services, and more that welcome our community across the EU and worldwide.
               </p>
             </CardContent>
           </Card>
@@ -51,7 +52,7 @@ const CommunityMapSection = () => {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Support LGBTQ+-owned businesses and community projects near you.
+                Support LGBTQ+-owned businesses and community projects near you — starting in the EU, open to the world.
               </p>
             </CardContent>
           </Card>
@@ -65,7 +66,7 @@ const CommunityMapSection = () => {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                All listings are reviewed to ensure a safe, welcoming directory.
+                Listings are reviewed to help keep Pride Social Network a safe, welcoming directory.
               </p>
             </CardContent>
           </Card>
@@ -75,18 +76,22 @@ const CommunityMapSection = () => {
               <div className="h-12 w-12 rounded-xl bg-pride-orange/10 text-pride-orange flex items-center justify-center mb-4">
                 <Heart className="h-6 w-6" />
               </div>
-              <CardTitle className="text-lg">Add Your Business</CardTitle>
+              <CardTitle className="text-lg">List Your Business</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Register your LGBTQ+-friendly business or project to appear on the map.
+                Register your LGBTQ+-friendly business or project to appear on the Pride Social Network map.
               </p>
             </CardContent>
           </Card>
         </div>
 
         {/* Map Preview */}
-        <div className="rounded-xl overflow-hidden border border-border shadow-lg mb-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+        <div
+          className="rounded-xl overflow-hidden border border-border shadow-lg mb-8 animate-fade-in"
+          style={{ animationDelay: '0.4s' }}
+        >
+          {/* NOTE: Map viewport should be set to EU inside CommunityMap component (default center/zoom/bounds). */}
           <CommunityMap compact onAddBusiness={() => setShowAddForm(true)} />
         </div>
 
@@ -100,7 +105,7 @@ const CommunityMapSection = () => {
               </Link>
             </Button>
             <Button variant="outline" size="lg" onClick={() => setShowAddForm(true)} className="gap-2">
-              Add Your Business
+              List Your Business
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
@@ -108,10 +113,7 @@ const CommunityMapSection = () => {
       </div>
 
       {/* Add Business Form */}
-      <AddBusinessForm
-        open={showAddForm}
-        onOpenChange={setShowAddForm}
-      />
+      <AddBusinessForm open={showAddForm} onOpenChange={setShowAddForm} />
     </section>
   );
 };
