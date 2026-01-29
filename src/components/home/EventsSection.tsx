@@ -32,7 +32,7 @@ const events = [
       'A casual meet-up for Pride community members. Make new friends, share stories, and celebrate together.',
     date: 'June 28, 2026',
     time: '3:00 PM',
-    location: 'San Francisco, USA',
+    location: 'Rome, Italy',
     type: 'hangout',
     icon: <Users className="h-5 w-5" />,
   },

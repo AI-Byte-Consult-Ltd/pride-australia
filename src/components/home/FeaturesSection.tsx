@@ -6,28 +6,28 @@ const features = [
     icon: <Users className="h-6 w-6" />,
     title: 'Connect & Share',
     description:
-      'Connect with a vibrant community, share your moments, and engage with people who celebrate diversity. Made in EU 🇪🇺, for the world 🌍.',
+      'Connect with a vibrant community, share your moments, and engage with people who celebrate diversity.',
     color: 'pride-pink',
   },
   {
     icon: <ShoppingBag className="h-6 w-6" />,
     title: 'List Your Business',
     description:
-      'Showcase your LGBTQ+-friendly business, services, or creative projects to the community across Europe and worldwide. Made in EU 🇪🇺, for the world 🌍.',
+      'Showcase your LGBTQ+-friendly business, services, or creative projects to the community across Europe and worldwide.',
     color: 'pride-orange',
   },
   {
     icon: <Shield className="h-6 w-6" />,
     title: 'Safe & Inclusive',
     description:
-      'A moderated and inclusive social space designed to protect users and celebrate identity, respect, and freedom of expression. Made in EU 🇪🇺, for the world 🌍.',
+      'A moderated and inclusive social space designed to protect users and celebrate identity, respect, and freedom of expression.',
     color: 'pride-green',
   },
   {
     icon: <Heart className="h-6 w-6" />,
     title: 'Community First',
     description:
-      'Pride Social Network is built around people, not algorithms — empowering communities to grow, connect, and support each other. Made in EU 🇪🇺, for the world 🌍.',
+      'Pride Social Network is built around people, not algorithms — empowering communities to grow, connect, and support each other.',
     color: 'pride-purple',
   },
 ];
@@ -42,7 +42,7 @@ const FeaturesSection = () => {
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             A modern social network created in Europe for a global community.
-            Made in EU 🇪🇺, for the world 🌍.
+            Made in EU 🇪🇺, for the World 🗺️.
           </p>
         </div>
 
