@@ -104,7 +104,7 @@ const SupportPage = () => {
                 Your monthly membership helps us build and maintain a modern, safe, and inclusive social network created
                 in Europe for a global community.
                 <br />
-                <span className="text-sm">Made in EU 🇪🇺, for the World 🗺️</span>
+                <span className="text-sm">Made in EU 🇪🇺 for the World 🗺️</span>
               </p>
             </div>
           </div>
