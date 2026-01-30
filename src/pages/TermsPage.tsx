@@ -3,9 +3,23 @@ import Layout from '@/components/layout/Layout';
 import { useJurisdiction } from '@/contexts/JurisdictionContext';
 
 const TermsPage = () => {
-  const { countryName } = useJurisdiction();
+  const { jurisdiction, countryName } = useJurisdiction();
 
   const lastUpdated = 'January 30, 2026';
+
+  const scopeLabel =
+    jurisdiction === 'eu'
+      ? 'European Union'
+      : jurisdiction === 'australia'
+        ? 'Australia'
+        : 'World';
+
+  const regionNote =
+    jurisdiction === 'eu'
+      ? 'These Terms are written with an EU-first approach and apply to users in the European Union.'
+      : jurisdiction === 'australia'
+        ? 'These Terms apply to users in Australia. Some EU-first policies may still be used as a baseline where compatible with local law.'
+        : 'These Terms apply worldwide. Some features, legal notes, and policies may vary by region due to local requirements.';
 
   return (
     <>
@@ -24,8 +38,16 @@ const TermsPage = () => {
               <p className="text-sm text-muted-foreground mb-2">Last updated: {lastUpdated}</p>
               <h1 className="font-display text-4xl font-bold mb-4">Terms of Service</h1>
               <p className="text-lg text-muted-foreground">
-                These terms apply to Pride Social Network users in {countryName}.
+                These terms apply to Pride Social Network users in <span className="font-medium">{countryName}</span>.
               </p>
+              <p className="text-sm text-muted-foreground mt-3">{regionNote}</p>
+
+              <div className="mt-6 p-4 rounded-xl border bg-muted/30">
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Selected region:</span> {scopeLabel}. If you change it in
+                  the header, this page updates accordingly.
+                </p>
+              </div>
             </header>
 
             <div
@@ -49,26 +71,29 @@ const TermsPage = () => {
 
               {/* 2 */}
               <section className="mb-10">
-                <h2 className="font-display text-2xl font-semibold mb-4">2. Who We Are, EU Priority, and Ecosystem Structure</h2>
+                <h2 className="font-display text-2xl font-semibold mb-4">
+                  2. Who We Are, EU Priority, and Ecosystem Structure
+                </h2>
                 <p className="text-muted-foreground">
                   Pride Social Network is a community-first LGBTQIA+ social platform built with an EU-first approach and a
-                  global mission (“Made in EU, for the World”). Our operational priority is the European Union (including
-                  Italy), while supporting members worldwide.
+                  global mission. Our operational priority is the European Union (including Italy), while supporting
+                  members worldwide.
                 </p>
 
                 <p className="text-muted-foreground mt-4">
-                  <strong>EU priority means:</strong> we design policies, safety standards, and product decisions to align
+                  <strong>EU-first means:</strong> we design policies, safety standards, and product decisions to align
                   first with EU norms and requirements (including data protection principles), and then extend responsibly
                   to other regions where we can operate safely and lawfully.
                 </p>
 
                 <p className="text-muted-foreground mt-4">
-                  The ecosystem may include separate, region-based non-profit entities that support community programs
-                  outside the Platform. Current direction:
+                  The broader ecosystem may include separate, region-based non-profit entities (foundations) intended to
+                  support real-world community programs outside the Platform. Current direction and priorities:
                 </p>
+
                 <ul className="list-disc pl-6 text-muted-foreground space-y-2">
                   <li>
-                    <strong>Pride Lab Foundation Italy</strong> (planned): intended to support EU-based community initiatives,
+                    <strong>Pride Lab Foundation Italy</strong> (planned): intended to support EU-based initiatives,
                     partnerships, and programs aligned with the Platform’s mission.
                   </li>
                   <li>
@@ -76,21 +101,22 @@ const TermsPage = () => {
                     registration steps may proceed on a later timeline depending on resources and priorities.
                   </li>
                   <li>
-                    <strong>USA foundation</strong>: postponed for an неопределённый срок due to the current uncertainty in
-                    the EU–US environment and related operational considerations.
+                    <strong>US foundation</strong>: postponed for an indefinite period due to current operational and
+                    cross-region uncertainty. (The Platform remains available globally where lawful.)
                   </li>
                 </ul>
 
                 <p className="text-muted-foreground mt-4">
                   <strong>Important:</strong> Pride Social Network is the digital platform. Foundations (when/where created)
-                  are separate legal entities used to run real-world programs (events, grants, education initiatives, etc.).
-                  They do not change your user relationship with the Platform unless explicitly stated in product notices.
+                  are separate legal entities designed to run real-world programs (events, grants, education initiatives,
+                  etc.). They do not change your user relationship with the Platform unless explicitly stated in product
+                  notices.
                 </p>
 
                 <p className="text-muted-foreground mt-4">
-                  References to any external professional networks or service providers (including advisory or audit networks)
-                  are informational only and do not imply endorsement, partnership, sponsorship, or affiliation unless we
-                  explicitly publish a signed partnership statement.
+                  References to external service providers (including legal, accounting, payment, hosting, or advisory
+                  services) are informational only and do not imply endorsement, partnership, sponsorship, or affiliation
+                  unless we explicitly publish a signed partnership statement.
                 </p>
               </section>
 
@@ -123,7 +149,7 @@ const TermsPage = () => {
                   <li>Hate speech, discrimination, harassment, threats, or targeted abuse</li>
                   <li>Non-consensual sexual content, exploitation, or content involving minors</li>
                   <li>Content that encourages self-harm or violence</li>
-                  <li>Illegal activity or attempts to evade law enforcement</li>
+                  <li>Illegal activity or attempts to facilitate illegal acts</li>
                   <li>Spam, manipulation, coordinated inauthentic behavior, or abusive automation</li>
                   <li>Invasions of privacy (doxxing, sharing private data, non-consensual recording)</li>
                   <li>Infringement of intellectual property rights (copyright/trademarks)</li>
@@ -136,7 +162,9 @@ const TermsPage = () => {
 
               {/* 5 */}
               <section className="mb-10">
-                <h2 className="font-display text-2xl font-semibold mb-4">5. Content, Replies, Mentions, and Interaction</h2>
+                <h2 className="font-display text-2xl font-semibold mb-4">
+                  5. Content, Replies, Mentions, and Interaction
+                </h2>
                 <p className="text-muted-foreground">
                   The Platform supports posts, replies, mentions (@tagging), likes, and reposts (“Echo”). You are
                   responsible for the content you publish and for ensuring your interactions remain respectful and lawful.
@@ -162,7 +190,7 @@ const TermsPage = () => {
                 <ul className="list-disc pl-6 text-muted-foreground space-y-2">
                   <li>Are not legal tender and are not a substitute for money</li>
                   <li>Have no guaranteed monetary value and are not guaranteed to be redeemable for cash</li>
-                  <li>May be adjusted, limited, or removed to prevent abuse or for platform integrity</li>
+                  <li>May be adjusted, limited, or removed to prevent abuse or to protect platform integrity</li>
                 </ul>
                 <p className="text-muted-foreground mt-4">
                   Payments may be processed by third-party providers. Your payment is subject to the provider’s terms and
@@ -284,4 +312,3 @@ const TermsPage = () => {
 };
 
 export default TermsPage;
-

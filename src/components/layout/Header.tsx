@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Heart, ChevronDown, LogOut, User } from 'lucide-react';
@@ -13,15 +14,19 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+// ✅ Must match JurisdictionContext union type
+type JurisdictionCode = 'eu' | 'world' | 'australia';
+
 type JurisdictionOption = {
-  code: 'EU' | 'AU';
+  code: JurisdictionCode;
   label: string;
   emoji: string;
 };
 
 const JURISDICTIONS: JurisdictionOption[] = [
-  { code: 'EU', label: 'European Union', emoji: '🇪🇺' },
-  { code: 'AU', label: 'Australia', emoji: '🇦🇺' },
+  { code: 'eu', label: 'European Union', emoji: '🇪🇺' },
+  { code: 'world', label: 'World', emoji: '🌍' },
+  { code: 'australia', label: 'Australia', emoji: '🇦🇺' },
 ];
 
 const Header = () => {
@@ -32,15 +37,8 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 🔹 UI default = EU, regardless of initial context value
   const currentJurisdiction =
-    JURISDICTIONS.find(j => j.code === jurisdiction) ??
-    JURISDICTIONS[0]; // fallback EU
-
-  const displayJurisdiction =
-    jurisdiction === 'AU'
-      ? JURISDICTIONS[0] // force EU on first render
-      : currentJurisdiction;
+    JURISDICTIONS.find((j) => j.code === (jurisdiction as JurisdictionCode)) ?? JURISDICTIONS[0];
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -86,25 +84,26 @@ const Header = () => {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          {/* Jurisdiction Selector */}
+          {/* ✅ Jurisdiction Selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
                 className="gap-2 px-3 text-muted-foreground hover:text-foreground"
+                aria-label="Select region"
               >
-                <span className="text-lg">{displayJurisdiction.emoji}</span>
-                <span className="hidden sm:inline">{displayJurisdiction.label}</span>
+                <span className="text-lg">{currentJurisdiction.emoji}</span>
+                <span className="hidden sm:inline">{currentJurisdiction.label}</span>
                 <ChevronDown className="h-4 w-4 opacity-70" />
               </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent align="end" className="w-52">
               {JURISDICTIONS.map((option) => (
                 <DropdownMenuItem
                   key={option.code}
-                  onClick={() => setJurisdiction(option.code as any)}
+                  onClick={() => setJurisdiction(option.code)}
                   className="cursor-pointer gap-2"
                 >
                   <span className="text-lg">{option.emoji}</span>
@@ -137,10 +136,7 @@ const Header = () => {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={handleSignOut}
-                        className="cursor-pointer text-destructive"
-                      >
+                      <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
                         <LogOut className="mr-2 h-4 w-4" />
                         Log out
                       </DropdownMenuItem>
@@ -166,6 +162,7 @@ const Header = () => {
             size="icon"
             className="md:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
