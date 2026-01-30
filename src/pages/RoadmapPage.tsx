@@ -1,3 +1,4 @@
+
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
@@ -17,7 +18,6 @@ import {
   Award,
   FileText,
   Coins,
-  CreditCard,
   Calendar,
   Users,
   Gift,
@@ -29,7 +29,6 @@ import {
   Video,
   Mic,
   Store,
-  Newspaper,
   BadgeCheck,
   UserPlus,
   Settings,
@@ -38,8 +37,10 @@ import {
   Search,
   UserCheck,
   Lock,
-  Mail,
   Flag,
+  Smartphone,
+  AppWindow,
+  Download,
 } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -114,7 +115,7 @@ const RoadmapPage = () => {
     {
       icon: <UserPlus className="h-5 w-5" />,
       title: 'Referral & affiliate links',
-      subtitle: 'Invite new members and earn PRIDE Units for each verified join (anti-abuse checks included)',
+      subtitle: 'Invite new members and earn PRIDE Coins for each verified join (anti-abuse checks included)',
     },
     {
       icon: <Award className="h-5 w-5" />,
@@ -127,14 +128,34 @@ const RoadmapPage = () => {
       subtitle: 'A structured way to reach the team, propose collaborations, and request support',
     },
     {
-      icon: <Newspaper className="h-5 w-5" />,
-      title: 'EU-focused news panel + events highlights',
-      subtitle: 'EU-first community updates and curated culture/events feed',
+      icon: <FileText className="h-5 w-5" />,
+      title: 'Mobile apps planning (iOS & Android)',
+      subtitle: 'Define scope, UX patterns, and account/session parity with the web app',
+    },
+    {
+      icon: <Download className="h-5 w-5" />,
+      title: 'App distribution setup',
+      subtitle: 'Preparation for App Store / Google Play policies, compliance, and release workflow',
     },
   ];
 
   // Pride Social Network — mid-term
   const socialNetworkMidTerm = [
+    {
+      icon: <Smartphone className="h-5 w-5" />,
+      title: 'Mobile app (iOS)',
+      subtitle: 'Native-feeling mobile experience with feed, posting, replies, mentions, notifications',
+    },
+    {
+      icon: <Smartphone className="h-5 w-5" />,
+      title: 'Mobile app (Android)',
+      subtitle: 'Android-first performance and UX, matching the platform’s core functionality',
+    },
+    {
+      icon: <AppWindow className="h-5 w-5" />,
+      title: 'Mobile-first UI improvements',
+      subtitle: 'Refine layouts and interactions across the entire platform for smaller screens',
+    },
     {
       icon: <UserCheck className="h-5 w-5" />,
       title: 'Verified supporter badges',
