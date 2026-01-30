@@ -1,6 +1,15 @@
+
 import { Sparkles, Crown, Star, CreditCard, Wallet, Coins, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
 import { SUPPORT_LINKS } from '@/config/supportLinks';
 
 type Provider = 'stripe' | 'revolut' | 'paypal' | 'coinbase';
@@ -12,42 +21,58 @@ interface SupportPackage {
   price: number;
   icon: React.ReactNode;
   featured?: boolean;
-  benefits: string[];
   coinsPerMonth: number;
+  benefitsNow: string[];
+  benefitsSoon: string[];
 }
 
 const EUR_SYMBOL = '€';
+const ROADMAP_DATE_LABEL = 'From June 1, 2026';
 
-// NOTE: Monthly subscription tiers (not donations)
 const packages: SupportPackage[] = [
   {
     id: 'basic',
     name: 'PRIDE Basic',
-    description: 'A simple monthly membership to support Pride Social Network and unlock quality-of-life features.',
+    description:
+      'A simple monthly membership to support Pride Social Network. Get supporter perks now, and unlock more features soon.',
     price: 2.5,
     icon: <Star className="h-6 w-6" />,
     coinsPerMonth: 250,
-    benefits: [
+    benefitsNow: [
+      'Early Supporter badge on your profile',
+      'Your name listed on the "Early Supporters" wall',
+      'Supporter status shown in your Dashboard',
+      'PRIDE Coins credited monthly',
+      'Priority access to new features during Alpha',
+    ],
+    benefitsSoon: [
       'Small reply boost',
       'Bookmark folders',
       'Highlights tab',
       'Edit posts',
       'Create longer posts',
-      'Customize your experience',
-      'Member badge on your profile',
+      'Customize your experience with themes',
     ],
   },
   {
     id: 'pro',
     name: 'PRIDE Pro',
-    description: 'For creators and active community members: more reach, better tools, and deeper insights.',
+    description:
+      'For creators and active community members. More recognition now, plus advanced tools rolling out after June 1, 2026.',
     price: 8.5,
     icon: <Sparkles className="h-6 w-6" />,
     featured: true,
     coinsPerMonth: 900,
-    benefits: [
-      'Everything in PRIDE Basic, plus:',
-      'Verified checkmark',
+    benefitsNow: [
+      'Everything in PRIDE Basic',
+      'Founding Member verification badge',
+      'Special recognition as a Founding Member',
+      'Access to supporter-only updates / announcements',
+      'PRIDE Coins credited monthly',
+      'Priority access to Alpha features',
+    ],
+    benefitsSoon: [
+      'Verified checkmark (public)',
       'Advanced analytics',
       'Less ads in your feeds',
       'Boosted replies',
@@ -60,15 +85,23 @@ const packages: SupportPackage[] = [
   {
     id: 'elite',
     name: 'PRIDE Elite',
-    description: 'Fully-loaded plan for power users, partners, and businesses — maximum visibility and advanced tools.',
+    description:
+      'The highest tier for power users, partners, and businesses. Maximum recognition now, with premium features rolling out after June 1, 2026.',
     price: 42,
     icon: <Crown className="h-6 w-6" />,
     coinsPerMonth: 5000,
-    benefits: [
-      'Everything in PRIDE Pro, plus:',
+    benefitsNow: [
+      'Everything in PRIDE Pro',
+      'VIP Supporter verification badge',
+      'VIP supporter recognition on the Supporters page',
+      'Priority feedback channel with the team',
+      'Early invitations to online/offline events (as available)',
+      'PRIDE Coins credited monthly',
+    ],
+    benefitsSoon: [
       'Fully ad-free',
       'Super NICS AI (NEW)',
-      'Handle Marketplace (NEW)',
+      'Handle Marketplace / advanced business tools (NEW)',
       'Highest reply boost',
       'PRIDE Radar Advanced Search',
       'Priority support channel',
@@ -78,7 +111,6 @@ const packages: SupportPackage[] = [
 
 const SupportPackagesSection = () => {
   const handleSubscribe = (pkg: SupportPackage, provider: Provider) => {
-    // SUPPORT_LINKS must contain subscription (recurring) checkout links per tier/provider
     const baseUrl = (SUPPORT_LINKS as any)[pkg.id]?.[provider];
     if (!baseUrl) {
       console.warn(`Missing subscription link for ${pkg.id} via ${provider}`);
@@ -97,13 +129,13 @@ const SupportPackagesSection = () => {
           </span>
 
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            Subscribe & Unlock PRIDE Benefits
+            Subscribe & Support Pride Social Network
           </h2>
 
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Pride Social Network is built in Europe for a global community.
-            Subscribe monthly to support the platform and receive{' '}
-            <span className="gradient-pride-text font-semibold">PRIDE Coins</span> every month.
+            This is a monthly membership that funds the development of Pride Social Network.
+            You’ll get supporter perks now, and many premium features will roll out after{' '}
+            <span className="font-medium text-foreground">June 1, 2026</span>.
             <br />
             <span className="text-sm">Made in EU 🇪🇺, for the World 🗺️</span>
           </p>
@@ -138,11 +170,13 @@ const SupportPackagesSection = () => {
                 >
                   {pkg.icon}
                 </div>
+
                 <CardTitle className="text-xl">{pkg.name}</CardTitle>
                 <CardDescription className="mt-2">{pkg.description}</CardDescription>
               </CardHeader>
 
               <CardContent className="text-center flex-1">
+                {/* Price */}
                 <div className="py-4">
                   <div className="mb-2">
                     <span className="text-3xl font-display font-bold">
@@ -156,28 +190,58 @@ const SupportPackagesSection = () => {
                     <span className="text-lg font-display font-bold gradient-pride-text">
                       PRIDE Coins
                     </span>
-                    <span className="text-sm text-muted-foreground">
-                      – {pkg.coinsPerMonth} / month
-                    </span>
+                    <span className="text-sm text-muted-foreground">– {pkg.coinsPerMonth} / month</span>
                   </div>
 
                   <p className="text-sm text-muted-foreground mt-1">Included with subscription</p>
                 </div>
 
-                {/* Benefits List */}
-                <div className="mt-6 text-left space-y-2">
-                  {pkg.benefits.map((benefit, i) => (
-                    <div key={i} className="flex items-start gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">{benefit}</span>
+                {/* Benefits */}
+                <div className="mt-6 text-left space-y-6">
+                  {/* Available Now */}
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <h4 className="text-sm font-semibold text-foreground">Available now</h4>
+                      <Badge variant="secondary" className="text-xs">
+                        Live
+                      </Badge>
                     </div>
-                  ))}
+
+                    <div className="space-y-2">
+                      {pkg.benefitsNow.map((benefit, i) => (
+                        <div key={i} className="flex items-start gap-2 text-sm">
+                          <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                          <span className="text-muted-foreground">{benefit}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Roadmap */}
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <h4 className="text-sm font-semibold text-foreground">Roadmap</h4>
+                      <Badge variant="outline" className="text-xs">
+                        {ROADMAP_DATE_LABEL}
+                      </Badge>
+                    </div>
+
+                    <div className="space-y-2">
+                      {pkg.benefitsSoon.map((benefit, i) => (
+                        <div key={i} className="flex items-start gap-2 text-sm">
+                          <Check className="h-4 w-4 text-muted-foreground/60 shrink-0 mt-0.5" />
+                          <span className="text-muted-foreground">
+                            {benefit} <span className="text-muted-foreground/70">(soon)</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </CardContent>
 
               {/* Subscription buttons */}
               <CardFooter className="flex flex-col gap-3">
-                {/* 1) Stripe (recommended for recurring) */}
                 <Button
                   variant={pkg.featured ? 'pride' : 'default'}
                   size="lg"
@@ -188,7 +252,6 @@ const SupportPackagesSection = () => {
                   Subscribe with Stripe
                 </Button>
 
-                {/* 2) Revolut (if you support recurring there) */}
                 <Button
                   variant="outline"
                   size="lg"
@@ -199,7 +262,6 @@ const SupportPackagesSection = () => {
                   Subscribe with Card (Revolut)
                 </Button>
 
-                {/* Optional payment rails (keep if you still want them) */}
                 <Button
                   variant="outline"
                   size="lg"
