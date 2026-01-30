@@ -13,12 +13,12 @@ type Benefit = {
   description: string;
 };
 
-type BankDetails = {
-  accountName: string;
-  bsb: string;
-  accountNumber: string;
-  swiftBic: string;
-  bank: string;
+type BankDetailsEU = {
+  recipient: string;
+  recipientAddress: string;
+  iban: string;
+  bic: string;
+  intermediaryBic?: string;
   reference: string;
 };
 
@@ -28,34 +28,37 @@ const SupportPage = () => {
   const benefits: Benefit[] = [
     {
       icon: <Gift className="h-5 w-5" />,
-      title: 'PRIDE Units',
+      title: 'PRIDE Coins',
       description:
-        'Earn PRIDE Units — our internal platform units — to use in our marketplace and unlock special features.',
+        'Receive PRIDE Coins every month with your membership — used for future premium features and community perks.',
     },
     {
       icon: <Trophy className="h-5 w-5" />,
-      title: 'Supporter Badge',
-      description: 'Display a special badge on your profile showing your support.',
+      title: 'Supporter Status',
+      description:
+        'Show your supporter badge and status — help us grow and build a stronger community across Europe and worldwide.',
     },
     {
       icon: <Sparkles className="h-5 w-5" />,
-      title: 'Exclusive Stickers',
-      description: 'Get access to exclusive digital stickers for your posts.',
+      title: 'Early Supporter Wall',
+      description:
+        'Get your name listed on the Early Supporters wall and be part of the founding story of Pride Social Network.',
     },
     {
       icon: <Heart className="h-5 w-5" />,
-      title: 'Community Impact',
-      description: 'Your support directly funds platform development and community programs.',
+      title: 'Real Impact',
+      description:
+        'Your membership directly funds development, moderation, infrastructure, and new features rolling out after June 1, 2026.',
     },
   ];
 
-  const bankDetails: BankDetails = {
-    accountName: 'Aleksandr Tochilov',
-    bsb: '774-001',
-    accountNumber: '226558266',
-    swiftBic: 'TRWIAUS1XXX',
-    bank: 'Wise Australia Pty Ltd, Suite 1, Level 11, 66 Goulburn Street, Sydney, NSW, 2000, Australia',
-    reference: 'PRIDE-DONATION',
+  const bankDetailsEU: BankDetailsEU = {
+    recipient: 'AI Byte Consult Ltd.',
+    recipientAddress: 'Cherno More 3, Bl. No 41a, Fl. 4, Apt. 406, 8230, Nesebar, Bulgaria',
+    iban: 'LT60 3250 0579 5416 1122',
+    bic: 'REVOLT21',
+    intermediaryBic: 'CHASDEFX',
+    reference: 'PRIDE-SUPPORT',
   };
 
   const copyToClipboard = async (text: string, label: string) => {
@@ -77,10 +80,10 @@ const SupportPage = () => {
   return (
     <>
       <Helmet>
-        <title>Support PRIDE Lab Foundation | Pride Social Network</title>
+        <title>Support Pride Social Network | Monthly Membership</title>
         <meta
           name="description"
-          content="Support PRIDE Lab Foundation and help build a better social network for the Pride community. Choose a supporter package and make an impact."
+          content="Support Pride Social Network with a monthly membership. Get supporter perks now, receive PRIDE Coins monthly, and help fund new features rolling out after June 1, 2026."
         />
       </Helmet>
 
@@ -92,12 +95,16 @@ const SupportPage = () => {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-pride mb-6">
                 <Heart className="h-8 w-8 text-primary-foreground" fill="currentColor" />
               </div>
+
               <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-                Support <span className="gradient-pride-text">PRIDE Lab Foundation</span>
+                Support <span className="gradient-pride-text">Pride Social Network</span>
               </h1>
+
               <p className="text-lg text-muted-foreground">
-                Your contribution helps us build and maintain a safe, inclusive social network for the Pride community.
-                Every supporter makes a difference.
+                Your monthly membership helps us build and maintain a modern, safe, and inclusive social network created
+                in Europe for a global community.
+                <br />
+                <span className="text-sm">Made in EU 🇪🇺, for the World 🗺️</span>
               </p>
             </div>
           </div>
@@ -129,7 +136,7 @@ const SupportPage = () => {
         {/* Packages */}
         <SupportPackagesSection />
 
-        {/* Bank Transfer Section */}
+        {/* Bank Transfer Section (EU Revolut) */}
         <section className="py-20 lg:py-28 bg-muted/30">
           <div className="container">
             <div className="max-w-2xl mx-auto">
@@ -137,99 +144,101 @@ const SupportPage = () => {
                 <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl gradient-pride mb-4">
                   <Building2 className="h-7 w-7 text-primary-foreground" />
                 </div>
-                <h2 className="font-display text-3xl font-bold mb-4">Donate via Bank Transfer</h2>
+
+                <h2 className="font-display text-3xl font-bold mb-4">Support via Bank Transfer (EUR)</h2>
+
                 <p className="text-muted-foreground">
-                  For Australian supporters who prefer to donate directly via bank transfer.
+                  Prefer a direct transfer? Use our EUR Revolut bank details for supporters in Europe (and worldwide).
                 </p>
               </div>
 
               <Card className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
                 <CardHeader>
-                  <CardTitle className="text-lg">Australian Bank Account Details</CardTitle>
+                  <CardTitle className="text-lg">EU / EUR Bank Details (Revolut)</CardTitle>
                 </CardHeader>
 
                 <CardContent className="space-y-4">
                   <div className="grid gap-4">
-                    {/* Account Name */}
+                    {/* Recipient */}
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 gap-3">
                       <div className="min-w-0">
-                        <p className="text-sm text-muted-foreground">Account Name</p>
-                        <p className="font-medium break-words">{bankDetails.accountName}</p>
+                        <p className="text-sm text-muted-foreground">Recipient</p>
+                        <p className="font-medium break-words">{bankDetailsEU.recipient}</p>
                       </div>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        aria-label="Copy account name"
-                        onClick={() => copyToClipboard(bankDetails.accountName, 'Account name')}
+                        aria-label="Copy recipient"
+                        onClick={() => copyToClipboard(bankDetailsEU.recipient, 'Recipient')}
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
                     </div>
 
-                    {/* BSB */}
+                    {/* Recipient address */}
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 gap-3">
                       <div className="min-w-0">
-                        <p className="text-sm text-muted-foreground">BSB</p>
-                        <p className="font-medium font-mono break-words">{bankDetails.bsb}</p>
+                        <p className="text-sm text-muted-foreground">Recipient address</p>
+                        <p className="font-medium break-words">{bankDetailsEU.recipientAddress}</p>
                       </div>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        aria-label="Copy BSB"
-                        onClick={() => copyToClipboard(bankDetails.bsb, 'BSB')}
+                        aria-label="Copy recipient address"
+                        onClick={() => copyToClipboard(bankDetailsEU.recipientAddress, 'Recipient address')}
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
                     </div>
 
-                    {/* Account Number */}
+                    {/* IBAN */}
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 gap-3">
                       <div className="min-w-0">
-                        <p className="text-sm text-muted-foreground">Account Number</p>
-                        <p className="font-medium font-mono break-words">{bankDetails.accountNumber}</p>
+                        <p className="text-sm text-muted-foreground">IBAN</p>
+                        <p className="font-medium font-mono break-words">{bankDetailsEU.iban}</p>
                       </div>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        aria-label="Copy account number"
-                        onClick={() => copyToClipboard(bankDetails.accountNumber, 'Account number')}
+                        aria-label="Copy IBAN"
+                        onClick={() => copyToClipboard(bankDetailsEU.iban, 'IBAN')}
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
                     </div>
 
-                    {/* SWIFT / BIC */}
+                    {/* BIC */}
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 gap-3">
                       <div className="min-w-0">
-                        <p className="text-sm text-muted-foreground">SWIFT / BIC</p>
-                        <p className="font-medium font-mono break-words">{bankDetails.swiftBic}</p>
+                        <p className="text-sm text-muted-foreground">BIC</p>
+                        <p className="font-medium font-mono break-words">{bankDetailsEU.bic}</p>
                       </div>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        aria-label="Copy SWIFT/BIC"
-                        onClick={() => copyToClipboard(bankDetails.swiftBic, 'SWIFT/BIC')}
+                        aria-label="Copy BIC"
+                        onClick={() => copyToClipboard(bankDetailsEU.bic, 'BIC')}
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
                     </div>
 
-                    {/* Bank */}
+                    {/* Intermediary BIC (outside EEA) */}
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 gap-3">
                       <div className="min-w-0">
-                        <p className="text-sm text-muted-foreground">Bank</p>
-                        <p className="font-medium break-words">{bankDetails.bank}</p>
+                        <p className="text-sm text-muted-foreground">Intermediary BIC (outside EEA)</p>
+                        <p className="font-medium font-mono break-words">{bankDetailsEU.intermediaryBic}</p>
                       </div>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        aria-label="Copy bank details"
-                        onClick={() => copyToClipboard(bankDetails.bank, 'Bank details')}
+                        aria-label="Copy intermediary BIC"
+                        onClick={() => copyToClipboard(bankDetailsEU.intermediaryBic || '', 'Intermediary BIC')}
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
@@ -239,23 +248,32 @@ const SupportPage = () => {
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50 gap-3">
                       <div className="min-w-0">
                         <p className="text-sm text-muted-foreground">Reference</p>
-                        <p className="font-medium font-mono break-words">{bankDetails.reference}</p>
+                        <p className="font-medium font-mono break-words">{bankDetailsEU.reference}</p>
                       </div>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
                         aria-label="Copy reference"
-                        onClick={() => copyToClipboard(bankDetails.reference, 'Reference')}
+                        onClick={() => copyToClipboard(bankDetailsEU.reference, 'Reference')}
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
 
-                  <p className="text-sm text-muted-foreground text-center pt-4 border-t">
-                    Please use the reference when making your transfer so we can track your donation.
-                  </p>
+                  <div className="pt-4 border-t space-y-2 text-sm text-muted-foreground text-center">
+                    <p>
+                      <span className="font-medium text-foreground">Transfer from a bank in the EEA:</span> use IBAN + BIC.
+                    </p>
+                    <p>
+                      <span className="font-medium text-foreground">Transfer from outside the EEA:</span> use IBAN + BIC
+                      and add the intermediary BIC if your bank requests it.
+                    </p>
+                    <p>
+                      Please include the reference so we can track your support and attribute it to your account.
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -268,8 +286,8 @@ const SupportPage = () => {
             <div className="max-w-2xl mx-auto text-center animate-fade-in">
               <h2 className="font-display text-3xl font-bold mb-4">Other Ways to Help</h2>
               <p className="text-muted-foreground mb-8">
-                Not ready to make a financial contribution? You can still support us by joining the network, inviting
-                friends, and being an active community member.
+                Not ready to pay? You can still support us by joining the network, inviting friends, and being an active
+                community member.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="outline" size="lg" asChild>
@@ -288,3 +306,4 @@ const SupportPage = () => {
 };
 
 export default SupportPage;
+
