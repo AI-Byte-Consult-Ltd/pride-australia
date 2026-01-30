@@ -33,6 +33,13 @@ import {
   BadgeCheck,
   UserPlus,
   Settings,
+  Bookmark,
+  Edit3,
+  Search,
+  UserCheck,
+  Lock,
+  Mail,
+  Flag,
 } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -67,6 +74,11 @@ const RoadmapPage = () => {
     { icon: <CheckCircle className="h-5 w-5" />, title: 'Community feed' },
     {
       icon: <CheckCircle className="h-5 w-5" />,
+      title: 'Community Map + business listing submissions',
+      subtitle: 'Members can submit LGBTQIA+-friendly businesses/projects for review and publication',
+    },
+    {
+      icon: <CheckCircle className="h-5 w-5" />,
       title: 'Documentation updates',
       subtitle: 'Updated About, Mission, Goals, and Values pages to clarify structure and purpose',
     },
@@ -77,34 +89,37 @@ const RoadmapPage = () => {
     },
     {
       icon: <CheckCircle className="h-5 w-5" />,
-      title: 'Expanded support options',
-      subtitle: 'Added an Australian bank account option for supporters who prefer a direct transfer',
-    },
-    {
-      icon: <CheckCircle className="h-5 w-5" />,
-      title: 'Support packages for PRIDE Social Network & Pride Lab Foundation',
-      subtitle:
-        'Support tiers are available, including an optional project/business audit: improvement plan, AI & automation opportunities, time-saving workflows, user activity growth, and scaling recommendations',
+      title: 'Support packages (core structure)',
+      subtitle: 'Support tiers with benefits and monthly PRIDE Coins positioning (evolving)',
     },
   ];
 
   // Pride Social Network — short-term
   const socialNetworkShortTerm = [
-    { icon: <Link2 className="h-5 w-5" />, title: 'Active links in posts' },
-    {
-      icon: <FileText className="h-5 w-5" />,
-      title: 'Post status updates in Dashboard',
-      subtitle: 'Three supporter statuses: Early Supporter, Founding Member, VIP Supporter',
-    },
     {
       icon: <Bell className="h-5 w-5" />,
       title: 'Dashboard notifications',
-      subtitle: 'Get notified when someone replies, likes, mentions you, or posts in your groups',
+      subtitle: 'Replies, likes, echoes, mentions — plus notification center & badges',
     },
     {
-      icon: <Newspaper className="h-5 w-5" />,
-      title: 'Country updates and news panels',
-      subtitle: 'Australia-first, with the ability to add other countries as we expand',
+      icon: <Link2 className="h-5 w-5" />,
+      title: 'Active links in posts',
+      subtitle: 'Clickable URLs with safe previews and better rendering',
+    },
+    {
+      icon: <Hash className="h-5 w-5" />,
+      title: 'Trending hashtags refresh',
+      subtitle: 'EU-first discovery, rotating topics, and a cleaner “Trending” widget',
+    },
+    {
+      icon: <UserPlus className="h-5 w-5" />,
+      title: 'Referral & affiliate links',
+      subtitle: 'Invite new members and earn PRIDE Units for each verified join (anti-abuse checks included)',
+    },
+    {
+      icon: <Award className="h-5 w-5" />,
+      title: 'Supporters wall (homepage + profile badges)',
+      subtitle: 'Visible supporter recognition with optional links and verified tiers',
     },
     {
       icon: <FileText className="h-5 w-5" />,
@@ -112,35 +127,48 @@ const RoadmapPage = () => {
       subtitle: 'A structured way to reach the team, propose collaborations, and request support',
     },
     {
-      icon: <UserPlus className="h-5 w-5" />,
-      title: 'Referral & affiliate links',
-      subtitle: 'Invite new members and earn PRIDE Units for each verified join',
-    },
-    {
-      icon: <Award className="h-5 w-5" />,
-      title: 'Supporters wall on the homepage',
-      subtitle: 'A dedicated section with supporter names, images, and optional links',
+      icon: <Newspaper className="h-5 w-5" />,
+      title: 'EU-focused news panel + events highlights',
+      subtitle: 'EU-first community updates and curated culture/events feed',
     },
   ];
 
   // Pride Social Network — mid-term
   const socialNetworkMidTerm = [
-    { icon: <Hash className="h-5 w-5" />, title: 'Topic-based feeds and discovery' },
-    { icon: <Shield className="h-5 w-5" />, title: 'Community moderation tools' },
     {
-      icon: <BadgeCheck className="h-5 w-5" />,
+      icon: <UserCheck className="h-5 w-5" />,
       title: 'Verified supporter badges',
-      subtitle: 'Clear recognition for Early Supporter, Founding Member, and VIP Supporter',
+      subtitle: 'Clear recognition for PRIDE Basic / Pro / Elite (and legacy tiers if needed)',
+    },
+    {
+      icon: <Bookmark className="h-5 w-5" />,
+      title: 'Bookmarks + bookmark folders',
+      subtitle: 'Save posts and organize them into collections',
+    },
+    {
+      icon: <Edit3 className="h-5 w-5" />,
+      title: 'Edit posts',
+      subtitle: 'Fast edits with an “edited” indicator and safe history rules',
+    },
+    {
+      icon: <FileText className="h-5 w-5" />,
+      title: 'Longer posts + creator format',
+      subtitle: 'Long-form posts / articles with better readability and indexing',
+    },
+    {
+      icon: <Search className="h-5 w-5" />,
+      title: 'Advanced search',
+      subtitle: 'Search posts, users, hashtags, and listings with better filtering',
+    },
+    {
+      icon: <Shield className="h-5 w-5" />,
+      title: 'Safety & moderation toolkit',
+      subtitle: 'Report flows, mute/block, content warnings, and faster review tooling',
     },
     {
       icon: <Users className="h-5 w-5" />,
       title: 'Closed and thematic groups',
-      subtitle: 'Join invite-only groups, interest-based groups, and create your own communities',
-    },
-    {
-      icon: <Share2 className="h-5 w-5" />,
-      title: 'Post sharing feature',
-      subtitle: 'Echo — share a post to amplify voices you support',
+      subtitle: 'Invite-only groups, interest-based groups, and community spaces',
     },
     {
       icon: <ImageIcon className="h-5 w-5" />,
@@ -155,22 +183,17 @@ const RoadmapPage = () => {
     {
       icon: <Mic className="h-5 w-5" />,
       title: 'Audio posts',
-      subtitle: 'Voice notes, short updates, and accessible formats for community storytelling',
+      subtitle: 'Voice notes and accessible storytelling formats',
     },
     {
       icon: <Store className="h-5 w-5" />,
-      title: 'Merchandise on Pride Social Network',
-      subtitle: 'Official merchandise section to support sustainability of the ecosystem',
-    },
-    {
-      icon: <Coins className="h-5 w-5" />,
-      title: 'PRIDE Units economy improvements',
-      subtitle: 'Clear earning rules, better balancing, and more ways to use Units inside the platform',
+      title: 'Marketplace evolution',
+      subtitle: 'Creator-friendly rules, clearer policies, and improved discovery',
     },
     {
       icon: <Settings className="h-5 w-5" />,
-      title: 'Marketplace improvements',
-      subtitle: 'Removing listing fees and refining rules to support creators and small sellers',
+      title: 'Better personalization controls',
+      subtitle: 'Themes, feed controls, and “reduce noise” options (without dark patterns)',
     },
   ];
 
@@ -178,28 +201,101 @@ const RoadmapPage = () => {
   const economyRules = [
     {
       icon: <Coins className="h-5 w-5" />,
-      title: 'Earn 3 PRIDE Units for each post',
-      subtitle: 'Encouraging consistent, meaningful participation',
+      title: 'Earn PRIDE Coins for meaningful participation',
+      subtitle: 'Clear rules and rate limits to prevent abuse, reward real engagement',
     },
     {
       icon: <MessageCircle className="h-5 w-5" />,
-      title: 'Earn 2 PRIDE Units for each reply',
-      subtitle: 'Supporting conversation and community-building',
+      title: 'Rewards for replies and conversation',
+      subtitle: 'Encouraging community-building and thoughtful discussion',
     },
     {
       icon: <Heart className="h-5 w-5" />,
-      title: 'Earn 1 PRIDE Unit for each like received',
-      subtitle: 'Simple recognition for content that resonates',
+      title: 'Recognition signals for content quality',
+      subtitle: 'Likes and community feedback mapped to transparent rewards',
     },
     {
       icon: <UserPlus className="h-5 w-5" />,
-      title: 'Earn 100 PRIDE Units for each invited member',
-      subtitle: 'Referral reward for verified joins (anti-abuse checks included)',
+      title: 'Referral rewards with verification',
+      subtitle: 'Invite members, earn rewards only for verified joins (anti-fraud included)',
     },
   ];
 
-  // Pride Lab Foundation — Phase 1
-  const foundationPhase1 = [
+  // AI layer (platform feature direction)
+  const aiCompanions = [
+    {
+      icon: <Sparkles className="h-5 w-5" />,
+      title: 'AI education companions',
+      subtitle: 'Guided learning experiences, skill-building, and curated educational paths',
+    },
+    {
+      icon: <Heart className="h-5 w-5" />,
+      title: 'Trusted conversation companions',
+      subtitle: 'Supportive, human-centered interactions designed with care and boundaries',
+    },
+    {
+      icon: <Shield className="h-5 w-5" />,
+      title: 'AI-assisted safety & moderation',
+      subtitle: 'Better detection of harassment patterns and faster support workflows',
+    },
+  ];
+
+  /**
+   * FOUNDATION: updated structure
+   * - HQ in EU
+   * - Italy foundation: #1
+   * - Australia: #2 (secondary priority)
+   * - USA: postponed indefinitely
+   */
+  const foundationOverview = [
+    {
+      icon: <Globe className="h-5 w-5" />,
+      title: 'Headquarters: European Union',
+      subtitle: 'Operations and product development are EU-based; global reach remains the goal',
+    },
+    {
+      icon: <Flag className="h-5 w-5" />,
+      title: 'Pride Lab Foundation Italy (priority)',
+      subtitle: 'Next foundation registration focus to support EU-first initiatives and partnerships',
+    },
+    {
+      icon: <Clock className="h-5 w-5" />,
+      title: 'Pride Lab Foundation Australia (secondary priority)',
+      subtitle: 'Not cancelled — rescheduled to keep focus on platform development and stability',
+    },
+    {
+      icon: <Lock className="h-5 w-5" />,
+      title: 'Pride Lab Foundation USA (postponed)',
+      subtitle: 'Postponed on an open-ended timeline due to current geopolitical and regulatory uncertainty',
+    },
+  ];
+
+  // Pride Lab Foundation Italy — Phase 1 (new)
+  const foundationItalyPhase1 = [
+    {
+      icon: <Clock className="h-5 w-5" />,
+      title: 'Italy registration preparation',
+      subtitle: 'Legal pathway selection, local requirements review, and governance structure',
+    },
+    {
+      icon: <FileText className="h-5 w-5" />,
+      title: 'Foundation charter + reporting model',
+      subtitle: 'Clear rules for transparency, public reporting, and mission-aligned activity',
+    },
+    {
+      icon: <Users className="h-5 w-5" />,
+      title: 'EU partnerships framework',
+      subtitle: 'Partner onboarding model for events, NGOs, creators, and community programs',
+    },
+    {
+      icon: <Calendar className="h-5 w-5" />,
+      title: 'Italy/EU community programs (pilot)',
+      subtitle: 'Small initiatives that can scale: events, workshops, and creator support',
+    },
+  ];
+
+  // Pride Lab Foundation Australia — Phase 1 (moved to second position)
+  const foundationAustraliaPhase1 = [
     {
       icon: <CheckCircle className="h-5 w-5" />,
       title: 'Documentation prepared',
@@ -211,49 +307,42 @@ const RoadmapPage = () => {
       subtitle: 'Virtual office lease agreement signed to support formal setup and operations',
     },
     {
-      icon: <CheckCircle className="h-5 w-5" />,
-      title: 'Sydney selected as headquarters',
-      subtitle: 'Sydney is confirmed as the Foundation’s HQ for Australia',
-    },
-    {
       icon: <Clock className="h-5 w-5" />,
       title: 'ASIC registration submission',
-      subtitle: 'Submitting the legal registration filing in Australia (ASIC)',
+      subtitle: 'Secondary priority: will be filed when platform capacity and timing align',
     },
     {
       icon: <Clock className="h-5 w-5" />,
       title: 'ABN application',
-      subtitle: 'Applying for an ABN after registration submission/approval',
+      subtitle: 'After registration submission/approval',
     },
     {
       icon: <Clock className="h-5 w-5" />,
-      title: 'GST registration (if required)',
-      subtitle: 'Registering for GST if/when required by operational thresholds and activity',
-    },
-    {
-      icon: <Clock className="h-5 w-5" />,
-      title: 'Tax-deductible donation pathway',
-      subtitle:
-        'Preparing the compliance steps needed for eligible tax-deductible donations (e.g., ACNC charity registration and ATO endorsement where applicable)',
-    },
-    {
-      icon: <CheckCircle className="h-5 w-5" />,
-      title: 'Transparent cost tracking page',
-      subtitle: 'Clear visibility on costs, priorities, and what community support enables',
-    },
-    {
-      icon: <CheckCircle className="h-5 w-5" />,
-      title: 'Payment infrastructure for voluntary support',
-      subtitle: 'Multiple support options, including bank transfer and card-based contributions',
+      title: 'Compliance pathway (as needed)',
+      subtitle: 'Charity and tax-deductible donation steps where applicable',
     },
   ];
 
-  // Pride Lab Foundation — Phase 2
+  // USA — Postponed block
+  const foundationUSPostponed = [
+    {
+      icon: <Lock className="h-5 w-5" />,
+      title: 'US foundation registration postponed',
+      subtitle: 'Open-ended timeline. Priority remains EU HQ + platform execution',
+    },
+    {
+      icon: <Shield className="h-5 w-5" />,
+      title: 'Risk management & continuity',
+      subtitle: 'We avoid jurisdictional moves that could distract from stability, safety, and delivery',
+    },
+  ];
+
+  // Pride Lab Foundation — Phase 2 (shared future, regardless of jurisdiction)
   const foundationPhase2 = [
     {
       icon: <Calendar className="h-5 w-5" />,
       title: 'Community-led events (online & offline)',
-      subtitle: 'Meetups, community sessions, safe spaces, and creator-focused gatherings',
+      subtitle: 'Meetups, safe spaces, and creator-focused gatherings',
     },
     {
       icon: <Users className="h-5 w-5" />,
@@ -266,14 +355,9 @@ const RoadmapPage = () => {
       subtitle: 'Small grants for creators, activists, and grassroots initiatives',
     },
     {
-      icon: <Gift className="h-5 w-5" />,
-      title: 'Medium and large grants',
-      subtitle: 'Expanded funding for higher-impact initiatives as the Foundation scales',
-    },
-    {
       icon: <GraduationCap className="h-5 w-5" />,
       title: 'Education grants & learning support',
-      subtitle: 'Training support, workshops, labs, and access to educational opportunities',
+      subtitle: 'Workshops, labs, and access to educational opportunities',
     },
   ];
 
@@ -298,30 +382,6 @@ const RoadmapPage = () => {
       icon: <Award className="h-5 w-5" />,
       title: 'Scholarships & training programs',
       subtitle: 'Long-term investments in education and professional development',
-    },
-    {
-      icon: <Building2 className="h-5 w-5" />,
-      title: 'Expansion to new regions',
-      subtitle: 'Establishing additional foundations where it makes sense (USA first, then other regions)',
-    },
-  ];
-
-  // AI layer (platform feature direction)
-  const aiCompanions = [
-    {
-      icon: <Sparkles className="h-5 w-5" />,
-      title: 'AI education companions',
-      subtitle: 'Guided learning experiences, skill-building, and curated educational paths',
-    },
-    {
-      icon: <Heart className="h-5 w-5" />,
-      title: 'Trusted conversation companions',
-      subtitle: 'Supportive, human-centered interactions designed with care and boundaries',
-    },
-    {
-      icon: <Shield className="h-5 w-5" />,
-      title: 'AI-assisted safety & moderation',
-      subtitle: 'Better detection of harassment patterns and faster support workflows',
     },
   ];
 
@@ -360,10 +420,12 @@ const RoadmapPage = () => {
             </div>
             <h3 className="font-display text-lg font-semibold">{title}</h3>
           </div>
+
           <span className={`text-xs font-medium px-2 py-1 rounded-full ${statusLabels[status].color}`}>
             {statusLabels[status].label}
           </span>
         </div>
+
         <ul className="space-y-3">
           {items.map((item, index) => (
             <li key={index} className="flex items-start gap-3">
@@ -391,7 +453,7 @@ const RoadmapPage = () => {
         <title>Roadmap | Pride Social Network & Pride Lab Foundation</title>
         <meta
           name="description"
-          content="Explore the roadmap for Pride Social Network and Pride Lab Foundation — see what's implemented, what's next, and our long-term vision."
+          content="Explore the roadmap for Pride Social Network and Pride Lab Foundation — what’s implemented, what’s next, and how our EU HQ and Italy-first foundation plan supports the ecosystem."
         />
       </Helmet>
 
@@ -452,7 +514,7 @@ const RoadmapPage = () => {
                   />
 
                   <RoadmapSection
-                    title="PRIDE Units Economy (Rules & Improvements)"
+                    title="PRIDE Coins Economy (Rules & Improvements)"
                     icon={<Coins className="h-5 w-5" />}
                     items={economyRules}
                     status="mid-term"
@@ -475,17 +537,45 @@ const RoadmapPage = () => {
                   </div>
                   <div>
                     <h2 className="font-display text-2xl font-bold">Pride Lab Foundation</h2>
-                    <p className="text-muted-foreground">Non-profit organization development</p>
+                    <p className="text-muted-foreground">Jurisdictions, programs, and real-world initiatives</p>
                   </div>
                 </div>
 
                 <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                  {/* New: HQ + jurisdiction status */}
                   <RoadmapSection
-                    title="Phase 1: Registration & Setup"
+                    title="Structure & Jurisdictions (Current Status)"
+                    icon={<Globe className="h-5 w-5" />}
+                    items={foundationOverview}
+                    variant="pride"
+                    status="implemented"
+                  />
+
+                  {/* 1) Italy FIRST */}
+                  <RoadmapSection
+                    title="Italy (Priority): Registration & Setup"
                     icon={<Building2 className="h-5 w-5" />}
-                    items={foundationPhase1}
+                    items={foundationItalyPhase1}
                     variant="pride"
                     status="short-term"
+                  />
+
+                  {/* 2) Australia SECOND */}
+                  <RoadmapSection
+                    title="Australia (Secondary): Registration & Setup"
+                    icon={<Clock className="h-5 w-5" />}
+                    items={foundationAustraliaPhase1}
+                    variant="pride"
+                    status="mid-term"
+                  />
+
+                  {/* USA postponed */}
+                  <RoadmapSection
+                    title="USA: Postponed (Open-Ended)"
+                    icon={<Lock className="h-5 w-5" />}
+                    items={foundationUSPostponed}
+                    variant="pride"
+                    status="upcoming"
                   />
 
                   <RoadmapSection
@@ -516,7 +606,7 @@ const RoadmapPage = () => {
               <h2 className="font-display text-3xl lg:text-4xl font-bold mb-4">Help Us Build the Future</h2>
               <p className="text-lg text-muted-foreground mb-8">
                 Every contribution helps us move forward on this roadmap faster. Join our community or support the
-                Foundation to be part of this journey.
+                ecosystem to be part of this journey.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="pride" size="lg" asChild>
