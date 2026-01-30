@@ -6,76 +6,84 @@ import { SUPPORT_LINKS } from '@/config/supportLinks';
 type Provider = 'stripe' | 'revolut' | 'paypal' | 'coinbase';
 
 interface SupportPackage {
-  id: 'early' | 'founding' | 'vip';
+  id: 'basic' | 'pro' | 'elite';
   name: string;
   description: string;
   price: number;
   icon: React.ReactNode;
   featured?: boolean;
   benefits: string[];
-  unitsLevel: string;
+  coinsPerMonth: number;
 }
 
-// ✅ EURO instead of AUD
 const EUR_SYMBOL = '€';
 
+// NOTE: Monthly subscription tiers (not donations)
 const packages: SupportPackage[] = [
   {
-    id: 'early',
-    name: 'Early Supporter',
-    description: 'A meaningful way to support the initiative and join the movement.',
-    price: 40,
+    id: 'basic',
+    name: 'PRIDE Basic',
+    description: 'A simple monthly membership to support Pride Social Network and unlock quality-of-life features.',
+    price: 2.5,
     icon: <Star className="h-6 w-6" />,
-    unitsLevel: 'Starter Level',
+    coinsPerMonth: 250,
     benefits: [
-      'Early Supporter badge on your profile',
-      'Access to exclusive supporter-only stickers',
-      'Priority access to new features during Alpha',
-      'Your name listed on the "Early Supporters" wall',
-      'Website/project audit to explore AI automation & growth opportunities',
+      'Small reply boost',
+      'Bookmark folders',
+      'Highlights tab',
+      'Edit posts',
+      'Create longer posts',
+      'Customize your experience',
+      'Member badge on your profile',
     ],
   },
   {
-    id: 'founding',
-    name: 'Founding Member',
-    description: 'Support the mission and help us build a strong, inclusive community.',
-    price: 80,
+    id: 'pro',
+    name: 'PRIDE Pro',
+    description: 'For creators and active community members: more reach, better tools, and deeper insights.',
+    price: 8.5,
     icon: <Sparkles className="h-6 w-6" />,
     featured: true,
-    unitsLevel: 'Founding Level',
+    coinsPerMonth: 900,
     benefits: [
-      'Founding Member verification badge',
-      'All Early Supporter benefits',
-      'Access to closed community groups (Founders Circle)',
-      'Ability to participate in community polls and early decisions',
-      'Special recognition as a Founding Member',
-      'Digital certificate confirming Founding Member status',
-      'In-depth website/project audit with AI automation & autoreply recommendations',
+      'Everything in PRIDE Basic, plus:',
+      'Verified checkmark',
+      'Advanced analytics',
+      'Less ads in your feeds',
+      'Boosted replies',
+      'Write Articles',
+      'Creator Subscriptions',
+      'Get paid to post (when enabled)',
+      'Enhanced AI features access (as available)',
     ],
   },
   {
-    id: 'vip',
-    name: 'VIP Supporter',
-    description: 'Make a lasting impact and be recognized as a founding supporter of the community.',
-    price: 480,
+    id: 'elite',
+    name: 'PRIDE Elite',
+    description: 'Fully-loaded plan for power users, partners, and businesses — maximum visibility and advanced tools.',
+    price: 42,
     icon: <Crown className="h-6 w-6" />,
-    unitsLevel: 'Patron Level',
+    coinsPerMonth: 5000,
     benefits: [
-      'VIP Supporter verification badge',
-      'All Founding Member benefits',
-      'Access to VIP-only discussions and updates',
-      'Early invitations to online and offline events',
-      'Direct feedback channel with PRIDE team',
-      'Recognition as a PRIDE Patron',
-      'Official paper certificate confirming VIP Supporter status',
-      'Comprehensive audit of your website, project, or business with tailored AI strategies',
+      'Everything in PRIDE Pro, plus:',
+      'Fully ad-free',
+      'Super NICS AI (NEW)',
+      'Handle Marketplace (NEW)',
+      'Highest reply boost',
+      'PRIDE Radar Advanced Search',
+      'Priority support channel',
     ],
   },
 ];
 
 const SupportPackagesSection = () => {
-  const handleSupport = (pkg: SupportPackage, provider: Provider) => {
-    const baseUrl = SUPPORT_LINKS[pkg.id][provider];
+  const handleSubscribe = (pkg: SupportPackage, provider: Provider) => {
+    // SUPPORT_LINKS must contain subscription (recurring) checkout links per tier/provider
+    const baseUrl = (SUPPORT_LINKS as any)[pkg.id]?.[provider];
+    if (!baseUrl) {
+      console.warn(`Missing subscription link for ${pkg.id} via ${provider}`);
+      return;
+    }
     window.open(baseUrl, '_blank', 'noopener,noreferrer');
   };
 
@@ -85,15 +93,19 @@ const SupportPackagesSection = () => {
         {/* Section Header */}
         <div className="text-center mb-16 animate-fade-in">
           <span className="inline-block px-4 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm font-medium mb-4">
-            Support Our Mission
+            Monthly Membership
           </span>
+
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            Become a Supporter
+            Subscribe & Unlock PRIDE Benefits
           </h2>
+
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Your support helps us build a safe, inclusive platform for the Pride community.
-            Choose a package and receive{' '}
-            <span className="gradient-pride-text font-semibold">PRIDE Coins</span> as a thank you.
+            Pride Social Network is built in Europe for a global community.
+            Subscribe monthly to support the platform and receive{' '}
+            <span className="gradient-pride-text font-semibold">PRIDE Coins</span> every month.
+            <br />
+            <span className="text-sm">Made in EU 🇪🇺, for the World 🗺️</span>
           </p>
         </div>
 
@@ -119,9 +131,9 @@ const SupportPackagesSection = () => {
                   className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl mx-auto mb-4 ${
                     pkg.featured
                       ? 'gradient-pride text-primary-foreground'
-                      : pkg.id === 'vip'
-                      ? 'bg-pride-purple/10 text-pride-purple'
-                      : 'bg-primary/10 text-primary'
+                      : pkg.id === 'elite'
+                        ? 'bg-pride-purple/10 text-pride-purple'
+                        : 'bg-primary/10 text-primary'
                   }`}
                 >
                   {pkg.icon}
@@ -132,21 +144,24 @@ const SupportPackagesSection = () => {
 
               <CardContent className="text-center flex-1">
                 <div className="py-4">
-                  <div className="mb-4">
+                  <div className="mb-2">
                     <span className="text-3xl font-display font-bold">
                       {EUR_SYMBOL}
-                      {pkg.price}
+                      {pkg.price.toFixed(pkg.price % 1 === 0 ? 0 : 2)}
                     </span>
+                    <span className="text-sm text-muted-foreground"> / month</span>
                   </div>
+
                   <div className="flex items-center justify-center gap-2">
                     <span className="text-lg font-display font-bold gradient-pride-text">
                       PRIDE Coins
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      – {pkg.unitsLevel}
+                      – {pkg.coinsPerMonth} / month
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">Included</p>
+
+                  <p className="text-sm text-muted-foreground mt-1">Included with subscription</p>
                 </div>
 
                 {/* Benefits List */}
@@ -160,46 +175,49 @@ const SupportPackagesSection = () => {
                 </div>
               </CardContent>
 
-              {/* Support buttons */}
+              {/* Subscription buttons */}
               <CardFooter className="flex flex-col gap-3">
+                {/* 1) Stripe (recommended for recurring) */}
                 <Button
                   variant={pkg.featured ? 'pride' : 'default'}
                   size="lg"
                   className="w-full gap-2"
-                  onClick={() => handleSupport(pkg, 'revolut')}
+                  onClick={() => handleSubscribe(pkg, 'stripe')}
                 >
                   <CreditCard className="h-4 w-4" />
-                  Support with Card
+                  Subscribe with Stripe
                 </Button>
 
+                {/* 2) Revolut (if you support recurring there) */}
                 <Button
                   variant="outline"
                   size="lg"
                   className="w-full gap-2"
-                  onClick={() => handleSupport(pkg, 'stripe')}
+                  onClick={() => handleSubscribe(pkg, 'revolut')}
                 >
                   <CreditCard className="h-4 w-4" />
-                  Support with Stripe
+                  Subscribe with Card (Revolut)
                 </Button>
 
+                {/* Optional payment rails (keep if you still want them) */}
                 <Button
                   variant="outline"
                   size="lg"
                   className="w-full gap-2"
-                  onClick={() => handleSupport(pkg, 'paypal')}
+                  onClick={() => handleSubscribe(pkg, 'paypal')}
                 >
                   <Wallet className="h-4 w-4" />
-                  Support with PayPal
+                  Subscribe with PayPal
                 </Button>
 
                 <Button
                   variant="outline"
                   size="lg"
                   className="w-full gap-2"
-                  onClick={() => handleSupport(pkg, 'coinbase')}
+                  onClick={() => handleSubscribe(pkg, 'coinbase')}
                 >
                   <Coins className="h-4 w-4" />
-                  Support with Crypto
+                  Subscribe with Crypto
                 </Button>
               </CardFooter>
             </Card>
