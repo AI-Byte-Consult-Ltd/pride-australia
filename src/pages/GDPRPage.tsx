@@ -4,10 +4,24 @@ import { Link } from "react-router-dom";
 
 const GDPRPage = () => {
   const siteUrl = "https://pridesocial.org";
-  const title = "GDPR & Data Protection | PRIDE Social Network";
+  const title = "GDPR & EU Data Protection | Pride Social Network";
   const description =
-    "Learn about your data protection rights under GDPR (EU) and the Australian Privacy Act. PRIDE Social Network is committed to protecting your privacy.";
-  const lastUpdated = "January 14, 2026";
+    "Your EU/EEA privacy rights under GDPR, how Pride Social Network handles personal data, cookies, security, and international transfers.";
+  const lastUpdated = "January 30, 2026";
+
+  /**
+   * IMPORTANT NOTE (kept in code comments, not UI):
+   * - We do NOT claim Australia has an EU adequacy decision (it does not).
+   * - We frame cross-border transfers using SCCs + supplementary measures where needed.
+   * - We position the platform as EU-first with HQ in the European Union.
+   */
+
+  const controller = {
+    name: "Pride Social Network (operated by AI Byte Consult Ltd.)",
+    email: "info@pridesocial.org",
+    website: "pridesocial.org",
+    euHqAddress: "Via del Corso 123, 00186 Rome (RM), Italy",
+  };
 
   return (
     <>
@@ -27,277 +41,379 @@ const GDPRPage = () => {
           <div className="container max-w-3xl">
             <header className="mb-12 animate-fade-in">
               <p className="text-sm text-muted-foreground mb-2">Last updated: {lastUpdated}</p>
-              <h1 className="font-display text-4xl font-bold mb-4">GDPR & Data Protection</h1>
-              <p className="text-lg text-muted-foreground">
-                This page explains your rights under the EU General Data Protection Regulation (GDPR) 
-                and the Australian Privacy Act 1988.
-              </p>
+              <h1 className="font-display text-4xl font-bold mb-4">GDPR & EU Data Protection</h1>
+
+              <div className="p-5 rounded-2xl border bg-card shadow-card">
+                <p className="text-lg text-muted-foreground">
+                  Pride Social Network follows an <span className="font-medium">EU-first</span> approach to privacy and
+                  safety. This page explains how we protect personal data under the{" "}
+                  <span className="font-medium">EU General Data Protection Regulation (GDPR)</span> and related EU/EEA
+                  privacy rules (including cookie requirements).
+                </p>
+              </div>
             </header>
 
-            <div className="prose prose-neutral dark:prose-invert max-w-none space-y-8 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-              
-              {/* Introduction */}
+            <div
+              className="prose prose-neutral dark:prose-invert max-w-none space-y-10 animate-fade-in"
+              style={{ animationDelay: "0.1s" }}
+            >
+              {/* 1 */}
               <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Our Commitment to Data Protection</h2>
+                <h2 className="font-display text-2xl font-semibold mb-4">1. Who This Applies To</h2>
                 <p className="text-muted-foreground">
-                  PRIDE Social Network, operated by Pride Lab Foundation Australia, is committed to protecting 
-                  your personal data and respecting your privacy rights. We comply with the EU General Data 
-                  Protection Regulation (GDPR) for users in the European Economic Area (EEA) and the UK, 
-                  as well as the Australian Privacy Act 1988 and the Australian Privacy Principles (APPs) 
-                  for all users.
+                  This GDPR page is written for users located in the{" "}
+                  <span className="font-medium">European Union / European Economic Area (EU/EEA)</span>. If you use Pride
+                  Social Network from outside the EU/EEA, our privacy practices remain consistent, but certain legal
+                  rights and procedures may differ by jurisdiction.
+                </p>
+                <p className="text-muted-foreground mt-4">
+                  For the full overview of how we collect, use, and protect data across the platform, see our{" "}
+                  <Link to="/privacy" className="text-primary hover:underline">
+                    Privacy Policy
+                  </Link>
+                  .
                 </p>
               </section>
 
-              {/* Data Controller */}
+              {/* 2 */}
               <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Data Controller</h2>
+                <h2 className="font-display text-2xl font-semibold mb-4">2. Data Controller (EU-first HQ)</h2>
                 <p className="text-muted-foreground mb-4">
-                  Pride Lab Foundation Australia is the data controller responsible for your personal data. 
-                  For any data protection inquiries, you can contact us at:
+                  For GDPR purposes, the <span className="font-medium">data controller</span> is the entity that decides
+                  how and why your personal data is processed.
                 </p>
-                <div className="p-4 rounded-lg border bg-card">
-                  <p className="font-medium">Pride Lab Foundation Australia</p>
-                  <p className="text-muted-foreground">Email: info@pridesocial.org</p>
-                  <p className="text-muted-foreground">Website: pridesocial.org</p>
+
+                <div className="p-5 rounded-2xl border bg-card shadow-card not-prose">
+                  <p className="font-medium">{controller.name}</p>
+                  <p className="text-muted-foreground">EU HQ: {controller.euHqAddress}</p>
+                  <p className="text-muted-foreground">
+                    Email:{" "}
+                    <a className="text-primary hover:underline" href={`mailto:${controller.email}`}>
+                      {controller.email}
+                    </a>
+                  </p>
+                  <p className="text-muted-foreground">Website: {controller.website}</p>
+                </div>
+
+                <p className="text-muted-foreground mt-4">
+                  We may use trusted vendors (processors) for hosting, security, analytics (where enabled), and payment
+                  processing. Processors act on our instructions and are contractually required to protect personal data.
+                </p>
+              </section>
+
+              {/* 3 */}
+              <section>
+                <h2 className="font-display text-2xl font-semibold mb-4">3. What Data We Collect</h2>
+                <p className="text-muted-foreground mb-4">
+                  We collect data needed to operate the platform, keep it safe, and improve it. Depending on how you use
+                  Pride Social Network, this can include:
+                </p>
+                <ul className="list-disc pl-6 text-muted-foreground space-y-2">
+                  <li>
+                    <strong>Account data:</strong> email, authentication identifiers, account creation date, security
+                    signals.
+                  </li>
+                  <li>
+                    <strong>Profile data:</strong> display name, username, bio, avatar, preferences you choose to add.
+                  </li>
+                  <li>
+                    <strong>Content you create:</strong> posts, replies, mentions, and other content you submit.
+                  </li>
+                  <li>
+                    <strong>Community interaction data:</strong> likes, echoes (reposts), replies, and related metadata.
+                  </li>
+                  <li>
+                    <strong>Technical and log data:</strong> IP address, device/browser information, timestamps, error
+                    logs, and security events (anti-abuse).
+                  </li>
+                  <li>
+                    <strong>Payments (if you support the project):</strong> payment confirmations and transaction status
+                    from providers (we do not store full card numbers when handled by payment processors).
+                  </li>
+                </ul>
+
+                <div className="p-5 rounded-2xl bg-muted/30 border not-prose mt-6">
+                  <p className="font-medium mb-2">Special note: sensitive data</p>
+                  <p className="text-muted-foreground text-sm">
+                    Pride Social Network is an LGBTQIA+ community space. Some user-generated content may reveal sensitive
+                    information (for example, sexual orientation or gender identity). We encourage members to share only
+                    what they feel safe sharing. We design safety and moderation to reduce risks from exposure or misuse.
+                  </p>
                 </div>
               </section>
 
-              {/* Lawful Basis for Processing (GDPR) */}
+              {/* 4 */}
               <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Lawful Basis for Processing (GDPR)</h2>
-                <p className="text-muted-foreground mb-4">
-                  Under the GDPR, we process your personal data based on the following legal grounds:
-                </p>
-                <ul className="list-disc pl-6 text-muted-foreground space-y-3">
+                <h2 className="font-display text-2xl font-semibold mb-4">4. Why We Process Data (Purposes)</h2>
+                <ul className="list-disc pl-6 text-muted-foreground space-y-2">
                   <li>
-                    <strong>Contract:</strong> Processing necessary for the performance of our service agreement 
-                    with you (e.g., providing your account, enabling platform features).
+                    <strong>To provide the service:</strong> create accounts, show the feed, enable posts/replies/mentions,
+                    and maintain core features.
                   </li>
                   <li>
-                    <strong>Consent:</strong> Where you have given explicit consent for specific processing 
-                    activities (e.g., marketing communications, optional cookies).
+                    <strong>To keep the platform safe:</strong> prevent spam, abuse, harassment, fraud, and security
+                    incidents.
                   </li>
                   <li>
-                    <strong>Legitimate Interests:</strong> Processing necessary for our legitimate interests, 
-                    provided these do not override your fundamental rights (e.g., fraud prevention, security, 
-                    service improvement).
+                    <strong>To operate and improve:</strong> debug, monitor performance, improve reliability, and refine
+                    features based on usage (with privacy-respecting controls).
                   </li>
                   <li>
-                    <strong>Legal Obligation:</strong> Processing required to comply with applicable laws 
-                    (e.g., tax records, law enforcement requests).
+                    <strong>To communicate with you:</strong> service notices, security alerts, support responses, and
+                    (where you choose) updates.
+                  </li>
+                  <li>
+                    <strong>To meet legal obligations:</strong> compliance, lawful requests, record-keeping where required.
                   </li>
                 </ul>
               </section>
 
-              {/* Your Rights Under GDPR */}
+              {/* 5 */}
               <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Your Rights Under GDPR (EU/UK Users)</h2>
+                <h2 className="font-display text-2xl font-semibold mb-4">5. Legal Bases Under GDPR</h2>
                 <p className="text-muted-foreground mb-4">
-                  If you are located in the European Economic Area or the United Kingdom, you have the following rights:
+                  GDPR requires a valid legal basis for processing. Depending on the context, Pride Social Network relies
+                  on:
                 </p>
                 <ul className="list-disc pl-6 text-muted-foreground space-y-3">
                   <li>
-                    <strong>Right to Access:</strong> You can request a copy of the personal data we hold about you.
+                    <strong>Contract (Art. 6(1)(b)):</strong> to provide the service you requested (account, platform
+                    features).
                   </li>
                   <li>
-                    <strong>Right to Rectification:</strong> You can request correction of inaccurate or incomplete data.
+                    <strong>Legitimate interests (Art. 6(1)(f)):</strong> to secure the service, prevent abuse, and improve
+                    reliability — balanced against your rights.
                   </li>
                   <li>
-                    <strong>Right to Erasure ("Right to be Forgotten"):</strong> You can request deletion of your 
-                    personal data under certain circumstances.
+                    <strong>Consent (Art. 6(1)(a)):</strong> for optional processing such as non-essential cookies or
+                    certain marketing communications (where used).
                   </li>
                   <li>
-                    <strong>Right to Restrict Processing:</strong> You can request that we limit how we use your data.
-                  </li>
-                  <li>
-                    <strong>Right to Data Portability:</strong> You can request your data in a structured, 
-                    commonly used, machine-readable format.
-                  </li>
-                  <li>
-                    <strong>Right to Object:</strong> You can object to processing based on legitimate interests 
-                    or for direct marketing purposes.
-                  </li>
-                  <li>
-                    <strong>Rights Related to Automated Decision-Making:</strong> You have rights concerning 
-                    automated decisions that significantly affect you.
-                  </li>
-                  <li>
-                    <strong>Right to Withdraw Consent:</strong> Where processing is based on consent, you can 
-                    withdraw it at any time.
+                    <strong>Legal obligation (Art. 6(1)(c)):</strong> when we must comply with applicable laws.
                   </li>
                 </ul>
-              </section>
 
-              {/* Your Rights Under Australian Privacy Act */}
-              <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Your Rights Under Australian Privacy Act</h2>
-                <p className="text-muted-foreground mb-4">
-                  Under the Australian Privacy Act 1988 and the Australian Privacy Principles (APPs), you have the right to:
+                <p className="text-muted-foreground mt-4">
+                  Where sensitive (special category) data is processed (Art. 9), we aim to minimize it and apply
+                  additional safeguards. In many cases, sensitive information appears only because users voluntarily
+                  include it in their own content.
                 </p>
-                <ul className="list-disc pl-6 text-muted-foreground space-y-3">
-                  <li>
-                    <strong>Access Your Information:</strong> Request access to the personal information we hold about you.
-                  </li>
-                  <li>
-                    <strong>Correct Your Information:</strong> Request correction of any inaccurate, out-of-date, 
-                    incomplete, irrelevant, or misleading information.
-                  </li>
-                  <li>
-                    <strong>Anonymity/Pseudonymity:</strong> Where lawful and practical, you may choose not to 
-                    identify yourself or use a pseudonym.
-                  </li>
-                  <li>
-                    <strong>Complain:</strong> Lodge a complaint with us or the Office of the Australian Information 
-                    Commissioner (OAIC) if you believe your privacy has been breached.
-                  </li>
-                  <li>
-                    <strong>Opt-Out of Marketing:</strong> Unsubscribe from direct marketing communications at any time.
-                  </li>
-                </ul>
               </section>
 
-              {/* Data We Collect */}
+              {/* 6 */}
               <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Data We Collect</h2>
-                <p className="text-muted-foreground mb-4">
-                  We collect and process the following categories of personal data:
+                <h2 className="font-display text-2xl font-semibold mb-4">6. Cookies and Similar Technologies (EU Rules)</h2>
+                <p className="text-muted-foreground">
+                  EU cookie rules generally require consent for non-essential cookies (for example, analytics/marketing),
+                  while strictly necessary cookies can be used to provide the service (for example, session, security,
+                  load balancing).
+                </p>
+
+                <p className="text-muted-foreground mt-4">
+                  We aim to follow these principles:
                 </p>
                 <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-                  <li><strong>Identity Data:</strong> Name, username, date of birth</li>
-                  <li><strong>Contact Data:</strong> Email address</li>
-                  <li><strong>Profile Data:</strong> Bio, avatar, preferences, interests</li>
-                  <li><strong>Content Data:</strong> Posts, comments, messages you create</li>
-                  <li><strong>Technical Data:</strong> IP address, browser type, device information</li>
-                  <li><strong>Usage Data:</strong> Information about how you use our platform</li>
-                  <li><strong>Transaction Data:</strong> Details of purchases or sales on our marketplace</li>
+                  <li>
+                    <strong>Necessary cookies:</strong> enabled by default because the site cannot function safely without
+                    them.
+                  </li>
+                  <li>
+                    <strong>Preferences:</strong> optional and used to remember your choices (where implemented).
+                  </li>
+                  <li>
+                    <strong>Analytics:</strong> only enabled with consent where legally required (where implemented).
+                  </li>
+                  <li>
+                    <strong>Marketing:</strong> we avoid tracking-based advertising as a default approach; if ever used, it
+                    would require clear consent.
+                  </li>
+                </ul>
+
+                <p className="text-muted-foreground mt-4">
+                  See our{" "}
+                  <Link to="/cookies" className="text-primary hover:underline">
+                    Cookie Policy
+                  </Link>{" "}
+                  for details and controls.
+                </p>
+              </section>
+
+              {/* 7 */}
+              <section>
+                <h2 className="font-display text-2xl font-semibold mb-4">7. Your Rights Under GDPR</h2>
+                <p className="text-muted-foreground mb-4">
+                  If you are in the EU/EEA, you have rights over your personal data, including:
+                </p>
+                <ul className="list-disc pl-6 text-muted-foreground space-y-2">
+                  <li>
+                    <strong>Access:</strong> request a copy of your data.
+                  </li>
+                  <li>
+                    <strong>Rectification:</strong> correct inaccurate or incomplete data.
+                  </li>
+                  <li>
+                    <strong>Erasure:</strong> request deletion in certain circumstances.
+                  </li>
+                  <li>
+                    <strong>Restriction:</strong> limit processing in certain cases.
+                  </li>
+                  <li>
+                    <strong>Portability:</strong> receive data in a structured, machine-readable format (where applicable).
+                  </li>
+                  <li>
+                    <strong>Objection:</strong> object to processing based on legitimate interests and to direct marketing.
+                  </li>
+                  <li>
+                    <strong>Withdraw consent:</strong> where processing is based on consent (e.g., optional cookies).
+                  </li>
                 </ul>
               </section>
 
-              {/* International Data Transfers */}
+              {/* 8 */}
               <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">International Data Transfers</h2>
-                <p className="text-muted-foreground mb-4">
-                  As Pride Lab Foundation is based in Australia, your data may be transferred to and processed 
-                  in Australia. For EU/UK users, we ensure appropriate safeguards are in place for such transfers, including:
-                </p>
+                <h2 className="font-display text-2xl font-semibold mb-4">8. How to Exercise Your Rights</h2>
+                <p className="text-muted-foreground mb-4">To submit a GDPR request, you can:</p>
                 <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-                  <li>Standard Contractual Clauses (SCCs) approved by the European Commission</li>
-                  <li>Adequacy decisions where applicable</li>
-                  <li>Your explicit consent for specific transfers</li>
+                  <li>
+                    Email{" "}
+                    <a className="text-primary hover:underline" href={`mailto:${controller.email}`}>
+                      {controller.email}
+                    </a>{" "}
+                    with subject: <strong>“GDPR Request”</strong>
+                  </li>
+                  <li>
+                    Use our{" "}
+                    <Link to="/contact" className="text-primary hover:underline">
+                      Contact page
+                    </Link>
+                  </li>
+                  <li>Use account settings where available (for example, updating profile info).</li>
                 </ul>
                 <p className="text-muted-foreground mt-4">
-                  Australia is recognized by the European Commission as providing adequate protection for personal data.
+                  We may ask you to verify your identity to protect your data. We aim to respond within{" "}
+                  <strong>one month</strong> (GDPR standard), and sooner where possible.
                 </p>
               </section>
 
-              {/* Data Retention */}
+              {/* 9 */}
               <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Data Retention</h2>
+                <h2 className="font-display text-2xl font-semibold mb-4">9. International Data Transfers</h2>
                 <p className="text-muted-foreground">
-                  We retain your personal data only for as long as necessary to fulfill the purposes for which 
-                  it was collected, including to satisfy legal, accounting, or reporting requirements. When 
-                  determining retention periods, we consider the amount, nature, and sensitivity of the data, 
-                  potential risk from unauthorized use, and applicable legal requirements.
-                </p>
-              </section>
-
-              {/* Data Security */}
-              <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Data Security</h2>
-                <p className="text-muted-foreground">
-                  We implement appropriate technical and organizational measures to protect your personal data 
-                  against unauthorized access, alteration, disclosure, or destruction. This includes encryption, 
-                  access controls, regular security assessments, and staff training.
-                </p>
-              </section>
-
-              {/* Cookies */}
-              <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Cookies and Tracking</h2>
-                <p className="text-muted-foreground">
-                  We use cookies and similar technologies to enhance your experience. For detailed information 
-                  about the cookies we use and how to manage your preferences, please see our{" "}
-                  <Link to="/cookies" className="text-primary hover:underline">Cookie Policy</Link>.
-                </p>
-              </section>
-
-              {/* Exercising Your Rights */}
-              <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">How to Exercise Your Rights</h2>
-                <p className="text-muted-foreground mb-4">
-                  To exercise any of your data protection rights, you can:
+                  Pride Social Network is EU-first, but our infrastructure and service providers may involve processing
+                  outside the EU/EEA. When personal data is transferred internationally, we use appropriate safeguards,
+                  such as:
                 </p>
                 <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-                  <li>Email us at <a href="mailto:info@pridesocial.org" className="text-primary hover:underline">info@pridesocial.org</a></li>
-                  <li>Use the privacy settings in your account dashboard</li>
-                  <li>Contact us through our <Link to="/contact" className="text-primary hover:underline">Contact page</Link></li>
+                  <li>European Commission Standard Contractual Clauses (SCCs) where applicable</li>
+                  <li>Vendor due diligence and contractual security requirements</li>
+                  <li>Supplementary measures when needed (encryption, access controls, minimization)</li>
                 </ul>
                 <p className="text-muted-foreground mt-4">
-                  We will respond to your request within 30 days (or one month for GDPR requests). 
-                  We may need to verify your identity before processing your request.
+                  We aim to minimize cross-border transfers and store only what is necessary to operate the platform
+                  safely and reliably.
                 </p>
               </section>
 
-              {/* Complaints */}
+              {/* 10 */}
               <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Complaints</h2>
-                <p className="text-muted-foreground mb-4">
-                  If you are not satisfied with how we handle your data or your rights request, you have the 
-                  right to lodge a complaint with:
+                <h2 className="font-display text-2xl font-semibold mb-4">10. Data Retention</h2>
+                <p className="text-muted-foreground">
+                  We keep personal data only as long as needed for the purposes described above, including legal,
+                  security, and operational needs. Retention depends on data type:
                 </p>
-                <div className="space-y-4">
-                  <div className="p-4 rounded-lg border bg-card">
-                    <p className="font-medium">For EU/UK Users</p>
-                    <p className="text-muted-foreground text-sm">
-                      Your local Data Protection Authority (DPA). A list of EU DPAs can be found at{" "}
-                      <a 
-                        href="https://edpb.europa.eu/about-edpb/about-edpb/members_en" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        edpb.europa.eu
-                      </a>
-                    </p>
-                  </div>
-                  <div className="p-4 rounded-lg border bg-card">
-                    <p className="font-medium">For Australian Users</p>
-                    <p className="text-muted-foreground text-sm">
-                      Office of the Australian Information Commissioner (OAIC)<br />
-                      Website:{" "}
-                      <a 
-                        href="https://www.oaic.gov.au" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        www.oaic.gov.au
-                      </a>
-                    </p>
-                  </div>
+                <ul className="list-disc pl-6 text-muted-foreground space-y-2">
+                  <li>
+                    <strong>Account data:</strong> retained while your account is active; removed or anonymized after
+                    deletion where feasible.
+                  </li>
+                  <li>
+                    <strong>Content:</strong> retained until removed by you or moderated; some content may remain visible
+                    if shared publicly unless deleted.
+                  </li>
+                  <li>
+                    <strong>Security logs:</strong> retained for a limited period to detect and investigate abuse.
+                  </li>
+                  <li>
+                    <strong>Payments:</strong> transaction records may be retained as required for accounting/legal
+                    obligations.
+                  </li>
+                </ul>
+              </section>
+
+              {/* 11 */}
+              <section>
+                <h2 className="font-display text-2xl font-semibold mb-4">11. Security Measures</h2>
+                <p className="text-muted-foreground">
+                  We implement technical and organizational safeguards appropriate to the risk, including access controls,
+                  secure authentication flows, encryption in transit where available, incident monitoring, and continuous
+                  improvement of our security posture.
+                </p>
+                <p className="text-muted-foreground mt-4">
+                  No system is perfectly secure. If you believe your account is compromised, contact us immediately at{" "}
+                  <a className="text-primary hover:underline" href={`mailto:${controller.email}`}>
+                    {controller.email}
+                  </a>
+                  .
+                </p>
+              </section>
+
+              {/* 12 */}
+              <section>
+                <h2 className="font-display text-2xl font-semibold mb-4">12. Complaints</h2>
+                <p className="text-muted-foreground mb-4">
+                  If you’re not satisfied with our response, you have the right to lodge a complaint with your local EU
+                  Data Protection Authority (DPA).
+                </p>
+                <div className="p-5 rounded-2xl border bg-card shadow-card not-prose">
+                  <p className="font-medium">EU/EEA Supervisory Authorities</p>
+                  <p className="text-muted-foreground text-sm">
+                    You can find the list of DPAs through the{" "}
+                    <a
+                      href="https://edpb.europa.eu/about-edpb/about-edpb/members_en"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      European Data Protection Board (EDPB)
+                    </a>
+                    .
+                  </p>
                 </div>
               </section>
 
-              {/* Updates */}
+              {/* 13 */}
               <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Updates to This Policy</h2>
-                <p className="text-muted-foreground">
-                  We may update this policy from time to time. We will notify you of any significant changes 
-                  by posting a notice on our platform or sending you an email. We encourage you to review 
-                  this page periodically for the latest information on our data protection practices.
-                </p>
-              </section>
-
-              {/* Related Policies */}
-              <section>
-                <h2 className="font-display text-2xl font-semibold mb-4">Related Policies</h2>
+                <h2 className="font-display text-2xl font-semibold mb-4">13. Related Policies</h2>
                 <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-                  <li><Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link></li>
-                  <li><Link to="/cookies" className="text-primary hover:underline">Cookie Policy</Link></li>
-                  <li><Link to="/terms" className="text-primary hover:underline">Terms of Service</Link></li>
+                  <li>
+                    <Link to="/privacy" className="text-primary hover:underline">
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/cookies" className="text-primary hover:underline">
+                      Cookie Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/terms" className="text-primary hover:underline">
+                      Terms of Service
+                    </Link>
+                  </li>
                 </ul>
               </section>
 
+              {/* 14 */}
+              <section className="mb-2">
+                <h2 className="font-display text-2xl font-semibold mb-4">14. Contact</h2>
+                <p className="text-muted-foreground">
+                  Questions about GDPR or data protection? Email{" "}
+                  <a className="text-primary hover:underline" href={`mailto:${controller.email}`}>
+                    {controller.email}
+                  </a>
+                  .
+                </p>
+              </section>
             </div>
           </div>
         </article>
