@@ -86,7 +86,6 @@ const CommunityMap = ({ onAddBusiness, className = '', compact = false }: Commun
     : businesses;
 
   // ✅ EU-wide map embed (Europe viewport)
-  // Center: Central Europe | Zoom tuned for EU coverage.
   const mapEmbedUrl =
     'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d9400000!2d10.0!3d50.0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2seu!4v1234567890';
 
@@ -159,16 +158,11 @@ const CommunityMap = ({ onAddBusiness, className = '', compact = false }: Commun
             title="Community Map (European Union)"
           />
 
-          {/* Overlay with business count */}
+          {/* Overlay with listings count (✅ removed slogan here) */}
           <div className="absolute top-4 left-4 bg-background/95 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg">
             <p className="text-sm font-medium">
               <span className="text-primary">{filteredBusinesses.length}</span> listings on the map
             </p>
-            {!compact && (
-              <p className="text-xs text-muted-foreground mt-1">
-                Made in EU 🇪🇺 for the World 🗺️
-              </p>
-            )}
           </div>
 
           {/* Add Business Button */}
@@ -194,7 +188,7 @@ const CommunityMap = ({ onAddBusiness, className = '', compact = false }: Commun
               <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : filteredBusinesses.length === 0 ? (
-            <div className="col-span-full text-center py-12">
+            <div className="col-span-full text-center py-12 px-6">
               <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground mb-2">
                 No listings on the map yet. Be the first to add yours!
@@ -233,11 +227,7 @@ const CommunityMap = ({ onAddBusiness, className = '', compact = false }: Commun
                   <div className="flex flex-wrap gap-2">
                     {business.website && (
                       <a
-                        href={
-                          business.website.startsWith('http')
-                            ? business.website
-                            : `https://${business.website}`
-                        }
+                        href={business.website.startsWith('http') ? business.website : `https://${business.website}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -279,13 +269,15 @@ const CommunityMap = ({ onAddBusiness, className = '', compact = false }: Commun
 
       {/* Map view empty state (non-compact) */}
       {viewMode === 'map' && !loading && filteredBusinesses.length === 0 && !compact && (
-        <div className="mt-4 text-center">
-          <p className="text-sm text-muted-foreground">
-            No listings on the map yet. Be the first to add yours!
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Made in EU 🇪🇺 for the World 🗺️
-          </p>
+        <div className="mt-6 px-6">
+          <div className="rounded-xl border border-border bg-muted/30 px-6 py-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              No listings on the map yet. Be the first to add yours!
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Made in EU 🇪🇺 for the World 🗺️
+            </p>
+          </div>
         </div>
       )}
     </div>
