@@ -128,18 +128,33 @@ export type Database = {
           id: string
           post_id: string
           user_id: string
+          /**
+           * Optional message associated with an echo. When a user quotes a post, this
+           * field stores the comment text. It can be null for echoes without a comment.
+           */
+          message: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           post_id: string
           user_id: string
+          /**
+           * Optional message associated with an echo. When a user quotes a post, this
+           * field stores the comment text.
+           */
+          message?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           post_id?: string
           user_id?: string
+          /**
+           * Optional message associated with an echo. When a user quotes a post, this
+           * field stores the comment text.
+           */
+          message?: string | null
         }
         Relationships: [
           {
