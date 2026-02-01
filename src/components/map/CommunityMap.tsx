@@ -3,8 +3,13 @@ import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { GoogleMap, Marker, InfoWindow, useLoadScript } from '@react-google-maps/api';
+import { Loader2, Plus } from 'lucide-react';
+import {
+  GoogleMap,
+  Marker,
+  InfoWindow,
+  useLoadScript,
+} from '@react-google-maps/api';
 
 interface Business {
   id: string;
@@ -20,10 +25,17 @@ interface Business {
   instagram: string | null;
 }
 
-const mapContainerStyle = { width: '100%', height: '500px' };
-const defaultCenter = { lat: 48.3794, lng: 31.1656 }; // центр Европы
+const mapContainerStyle = {
+  width: '100%',
+  height: '520px',
+};
 
-export default function CommunityMap() {
+const defaultCenter = {
+  lat: 48.3794,
+  lng: 31.1656,
+};
+
+export default function CommunityMapPage() {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
@@ -33,16 +45,20 @@ export default function CommunityMap() {
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const [loading, setLoading] = useState(true);
 
+  // future: modal for adding business
+  const [isAddOpen, setIsAddOpen] = useState(false);
+
   useEffect(() => {
     const fetchBusinesses = async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('businesses')
         .select('*')
         .eq('is_approved', true);
 
-      if (!error && data) setBusinesses(data as Business[]);
+      if (data) setBusinesses(data as Business[]);
       setLoading(false);
     };
+
     fetchBusinesses();
   }, []);
 
@@ -56,29 +72,47 @@ export default function CommunityMap() {
 
   return (
     <div className="space-y-4">
-      {/* Переключатель вида */}
-      <div className="flex items-center gap-2">
-        <Button
-          variant={viewMode === 'map' ? 'pride' : 'outline'}
-          size="sm"
-          onClick={() => setViewMode('map')}
-        >
-          Map View
-        </Button>
-        <Button
-          variant={viewMode === 'list' ? 'pride' : 'outline'}
-          size="sm"
-          onClick={() => setViewMode('list')}
-        >
-          List View
-        </Button>
+      {/* Header controls */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant={viewMode === 'map' ? 'pride' : 'outline'}
+            onClick={() => setViewMode('map')}
+          >
+            Map view
+          </Button>
+          <Button
+            size="sm"
+            variant={viewMode === 'list' ? 'pride' : 'outline'}
+            onClick={() => setViewMode('list')}
+          >
+            List view
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">
+            Already listed: <strong>{businesses.length}</strong>
+          </span>
+
+          <Button
+            size="sm"
+            variant="pride"
+            className="gap-2"
+            onClick={() => setIsAddOpen(true)}
+          >
+            <Plus className="h-4 w-4" />
+            List your business
+          </Button>
+        </div>
       </div>
 
+      {/* MAP VIEW */}
       {viewMode === 'map' ? (
-        // Карта с маркерами
-        <div className="relative">
+        <div className="relative rounded-lg overflow-hidden border">
           {!isLoaded ? (
-            <p>Loading map…</p>
+            <div className="p-6 text-center">Loading map…</div>
           ) : (
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
@@ -90,7 +124,10 @@ export default function CommunityMap() {
                 .map((biz) => (
                   <Marker
                     key={biz.id}
-                    position={{ lat: biz.latitude!, lng: biz.longitude! }}
+                    position={{
+                      lat: biz.latitude!,
+                      lng: biz.longitude!,
+                    }}
                     onClick={() => setSelected(biz)}
                   />
                 ))}
@@ -103,18 +140,20 @@ export default function CommunityMap() {
                   }}
                   onCloseClick={() => setSelected(null)}
                 >
-                  <div className="max-w-xs">
-                    <h3 className="font-semibold">{selected.name}</h3>
+                  <div className="max-w-xs space-y-1">
+                    <h3 className="font-semibold text-sm">
+                      {selected.name}
+                    </h3>
                     {selected.description && (
-                      <p className="text-xs line-clamp-2">
+                      <p className="text-xs line-clamp-3">
                         {selected.description}
                       </p>
                     )}
                     <Link
                       to={`/business/${selected.id}`}
-                      className="text-sm text-primary hover:underline block mt-1"
+                      className="text-xs text-primary hover:underline block"
                     >
-                      View profile
+                      View business profile
                     </Link>
                   </div>
                 </InfoWindow>
@@ -123,17 +162,15 @@ export default function CommunityMap() {
           )}
         </div>
       ) : (
-        // Список бизнесов
+        /* LIST VIEW */
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {businesses.map((biz) => (
             <Card key={biz.id}>
               <CardHeader>
-                <CardTitle className="flex justify-between items-center">
-                  {biz.name}
-                </CardTitle>
+                <CardTitle>{biz.name}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <p className="text-sm line-clamp-2">
+                <p className="text-sm line-clamp-3">
                   {biz.description || 'No description'}
                 </p>
                 <p className="text-xs text-muted-foreground">
@@ -150,6 +187,11 @@ export default function CommunityMap() {
           ))}
         </div>
       )}
+
+      {/* NOTE:
+         isAddOpen -> сюда подключается модалка добавления бизнеса
+         (логика у тебя уже есть и работает)
+      */}
     </div>
   );
 }
