@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { ExternalLink, Mail, Instagram, MapPin, List } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
+import { GoogleMap, Marker, InfoWindow, useLoadScript } from '@react-google-maps/api';
 
 interface Business {
   id: string;
@@ -11,277 +12,144 @@ interface Business {
   category: string;
   description: string | null;
   city: string;
-
-  // NOTE: DB column is still called "state" — we now store EU Country/Region here (no migration).
   state: string;
-
   latitude: number | null;
   longitude: number | null;
-  contact_email: string | null;
   website: string | null;
+  contact_email: string | null;
   instagram: string | null;
 }
 
-interface CommunityMapProps {
-  onAddBusiness?: () => void;
-  className?: string;
-  compact?: boolean;
-}
+const mapContainerStyle = { width: '100%', height: '500px' };
+const defaultCenter = { lat: 48.3794, lng: 31.1656 }; // центр Европы
 
-const getCategoryColor = (category: string) => {
-  const colors: Record<string, string> = {
-    'Café & Restaurant': 'bg-pride-orange',
-    'Artist & Creative': 'bg-pride-pink',
-    'Health & Wellness': 'bg-pride-green',
-    'NGO & Community': 'bg-pride-blue',
-    'Tech & Freelancer': 'bg-pride-purple',
-    'Retail & Shopping': 'bg-pride-yellow',
-    'Entertainment': 'bg-pride-red',
-    'Professional Services': 'bg-muted',
-    'Other': 'bg-muted',
-  };
-  return colors[category] || 'bg-muted';
-};
+export default function CommunityMap() {
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+  });
 
-const CommunityMap = ({ onAddBusiness, className = '', compact = false }: CommunityMapProps) => {
   const [businesses, setBusinesses] = useState<Business[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Business | null>(null);
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
-
-  const categories = [
-    'Café & Restaurant',
-    'Artist & Creative',
-    'Health & Wellness',
-    'NGO & Community',
-    'Tech & Freelancer',
-    'Retail & Shopping',
-    'Entertainment',
-    'Professional Services',
-    'Other',
-  ];
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchBusinesses();
-  }, []);
-
-  const fetchBusinesses = async () => {
-    try {
+    const fetchBusinesses = async () => {
       const { data, error } = await supabase
         .from('businesses')
         .select('*')
         .eq('is_approved', true);
 
-      if (error) throw error;
-      setBusinesses((data as Business[]) || []);
-    } catch (error) {
-      console.error('Error fetching businesses:', error);
-    } finally {
+      if (!error && data) setBusinesses(data as Business[]);
       setLoading(false);
-    }
-  };
+    };
+    fetchBusinesses();
+  }, []);
 
-  const filteredBusinesses = selectedCategory
-    ? businesses.filter((b) => b.category === selectedCategory)
-    : businesses;
-
-  // ✅ EU-wide map embed (Europe viewport)
-  const mapEmbedUrl =
-    'https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d9400000!2d10.0!3d50.0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2seu!4v1234567890';
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+      </div>
+    );
+  }
 
   return (
-    <div className={`relative ${className}`}>
-      {/* Header with filters */}
-      {!compact && (
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          <div className="flex flex-wrap gap-2 flex-1">
-            <Button
-              variant={selectedCategory === null ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSelectedCategory(null)}
-            >
-              All ({businesses.length})
-            </Button>
-
-            {categories.map((cat) => {
-              const count = businesses.filter((b) => b.category === cat).length;
-              if (count === 0) return null;
-
-              return (
-                <Button
-                  key={cat}
-                  variant={selectedCategory === cat ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setSelectedCategory(cat)}
-                >
-                  {cat} ({count})
-                </Button>
-              );
-            })}
-          </div>
-
-          <div className="flex gap-1">
-            <Button
-              variant={viewMode === 'map' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setViewMode('map')}
-              aria-label="Map view"
-            >
-              <MapPin className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={viewMode === 'list' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setViewMode('list')}
-              aria-label="List view"
-            >
-              <List className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Map View */}
-      {viewMode === 'map' && (
-        <div
-          className={`relative rounded-lg overflow-hidden border border-border ${
-            compact ? 'h-[300px]' : 'h-[500px] lg:h-[600px]'
-          }`}
+    <div className="space-y-4">
+      {/* Переключатель вида */}
+      <div className="flex items-center gap-2">
+        <Button
+          variant={viewMode === 'map' ? 'pride' : 'outline'}
+          size="sm"
+          onClick={() => setViewMode('map')}
         >
-          <iframe
-            src={mapEmbedUrl}
-            className="w-full h-full"
-            style={{ border: 0 }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="Community Map (European Union)"
-          />
+          Map View
+        </Button>
+        <Button
+          variant={viewMode === 'list' ? 'pride' : 'outline'}
+          size="sm"
+          onClick={() => setViewMode('list')}
+        >
+          List View
+        </Button>
+      </div>
 
-          {/* Overlay with listings count (✅ removed slogan here) */}
-          <div className="absolute top-4 left-4 bg-background/95 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg">
-            <p className="text-sm font-medium">
-              <span className="text-primary">{filteredBusinesses.length}</span> listings on the map
-            </p>
-          </div>
-
-          {/* Add Business Button */}
-          {onAddBusiness && (
-            <Button
-              variant="pride"
-              size={compact ? 'sm' : 'default'}
-              onClick={onAddBusiness}
-              className={`absolute ${compact ? 'top-2 right-2' : 'bottom-6 right-6'} shadow-lg`}
-            >
-              <MapPin className="h-4 w-4 mr-2" />
-              List Your Business
-            </Button>
-          )}
-        </div>
-      )}
-
-      {/* List View */}
-      {viewMode === 'list' && (
-        <div className={`grid gap-4 ${compact ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-3'}`}>
-          {loading ? (
-            <div className="col-span-full flex items-center justify-center py-12">
-              <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-            </div>
-          ) : filteredBusinesses.length === 0 ? (
-            <div className="col-span-full text-center py-12 px-6">
-              <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground mb-2">
-                No listings on the map yet. Be the first to add yours!
-              </p>
-              <p className="text-xs text-muted-foreground mb-4">
-                Made in EU 🇪🇺 for the World 🗺️
-              </p>
-              {onAddBusiness && (
-                <Button variant="pride" onClick={onAddBusiness}>
-                  List Your Business
-                </Button>
-              )}
-            </div>
+      {viewMode === 'map' ? (
+        // Карта с маркерами
+        <div className="relative">
+          {!isLoaded ? (
+            <p>Loading map…</p>
           ) : (
-            filteredBusinesses.map((business) => (
-              <Card key={business.id} className="overflow-hidden">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="font-bold text-lg">{business.name}</h3>
-                    <Badge className={`${getCategoryColor(business.category)} text-white shrink-0`}>
-                      {business.category}
-                    </Badge>
-                  </div>
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={defaultCenter}
+              zoom={4}
+            >
+              {businesses
+                .filter((b) => b.latitude && b.longitude)
+                .map((biz) => (
+                  <Marker
+                    key={biz.id}
+                    position={{ lat: biz.latitude!, lng: biz.longitude! }}
+                    onClick={() => setSelected(biz)}
+                  />
+                ))}
 
-                  {business.description && (
-                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                      {business.description}
-                    </p>
-                  )}
-
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground mb-3">
-                    <MapPin className="h-4 w-4" />
-                    {business.city}, {business.state}
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {business.website && (
-                      <a
-                        href={business.website.startsWith('http') ? business.website : `https://${business.website}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="outline" size="sm" className="gap-1">
-                          <ExternalLink className="h-3 w-3" />
-                          Website
-                        </Button>
-                      </a>
+              {selected && (
+                <InfoWindow
+                  position={{
+                    lat: selected.latitude!,
+                    lng: selected.longitude!,
+                  }}
+                  onCloseClick={() => setSelected(null)}
+                >
+                  <div className="max-w-xs">
+                    <h3 className="font-semibold">{selected.name}</h3>
+                    {selected.description && (
+                      <p className="text-xs line-clamp-2">
+                        {selected.description}
+                      </p>
                     )}
-
-                    {business.contact_email && (
-                      <a href={`mailto:${business.contact_email}`}>
-                        <Button variant="outline" size="sm" className="gap-1">
-                          <Mail className="h-3 w-3" />
-                          Email
-                        </Button>
-                      </a>
-                    )}
-
-                    {business.instagram && (
-                      <a
-                        href={`https://instagram.com/${business.instagram.replace('@', '')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="outline" size="sm" className="gap-1">
-                          <Instagram className="h-3 w-3" />
-                          Instagram
-                        </Button>
-                      </a>
-                    )}
+                    <Link
+                      to={`/business/${selected.id}`}
+                      className="text-sm text-primary hover:underline block mt-1"
+                    >
+                      View profile
+                    </Link>
                   </div>
-                </CardContent>
-              </Card>
-            ))
+                </InfoWindow>
+              )}
+            </GoogleMap>
           )}
         </div>
-      )}
-
-      {/* Map view empty state (non-compact) */}
-      {viewMode === 'map' && !loading && filteredBusinesses.length === 0 && !compact && (
-        <div className="mt-6 px-6">
-          <div className="rounded-xl border border-border bg-muted/30 px-6 py-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              No listings on the map yet. Be the first to add yours!
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Made in EU 🇪🇺 for the World 🗺️
-            </p>
-          </div>
+      ) : (
+        // Список бизнесов
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {businesses.map((biz) => (
+            <Card key={biz.id}>
+              <CardHeader>
+                <CardTitle className="flex justify-between items-center">
+                  {biz.name}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <p className="text-sm line-clamp-2">
+                  {biz.description || 'No description'}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {biz.city}, {biz.state}
+                </p>
+                <Link
+                  to={`/business/${biz.id}`}
+                  className="text-sm text-primary hover:underline"
+                >
+                  View profile
+                </Link>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       )}
     </div>
   );
-};
-
-export default CommunityMap;
+}

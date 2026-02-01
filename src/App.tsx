@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -44,6 +45,9 @@ import NewsArticlePage from "./pages/NewsArticle";
 // ✅ NEW: User profile page (/users/:username)
 import UserProfilePage from "./pages/UserProfilePage";
 
+// ✅ NEW: Business profile page (/business/:id)
+import BusinessProfilePage from "./pages/BusinessProfilePage";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -76,7 +80,10 @@ const App = () => {
                   <Route path="/goals" element={<GoalsPage />} />
                   <Route path="/values" element={<ValuesPage />} />
                   <Route path="/support" element={<SupportPage />} />
-                  <Route path="/early-supporters" element={<EarlySupportersPage />} />
+                  <Route
+                    path="/early-supporters"
+                    element={<EarlySupportersPage />}
+                  />
                   <Route path="/community-map" element={<CommunityMapPage />} />
 
                   {/* News */}
@@ -86,29 +93,41 @@ const App = () => {
                   {/* Events */}
                   <Route path="/events" element={<EventsPage />} />
 
-                    {/* Foundation */}
-                    <Route path="/roadmap" element={<RoadmapPage />} />
-                    <Route path="/transparency-and-costs" element={<TransparencyCostsPage />} />
-                    <Route path="/contact" element={<ContactPage />} />
+                  {/* Foundation */}
+                  <Route path="/roadmap" element={<RoadmapPage />} />
+                  <Route
+                    path="/transparency-and-costs"
+                    element={<TransparencyCostsPage />}
+                  />
+                  <Route path="/contact" element={<ContactPage />} />
 
-                    {/* Legal */}
-                    <Route path="/privacy" element={<PrivacyPage />} />
-                    <Route path="/terms" element={<TermsPage />} />
-                    <Route path="/cookies" element={<CookiesPage />} />
-                    <Route path="/guidelines" element={<GuidelinesPage />} />
-                    <Route path="/gdpr" element={<GDPRPage />} />
-                    <Route path="/constitution" element={<ConstitutionPage />} />
+                  {/* Legal */}
+                  <Route path="/privacy" element={<PrivacyPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/cookies" element={<CookiesPage />} />
+                  <Route path="/guidelines" element={<GuidelinesPage />} />
+                  <Route path="/gdpr" element={<GDPRPage />} />
+                  <Route path="/constitution" element={<ConstitutionPage />} />
 
-                    {/* App */}
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                    <Route path="/dashboard/settings" element={<SettingsPage />} />
-                    <Route path="/admin" element={<AdminDashboardPage />} />
+                  {/* App */}
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route
+                    path="/dashboard/settings"
+                    element={<SettingsPage />}
+                  />
+                  <Route path="/admin" element={<AdminDashboardPage />} />
 
-                    {/* NEW: Profile route */}
-                    <Route path="/users/:username" element={<UserProfilePage />} />
+                  {/* NEW: Profile route */}
+                  <Route path="/users/:username" element={<UserProfilePage />} />
 
-                    {/* Catch-all */}
-                    <Route path="*" element={<NotFound />} />
+                  {/* NEW: Business profile route */}
+                  <Route
+                    path="/business/:id"
+                    element={<BusinessProfilePage />}
+                  />
+
+                  {/* Catch-all */}
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
             </TooltipProvider>
