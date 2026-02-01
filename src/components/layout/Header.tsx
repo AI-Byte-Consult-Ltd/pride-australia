@@ -14,20 +14,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-// ✅ Must match JurisdictionContext union type
 type JurisdictionCode = 'eu' | 'world' | 'australia';
 
-type JurisdictionOption = {
-  code: JurisdictionCode;
-  label: string;
-  emoji: string;
-};
-
-const JURISDICTIONS: JurisdictionOption[] = [
+const JURISDICTIONS = [
   { code: 'eu', label: 'European Union', emoji: '🇪🇺' },
   { code: 'world', label: 'World', emoji: '🌍' },
   { code: 'australia', label: 'Australia', emoji: '🇦🇺' },
-];
+] as const;
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,9 +29,6 @@ const Header = () => {
   const { user, signOut, loading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-
-  const currentJurisdiction =
-    JURISDICTIONS.find((j) => j.code === (jurisdiction as JurisdictionCode)) ?? JURISDICTIONS[0];
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -51,27 +41,31 @@ const Header = () => {
 
   const handleSignOut = async () => {
     await signOut();
+    setMobileMenuOpen(false);
     navigate('/');
   };
 
+  const currentJurisdiction =
+    JURISDICTIONS.find((j) => j.code === jurisdiction) ?? JURISDICTIONS[0];
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl gradient-pride shadow-soft group-hover:shadow-glow transition-shadow">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl gradient-pride">
             <Heart className="h-5 w-5 text-primary-foreground" fill="currentColor" />
           </div>
           <span className="font-display text-xl font-bold">Pride Social</span>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => (
             <Link
               key={item.name}
               to={item.href}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium ${
                 isActive(item.href)
                   ? 'bg-primary/10 text-primary'
                   : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -82,62 +76,50 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* Right side */}
+        {/* Right */}
         <div className="flex items-center gap-3">
-          {/* ✅ Jurisdiction Selector */}
+          {/* Jurisdiction */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 px-3 text-muted-foreground hover:text-foreground"
-                aria-label="Select region"
-              >
-                <span className="text-lg">{currentJurisdiction.emoji}</span>
-                <span className="hidden sm:inline">{currentJurisdiction.label}</span>
+              <Button variant="ghost" size="sm" className="gap-2">
+                <span>{currentJurisdiction.emoji}</span>
                 <ChevronDown className="h-4 w-4 opacity-70" />
               </Button>
             </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end" className="w-52">
-              {JURISDICTIONS.map((option) => (
+            <DropdownMenuContent align="end">
+              {JURISDICTIONS.map((j) => (
                 <DropdownMenuItem
-                  key={option.code}
-                  onClick={() => setJurisdiction(option.code)}
-                  className="cursor-pointer gap-2"
+                  key={j.code}
+                  onClick={() => setJurisdiction(j.code)}
                 >
-                  <span className="text-lg">{option.emoji}</span>
-                  <span>{option.label}</span>
+                  {j.emoji} {j.label}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Auth */}
+          {/* Desktop auth */}
           {!loading && (
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
               {user ? (
                 <>
                   <NotificationBell />
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="gap-2">
-                        <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
-                          <User className="h-4 w-4 text-primary" />
-                        </div>
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      <Button variant="ghost" size="sm">
+                        <User className="h-4 w-4" />
+                        <ChevronDown className="h-4 w-4 ml-1" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
-                        <Link to="/dashboard">
-                          <User className="mr-2 h-4 w-4" />
-                          Dashboard
-                        </Link>
+                        <Link to="/dashboard">Dashboard</Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">
-                        <LogOut className="mr-2 h-4 w-4" />
+                      <DropdownMenuItem
+                        onClick={handleSignOut}
+                        className="text-destructive"
+                      >
                         Log out
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -148,7 +130,7 @@ const Header = () => {
                   <Button variant="ghost" size="sm" asChild>
                     <Link to="/login">Log in</Link>
                   </Button>
-                  <Button variant="default" size="sm" asChild>
+                  <Button size="sm" asChild>
                     <Link to="/signup">Sign up</Link>
                   </Button>
                 </>
@@ -156,18 +138,65 @@ const Header = () => {
             </div>
           )}
 
-          {/* Mobile */}
+          {/* Mobile burger */}
           <Button
             variant="ghost"
             size="icon"
             className="md:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
+            onClick={() => setMobileMenuOpen((v) => !v)}
           >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileMenuOpen ? <X /> : <Menu />}
           </Button>
         </div>
       </div>
+
+      {/* ✅ MOBILE MENU */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-border bg-background">
+          <div className="container py-4 space-y-3">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-sm font-medium"
+              >
+                {item.name}
+              </Link>
+            ))}
+
+            <div className="pt-3 border-t">
+              {user ? (
+                <>
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block text-sm mb-2"
+                  >
+                    Dashboard
+                  </Link>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleSignOut}
+                  >
+                    Log out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button size="sm" className="w-full mb-2" asChild>
+                    <Link to="/login">Log in</Link>
+                  </Button>
+                  <Button variant="outline" size="sm" className="w-full" asChild>
+                    <Link to="/signup">Sign up</Link>
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
