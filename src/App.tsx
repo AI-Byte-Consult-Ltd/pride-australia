@@ -41,6 +41,9 @@ import ConstitutionPage from "./pages/ConstitutionPage";
 // ✅ NEW: News article page (/news/:id)
 import NewsArticlePage from "./pages/NewsArticle";
 
+// ✅ NEW: User profile page (/users/:username)
+import UserProfilePage from "./pages/UserProfilePage";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -83,26 +86,29 @@ const App = () => {
                   {/* Events */}
                   <Route path="/events" element={<EventsPage />} />
 
-                  {/* Foundation */}
-                  <Route path="/roadmap" element={<RoadmapPage />} />
-                  <Route path="/transparency-and-costs" element={<TransparencyCostsPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
+                    {/* Foundation */}
+                    <Route path="/roadmap" element={<RoadmapPage />} />
+                    <Route path="/transparency-and-costs" element={<TransparencyCostsPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
 
-                  {/* Legal */}
-                  <Route path="/privacy" element={<PrivacyPage />} />
-                  <Route path="/terms" element={<TermsPage />} />
-                  <Route path="/cookies" element={<CookiesPage />} />
-                  <Route path="/guidelines" element={<GuidelinesPage />} />
-                  <Route path="/gdpr" element={<GDPRPage />} />
-                  <Route path="/constitution" element={<ConstitutionPage />} />
+                    {/* Legal */}
+                    <Route path="/privacy" element={<PrivacyPage />} />
+                    <Route path="/terms" element={<TermsPage />} />
+                    <Route path="/cookies" element={<CookiesPage />} />
+                    <Route path="/guidelines" element={<GuidelinesPage />} />
+                    <Route path="/gdpr" element={<GDPRPage />} />
+                    <Route path="/constitution" element={<ConstitutionPage />} />
 
-                  {/* App */}
-                  <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/dashboard/settings" element={<SettingsPage />} />
-                  <Route path="/admin" element={<AdminDashboardPage />} />
+                    {/* App */}
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/dashboard/settings" element={<SettingsPage />} />
+                    <Route path="/admin" element={<AdminDashboardPage />} />
 
-                  {/* Catch-all */}
-                  <Route path="*" element={<NotFound />} />
+                    {/* NEW: Profile route */}
+                    <Route path="/users/:username" element={<UserProfilePage />} />
+
+                    {/* Catch-all */}
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
             </TooltipProvider>

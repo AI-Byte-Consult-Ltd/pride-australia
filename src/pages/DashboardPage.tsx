@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
@@ -702,7 +703,17 @@ const DashboardPage = () => {
                             {post.is_echo && post.echoed_by_name && (
                               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3 -mt-1">
                                 <Repeat2 className="h-4 w-4" />
-                                <span>{post.echoed_by_name} echoed</span>
+                                {/* Link echo author name */}
+                                {post.echoed_by_username ? (
+                                  <>
+                                    <Link to={`/users/${post.echoed_by_username}`} className="hover:underline">
+                                      {post.echoed_by_name}
+                                    </Link>
+                                    <span> echoed</span>
+                                  </>
+                                ) : (
+                                  <span>{post.echoed_by_name} echoed</span>
+                                )}
                               </div>
                             )}
 
@@ -713,8 +724,20 @@ const DashboardPage = () => {
 
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-semibold">{post.author_name}</span>
-                                  {post.author_username && <RainbowUsername username={post.author_username} />}
+                                  {/* Link display name */}
+                                  {post.author_username ? (
+                                    <Link to={`/users/${post.author_username}`} className="font-semibold hover:underline">
+                                      {post.author_name}
+                                    </Link>
+                                  ) : (
+                                    <span className="font-semibold">{post.author_name}</span>
+                                  )}
+                                  {/* Link username */}
+                                  {post.author_username && (
+                                    <Link to={`/users/${post.author_username}`}>
+                                      <RainbowUsername username={post.author_username} />
+                                    </Link>
+                                  )}
                                   <span className="text-muted-foreground text-sm">· {formatTimeAgo(post.created_at)}</span>
                                 </div>
 
@@ -734,7 +757,7 @@ const DashboardPage = () => {
 
                                   <button
                                     onClick={() => openReplyThread({ ...post, id: post.original_post_id || post.id })}
-                                    className="flex items-center gap-2 text-muted-foreground hover:text-pride-blue transition-colors"
+                                    className="flex items=center gap-2 text-muted-foreground hover:text-pride-blue transition-colors"
                                   >
                                     <MessageCircle className="h-4 w-4" />
                                     <span className="text-sm">{post.reply_count}</span>
@@ -830,12 +853,24 @@ const DashboardPage = () => {
               </CardHeader>
 
               {/* Make content scrollable */}
-              <CardContent className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+              <CardContent className="flex-1 overflow-y-auto p-4 sm=p-6 space-y-4">
                 {/* Original Post */}
                 <div className="p-4 rounded-lg bg-muted/50 border">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="font-semibold text-sm">{replyingToPost.author_name}</span>
-                    {replyingToPost.author_username && <RainbowUsername username={replyingToPost.author_username} />}
+                    {/* Link original author name */}
+                    {replyingToPost.author_username ? (
+                      <Link to={`/users/${replyingToPost.author_username}`} className="font-semibold text-sm hover:underline">
+                        {replyingToPost.author_name}
+                      </Link>
+                    ) : (
+                      <span className="font-semibold text-sm">{replyingToPost.author_name}</span>
+                    )}
+                    {/* Link original author username */}
+                    {replyingToPost.author_username && (
+                      <Link to={`/users/${replyingToPost.author_username}`}>
+                        <RainbowUsername username={replyingToPost.author_username} />
+                      </Link>
+                    )}
                   </div>
                   <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                     {renderContentWithMentionsAndLinks(replyingToPost.content)}
@@ -858,8 +893,20 @@ const DashboardPage = () => {
                         </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold text-sm">{reply.author_name}</span>
-                            {reply.author_username && <RainbowUsername username={reply.author_username} />}
+                            {/* Link reply author name */}
+                            {reply.author_username ? (
+                              <Link to={`/users/${reply.author_username}`} className="font-semibold text-sm hover:underline">
+                                {reply.author_name}
+                              </Link>
+                            ) : (
+                              <span className="font-semibold text-sm">{reply.author_name}</span>
+                            )}
+                            {/* Link reply author username */}
+                            {reply.author_username && (
+                              <Link to={`/users/${reply.author_username}`}>
+                                <RainbowUsername username={reply.author_username} />
+                              </Link>
+                            )}
                             <span className="text-xs text-muted-foreground">· {formatTimeAgo(reply.created_at)}</span>
                           </div>
                           <p className="text-sm whitespace-pre-wrap">{renderContentWithMentionsAndLinks(reply.content)}</p>
