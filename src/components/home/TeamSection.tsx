@@ -22,7 +22,7 @@ const teamMembers = [
     role: 'Main AI Brain',
     linkedIn: '#',
     website: 'https://nics.space',
-    photo: 'https://ipfs.io/ipfs/bafkreignzgyque7xpncvgff44ym6d3xyx5ub4rj65hgo4yihhdyhwfqioe',
+    photo: 'https://ipfs.io/ipfs/bafkreicgjgrt7pojp3tkorg22c7i3vit2kim7qodgdzz3z2i3rs6k5umjy',
     description: 'Advanced AI engine powering smart features and analytics for the community.',
   },
   {
@@ -30,7 +30,7 @@ const teamMembers = [
     role: 'Main Company',
     linkedIn: '#',
     website: 'https://aibyteconsult.com',
-    photo: 'https://ipfs.io/ipfs/bafybeibtryfugwl2ux3ka63ihhkvwcgshxqox67jmfk3k2p52s4nuagir4',
+    photo: 'https://ipfs.io/ipfs/bafkreichb6aabg76ecutmcvytthrqx62lhrtlc7k5kocjkhf6hjcot2g7m',
     description: 'Providing technological expertise and support for PRIDE Social Network projects.',
   },
 ];
