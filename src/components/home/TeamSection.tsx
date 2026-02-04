@@ -15,7 +15,7 @@ const teamMembers = [
     role: 'Co-founder & Product Director',
     linkedIn: 'https://linkedin.com/in/alekstoch',
     photo: 'https://ipfs.io/ipfs/bafkreigz6iqq74v54bta5hjnipdpjn4j2z6tzlkre4gk2uil3xbjtslz6q',
-    description: 'Leading product strategy and innovation, ensuring the platform meets user needs.',
+    description: '"Co-founder of AI Byte Consult | SaaS & MTS Engineer, Digital Project Manager, Graphic designer and more… | Charged with 60+ countries.',
   },
   {
     name: 'NICS AI',
