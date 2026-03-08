@@ -911,6 +911,10 @@ const DashboardPage = () => {
                   activeTag={hashtagFilter}
                   onTagClick={setHashtagFilter}
                 />
+                <ReferralPanel
+                  userId={user.id}
+                  referralCode={userProfile?.referral_code || null}
+                />
               </aside>
             </div>
           </div>
