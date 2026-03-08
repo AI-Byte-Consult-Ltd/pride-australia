@@ -25,6 +25,8 @@ const SignupPage = () => {
   const [birthYear, setBirthYear] = useState('');
   
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const referralCode = searchParams.get('ref');
   const { toast } = useToast();
   const { signUp, user } = useAuth();
 
