@@ -775,7 +775,7 @@ const DashboardPage = () => {
                                   </div>
                                 ) : (
                                   <p className="text-foreground mb-4 whitespace-pre-wrap">
-                                    {renderContentWithMentionsAndLinks(post.content)}
+                                    {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
                                   </p>
                                 )}
                                 <div className="flex items-center gap-6">
