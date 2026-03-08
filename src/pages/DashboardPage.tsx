@@ -763,7 +763,7 @@ const DashboardPage = () => {
                                 {/* Show quoted message if present */}
                                 {post.is_echo && post.echo_message && (
                                   <p className="text-foreground mb-2 whitespace-pre-wrap">
-                                    {renderContentWithMentionsAndLinks(post.echo_message)}
+                                    {renderContentWithMentionsAndLinks(post.echo_message, setHashtagFilter)}
                                   </p>
                                 )}
                                 {/* Wrap original post when a quote exists */}
