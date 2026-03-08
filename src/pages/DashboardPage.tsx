@@ -233,6 +233,7 @@ const DashboardPage = () => {
         echo_count: echoCountMap.get(post.id) || 0,
         user_has_echoed: userEchoedSet.has(post.id),
         sticker: (post as any).sticker || null,
+        image_url: (post as any).image_url || null,
         is_echo: item.type === 'echo',
         echoed_by_name: item.echoedBy?.name,
         echoed_by_username: item.echoedBy?.username,
