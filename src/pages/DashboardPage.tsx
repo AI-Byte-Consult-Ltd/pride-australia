@@ -354,11 +354,12 @@ const DashboardPage = () => {
       'postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `user_id=eq.${user.id}` },
       (payload) => {
-        const updated = payload.new as { pride_coins: number; display_name: string | null; username: string | null };
+        const updated = payload.new as { pride_coins: number; display_name: string | null; username: string | null; referral_code: string | null };
         setUserProfile({
           pride_coins: updated.pride_coins,
           display_name: updated.display_name,
           username: updated.username,
+          referral_code: updated.referral_code,
         });
       }
     );
