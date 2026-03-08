@@ -800,6 +800,11 @@ const DashboardPage = () => {
                                     {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
                                   </p>
                                 )}
+                                {post.sticker && (
+                                  <div className="mb-4">
+                                    <span className="text-5xl">{post.sticker}</span>
+                                  </div>
+                                )}
                                 <div className="flex items-center gap-6">
                                   <button
                                       onClick={() =>
