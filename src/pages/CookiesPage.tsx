@@ -80,7 +80,7 @@ const CookiesPage = () => {
                   </p>
                 </section>
 
-                {jurisdiction === 'AU' && (
+                {jurisdiction === 'australia' && (
                   <section className="mb-12">
                     <h2 className="font-display text-2xl font-semibold mb-4">Australian Privacy Principles</h2>
                     <p className="text-muted-foreground mb-4">
@@ -91,7 +91,7 @@ const CookiesPage = () => {
                   </section>
                 )}
 
-                {jurisdiction === 'US' && (
+                {jurisdiction === 'world' && (
                   <section className="mb-12">
                     <h2 className="font-display text-2xl font-semibold mb-4">California Privacy Rights</h2>
                     <p className="text-muted-foreground mb-4">
