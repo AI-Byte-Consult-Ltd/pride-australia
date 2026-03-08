@@ -30,6 +30,10 @@ const LANGUAGES = [
   { code: 'fr', label: 'Français', flag: '🇫🇷' },
   { code: 'it', label: 'Italiano', flag: '🇮🇹' },
   { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+  { code: 'ar', label: 'العربية', flag: '🇸🇦' },
+  { code: 'id', label: 'Bahasa Indonesia', flag: '🇮🇩' },
+  { code: 'pt', label: 'Português', flag: '🇧🇷' },
+  { code: 'es', label: 'Español', flag: '🇪🇸' },
 ] as const;
 
 const Header = () => {
