@@ -758,6 +758,9 @@ const DashboardPage = () => {
                             )}
                             <div className="flex gap-4">
                               <Avatar className="h-10 w-10">
+                                {post.author_avatar ? (
+                                  <AvatarImage src={post.author_avatar} alt={post.author_name} />
+                                ) : null}
                                 <AvatarFallback className="bg-primary/10 text-primary">
                                   {post.author_name[0].toUpperCase()}
                                 </AvatarFallback>
