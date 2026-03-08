@@ -166,9 +166,9 @@ const DashboardPage = () => {
       .eq('user_id', user.id)
       .in('post_id', postIds);
 
-    const profileMap = new Map<string, { display_name: string; username: string | null }>();
+    const profileMap = new Map<string, { display_name: string; username: string | null; avatar_url: string | null }>();
     profilesData?.forEach((p) =>
-      profileMap.set(p.user_id, { display_name: p.display_name || 'Anonymous', username: p.username })
+      profileMap.set(p.user_id, { display_name: p.display_name || 'Anonymous', username: p.username, avatar_url: p.avatar_url })
     );
 
     const likeCountMap = new Map<string, number>();
