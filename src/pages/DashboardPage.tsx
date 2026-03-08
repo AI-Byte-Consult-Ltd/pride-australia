@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/MentionInput';
 import { TrendingPanel } from '@/components/TrendingPanel';
 import { StickerPicker } from '@/components/StickerPicker';
+import { ReferralPanel } from '@/components/ReferralPanel';
 import {
   Home,
   MapPin,
