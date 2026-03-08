@@ -270,6 +270,7 @@ const DashboardPage = () => {
         echo_count: 0,
         user_has_echoed: false,
         sticker: (newPostData as any).sticker || null,
+        image_url: (newPostData as any).image_url || null,
       };
       setPosts((prev) => [newPost, ...prev]);
     });
