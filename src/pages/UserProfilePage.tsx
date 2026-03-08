@@ -186,6 +186,7 @@ const UserProfilePage = () => {
       reply_count: replyCountMap.get(post.id) || 0,
       echo_count: echoCountMap.get(post.id) || 0,
       user_has_echoed: userEchoedSet.has(post.id),
+      image_url: (post as any).image_url || null,
     }));
 
     setPosts(postsWithProfiles);
