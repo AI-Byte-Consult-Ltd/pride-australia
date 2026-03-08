@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/MentionInput';
 import { TrendingPanel } from '@/components/TrendingPanel';
 import { StickerPicker } from '@/components/StickerPicker';
+import { ReferralPanel } from '@/components/ReferralPanel';
 import {
   Home,
   MapPin,
@@ -64,6 +65,7 @@ interface Profile {
   pride_coins: number;
   display_name: string | null;
   username: string | null;
+  referral_code: string | null;
 }
 
 const MAX_POST_LENGTH = 5000;
@@ -342,7 +344,7 @@ const DashboardPage = () => {
     const fetchProfile = async () => {
       const { data } = await supabase
         .from('profiles')
-        .select('pride_coins, display_name, username')
+        .select('pride_coins, display_name, username, referral_code')
         .eq('user_id', user.id)
         .maybeSingle();
       if (data) setUserProfile(data);
@@ -353,11 +355,12 @@ const DashboardPage = () => {
       'postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `user_id=eq.${user.id}` },
       (payload) => {
-        const updated = payload.new as { pride_coins: number; display_name: string | null; username: string | null };
+        const updated = payload.new as { pride_coins: number; display_name: string | null; username: string | null; referral_code: string | null };
         setUserProfile({
           pride_coins: updated.pride_coins,
           display_name: updated.display_name,
           username: updated.username,
+          referral_code: updated.referral_code,
         });
       }
     );
@@ -907,6 +910,10 @@ const DashboardPage = () => {
                   userId={user.id}
                   activeTag={hashtagFilter}
                   onTagClick={setHashtagFilter}
+                />
+                <ReferralPanel
+                  userId={user.id}
+                  referralCode={userProfile?.referral_code || null}
                 />
               </aside>
             </div>

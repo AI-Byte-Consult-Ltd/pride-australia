@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import PageSEO from '@/components/PageSEO';
 import { Eye, EyeOff, Heart, Mail, Lock, User, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/layout/Layout';
 
 const SignupPage = () => {
@@ -24,6 +25,8 @@ const SignupPage = () => {
   const [birthYear, setBirthYear] = useState('');
   
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const referralCode = searchParams.get('ref');
   const { toast } = useToast();
   const { signUp, user } = useAuth();
 
@@ -146,6 +149,21 @@ const SignupPage = () => {
         title: "Account created!",
         description: "Welcome to Pride Social Network.",
       });
+
+      // Process referral if code present
+      if (referralCode) {
+        // Wait briefly for profile to be created by trigger
+        setTimeout(async () => {
+          const { data: { user: newUser } } = await supabase.auth.getUser();
+          if (newUser) {
+            await supabase.rpc('process_referral', {
+              _referral_code: referralCode,
+              _referred_user_id: newUser.id,
+            });
+          }
+        }, 1500);
+      }
+
       navigate('/dashboard');
     }
     
@@ -169,6 +187,12 @@ const SignupPage = () => {
             </div>
             <span className="font-display text-2xl font-bold">Pride Social</span>
           </Link>
+
+          {referralCode && (
+            <div className="text-center mb-4 px-4 py-2 rounded-lg bg-primary/10 text-primary text-sm font-medium">
+              🎉 You've been invited! Sign up to join the community.
+            </div>
+          )}
 
           <Card variant="elevated">
             <CardHeader className="text-center">

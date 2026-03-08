@@ -287,6 +287,7 @@ export type Database = {
           display_name_changes: number
           id: string
           pride_coins: number
+          referral_code: string | null
           updated_at: string
           user_id: string
           username: string | null
@@ -304,6 +305,7 @@ export type Database = {
           display_name_changes?: number
           id?: string
           pride_coins?: number
+          referral_code?: string | null
           updated_at?: string
           user_id: string
           username?: string | null
@@ -321,10 +323,35 @@ export type Database = {
           display_name_changes?: number
           id?: string
           pride_coins?: number
+          referral_code?: string | null
           updated_at?: string
           user_id?: string
           username?: string | null
           username_changes?: number
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          coins_awarded: number
+          created_at: string
+          id: string
+          referred_id: string
+          referrer_id: string
+        }
+        Insert: {
+          coins_awarded?: number
+          created_at?: string
+          id?: string
+          referred_id: string
+          referrer_id: string
+        }
+        Update: {
+          coins_awarded?: number
+          created_at?: string
+          id?: string
+          referred_id?: string
+          referrer_id?: string
         }
         Relationships: []
       }
@@ -374,6 +401,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      process_referral: {
+        Args: { _referral_code: string; _referred_user_id: string }
         Returns: boolean
       }
       spend_coins_for_change: {
