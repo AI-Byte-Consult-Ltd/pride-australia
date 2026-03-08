@@ -770,7 +770,7 @@ const DashboardPage = () => {
                                 {post.is_echo && post.echo_message ? (
                                   <div className="bg-muted/50 border border-border rounded p-3 mb-4">
                                     <p className="text-foreground whitespace-pre-wrap">
-                                      {renderContentWithMentionsAndLinks(post.content)}
+                                      {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
                                     </p>
                                   </div>
                                 ) : (
