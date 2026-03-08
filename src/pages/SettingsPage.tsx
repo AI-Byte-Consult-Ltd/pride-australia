@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PageSEO from '@/components/PageSEO';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   Home, 
   MapPin, 
@@ -15,7 +15,9 @@ import {
   Save,
   AtSign,
   Coins,
-  User
+  User,
+  Camera,
+  ImageIcon,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -25,13 +27,21 @@ interface Profile {
   display_name: string | null;
   username: string | null;
   bio: string | null;
+  avatar_url: string | null;
+  banner_url: string | null;
   pride_coins: number;
   username_changes: number;
   display_name_changes: number;
+  avatar_changes: number;
+  banner_changes: number;
 }
 
 const USERNAME_CHANGE_COST = 50;
 const DISPLAY_NAME_CHANGE_COST = 25;
+const AVATAR_CHANGE_COST = 30;
+const BANNER_CHANGE_COST = 40;
+
+const PROFILE_FIELDS = 'display_name, username, bio, avatar_url, banner_url, pride_coins, username_changes, display_name_changes, avatar_changes, banner_changes';
 
 const SettingsPage = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -40,8 +50,12 @@ const SettingsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSavingUsername, setIsSavingUsername] = useState(false);
   const [isSavingDisplayName, setIsSavingDisplayName] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [isUploadingBanner, setIsUploadingBanner] = useState(false);
   const [usernameError, setUsernameError] = useState('');
   const [displayNameError, setDisplayNameError] = useState('');
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -50,23 +64,25 @@ const SettingsPage = () => {
     if (!loading && !user) navigate('/login');
   }, [user, loading, navigate]);
 
+  const fetchProfile = async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(PROFILE_FIELDS)
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (error) {
+      console.error('Error fetching profile:', error);
+    } else if (data) {
+      setProfile(data as Profile);
+      setUsername(data.username || '');
+      setDisplayName(data.display_name || '');
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     if (!user) return;
-    const fetchProfile = async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('display_name, username, bio, pride_coins, username_changes, display_name_changes')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      if (error) {
-        console.error('Error fetching profile:', error);
-      } else if (data) {
-        setProfile(data as Profile);
-        setUsername(data.username || '');
-        setDisplayName(data.display_name || '');
-      }
-      setIsLoading(false);
-    };
     fetchProfile();
   }, [user]);
 
@@ -102,88 +118,103 @@ const SettingsPage = () => {
 
   const usernameChangeCost = profile && profile.username_changes >= 1 ? USERNAME_CHANGE_COST : 0;
   const displayNameChangeCost = profile && profile.display_name_changes >= 1 ? DISPLAY_NAME_CHANGE_COST : 0;
+  const avatarChangeCost = profile && profile.avatar_changes >= 1 ? AVATAR_CHANGE_COST : 0;
+  const bannerChangeCost = profile && profile.banner_changes >= 1 ? BANNER_CHANGE_COST : 0;
 
   const handleSaveUsername = async () => {
     if (!user || !validateUsername(username) || !profile) return;
     setIsSavingUsername(true);
-
-    // Check uniqueness
     const { data: existing } = await supabase
-      .from('profiles')
-      .select('user_id')
-      .eq('username', username)
-      .neq('user_id', user.id)
-      .maybeSingle();
-
-    if (existing) {
-      setUsernameError('This username is already taken');
-      setIsSavingUsername(false);
-      return;
-    }
-
-    // Spend coins if needed
+      .from('profiles').select('user_id').eq('username', username).neq('user_id', user.id).maybeSingle();
+    if (existing) { setUsernameError('This username is already taken'); setIsSavingUsername(false); return; }
     if (usernameChangeCost > 0) {
-      const { data: success } = await supabase.rpc('spend_coins_for_change', {
-        _user_id: user.id,
-        _change_type: 'username',
-      });
-      if (!success) {
-        toast({ title: 'Insufficient coins', description: `You need ${usernameChangeCost} Pride Coins to change your username.`, variant: 'destructive' });
-        setIsSavingUsername(false);
-        return;
-      }
+      const { data: success } = await supabase.rpc('spend_coins_for_change', { _user_id: user.id, _change_type: 'username' });
+      if (!success) { toast({ title: 'Insufficient coins', description: `You need ${usernameChangeCost} Pride Coins.`, variant: 'destructive' }); setIsSavingUsername(false); return; }
     } else {
-      // First free change — just increment counter
       await supabase.from('profiles').update({ username_changes: 1 }).eq('user_id', user.id);
     }
-
     const { error } = await supabase.from('profiles').update({ username }).eq('user_id', user.id);
-    if (error) {
-      toast({ title: 'Error', description: 'Failed to update username.', variant: 'destructive' });
-    } else {
-      // Re-fetch profile to get updated coins/counters
-      const { data: refreshed } = await supabase
-        .from('profiles')
-        .select('display_name, username, bio, pride_coins, username_changes, display_name_changes')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      if (refreshed) setProfile(refreshed as Profile);
-      toast({ title: 'Success', description: usernameChangeCost > 0 ? `Username updated! ${usernameChangeCost} coins spent.` : 'Username updated!' });
-    }
+    if (error) { toast({ title: 'Error', description: 'Failed to update username.', variant: 'destructive' }); }
+    else { await fetchProfile(); toast({ title: 'Success', description: usernameChangeCost > 0 ? `Username updated! ${usernameChangeCost} coins spent.` : 'Username updated!' }); }
     setIsSavingUsername(false);
   };
 
   const handleSaveDisplayName = async () => {
     if (!user || !profile || displayName.trim().length < 2 || displayName.length > 50) return;
     setIsSavingDisplayName(true);
-
     if (displayNameChangeCost > 0) {
-      const { data: success } = await supabase.rpc('spend_coins_for_change', {
-        _user_id: user.id,
-        _change_type: 'display_name',
-      });
-      if (!success) {
-        toast({ title: 'Insufficient coins', description: `You need ${displayNameChangeCost} Pride Coins to change your display name.`, variant: 'destructive' });
-        setIsSavingDisplayName(false);
-        return;
-      }
+      const { data: success } = await supabase.rpc('spend_coins_for_change', { _user_id: user.id, _change_type: 'display_name' });
+      if (!success) { toast({ title: 'Insufficient coins', description: `You need ${displayNameChangeCost} Pride Coins.`, variant: 'destructive' }); setIsSavingDisplayName(false); return; }
     } else {
       await supabase.from('profiles').update({ display_name_changes: 1 }).eq('user_id', user.id);
     }
-
     const { error } = await supabase.from('profiles').update({ display_name: displayName.trim() }).eq('user_id', user.id);
-    if (error) {
-      toast({ title: 'Error', description: 'Failed to update display name.', variant: 'destructive' });
-    } else {
-      const { data: refreshed } = await supabase
-        .from('profiles')
-        .select('display_name, username, bio, pride_coins, username_changes, display_name_changes')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      if (refreshed) setProfile(refreshed as Profile);
-      toast({ title: 'Success', description: displayNameChangeCost > 0 ? `Display name updated! ${displayNameChangeCost} coins spent.` : 'Display name updated!' });
-    }
+    if (error) { toast({ title: 'Error', description: 'Failed to update display name.', variant: 'destructive' }); }
+    else { await fetchProfile(); toast({ title: 'Success', description: displayNameChangeCost > 0 ? `Display name updated! ${displayNameChangeCost} coins spent.` : 'Display name updated!' }); }
     setIsSavingDisplayName(false);
+  };
+
+  const uploadImage = async (file: File, type: 'avatar' | 'banner') => {
+    if (!user) return;
+    const isAvatar = type === 'avatar';
+    const setUploading = isAvatar ? setIsUploadingAvatar : setIsUploadingBanner;
+    const cost = isAvatar ? avatarChangeCost : bannerChangeCost;
+    const costLabel = isAvatar ? AVATAR_CHANGE_COST : BANNER_CHANGE_COST;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Maximum file size is 5MB.', variant: 'destructive' });
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Invalid file', description: 'Please upload an image file.', variant: 'destructive' });
+      return;
+    }
+
+    setUploading(true);
+
+    // Spend coins if needed
+    if (cost > 0) {
+      const { data: success } = await supabase.rpc('spend_coins_for_change', { _user_id: user.id, _change_type: type });
+      if (!success) {
+        toast({ title: 'Insufficient coins', description: `You need ${costLabel} Pride Coins to change your ${type}.`, variant: 'destructive' });
+        setUploading(false);
+        return;
+      }
+    } else {
+      // First free change — increment counter
+      const counterField = isAvatar ? 'avatar_changes' : 'banner_changes';
+      await supabase.from('profiles').update({ [counterField]: 1 } as any).eq('user_id', user.id);
+    }
+
+    const ext = file.name.split('.').pop() || 'jpg';
+    const filePath = `${type}s/${user.id}/${Date.now()}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('pride-social-network')
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      toast({ title: 'Upload failed', description: uploadError.message, variant: 'destructive' });
+      setUploading(false);
+      return;
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('pride-social-network')
+      .getPublicUrl(filePath);
+
+    const urlField = isAvatar ? 'avatar_url' : 'banner_url';
+    const { error: updateError } = await supabase.from('profiles')
+      .update({ [urlField]: urlData.publicUrl } as any)
+      .eq('user_id', user.id);
+
+    if (updateError) {
+      toast({ title: 'Error', description: `Failed to update ${type}.`, variant: 'destructive' });
+    } else {
+      await fetchProfile();
+      toast({ title: 'Success', description: cost > 0 ? `${isAvatar ? 'Avatar' : 'Banner'} updated! ${cost} coins spent.` : `${isAvatar ? 'Avatar' : 'Banner'} updated!` });
+    }
+    setUploading(false);
   };
 
   if (loading || isLoading) {
@@ -212,6 +243,9 @@ const SettingsPage = () => {
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
                       <Avatar className="h-10 w-10">
+                        {profile?.avatar_url ? (
+                          <AvatarImage src={profile.avatar_url} alt={currentDisplayName} />
+                        ) : null}
                         <AvatarFallback className="gradient-pride text-primary-foreground">{userInitial}</AvatarFallback>
                       </Avatar>
                       <div className="overflow-hidden">
@@ -249,6 +283,117 @@ const SettingsPage = () => {
                         <p className="text-lg font-bold">{profile?.pride_coins ?? 0} Pride Coins</p>
                         <p className="text-xs text-muted-foreground">Earn coins by posting, liking, replying & echoing</p>
                       </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Avatar & Banner Card */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Camera className="h-5 w-5" /> Profile Images
+                    </CardTitle>
+                    <CardDescription>Upload your avatar and banner image</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Banner Preview + Upload */}
+                    <div className="space-y-2">
+                      <Label>Banner Image</Label>
+                      <div
+                        className="relative w-full h-32 rounded-lg overflow-hidden bg-muted border border-border cursor-pointer group"
+                        onClick={() => bannerInputRef.current?.click()}
+                      >
+                        {profile?.banner_url ? (
+                          <img src={profile.banner_url} alt="Banner" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full gradient-pride opacity-30" />
+                        )}
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          {isUploadingBanner ? (
+                            <Loader2 className="h-6 w-6 animate-spin text-white" />
+                          ) : (
+                            <>
+                              <ImageIcon className="h-5 w-5 text-white" />
+                              <span className="text-white text-sm font-medium">
+                                {profile?.banner_url ? 'Change Banner' : 'Upload Banner'}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <input
+                        ref={bannerInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) uploadImage(file, 'banner');
+                          e.target.value = '';
+                        }}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {bannerChangeCost > 0 ? (
+                          <span className="text-yellow-600 font-medium">Costs {bannerChangeCost} Pride Coins to change.</span>
+                        ) : (
+                          <span className="text-green-600 font-medium">First upload is free!</span>
+                        )}
+                        {' '}Max 5MB.
+                      </p>
+                    </div>
+
+                    {/* Avatar Preview + Upload */}
+                    <div className="space-y-2">
+                      <Label>Avatar</Label>
+                      <div className="flex items-center gap-4">
+                        <div
+                          className="relative cursor-pointer group"
+                          onClick={() => avatarInputRef.current?.click()}
+                        >
+                          <Avatar className="h-20 w-20">
+                            {profile?.avatar_url ? (
+                              <AvatarImage src={profile.avatar_url} alt="Avatar" />
+                            ) : null}
+                            <AvatarFallback className="gradient-pride text-primary-foreground text-2xl">{userInitial}</AvatarFallback>
+                          </Avatar>
+                          <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            {isUploadingAvatar ? (
+                              <Loader2 className="h-5 w-5 animate-spin text-white" />
+                            ) : (
+                              <Camera className="h-5 w-5 text-white" />
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => avatarInputRef.current?.click()}
+                            disabled={isUploadingAvatar}
+                          >
+                            {isUploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Camera className="h-4 w-4 mr-2" />}
+                            {profile?.avatar_url ? 'Change Avatar' : 'Upload Avatar'}
+                          </Button>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {avatarChangeCost > 0 ? (
+                              <span className="text-yellow-600 font-medium">Costs {avatarChangeCost} Pride Coins</span>
+                            ) : (
+                              <span className="text-green-600 font-medium">First upload is free!</span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <input
+                        ref={avatarInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) uploadImage(file, 'avatar');
+                          e.target.value = '';
+                        }}
+                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -360,8 +505,14 @@ const SettingsPage = () => {
                       <div className="flex justify-between py-1 border-b border-border">
                         <span>✏️ Change username (2nd+)</span><span className="font-medium text-red-500">−50 coins</span>
                       </div>
-                      <div className="flex justify-between py-1">
+                      <div className="flex justify-between py-1 border-b border-border">
                         <span>✏️ Change display name (2nd+)</span><span className="font-medium text-red-500">−25 coins</span>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-border">
+                        <span>📸 Change avatar (2nd+)</span><span className="font-medium text-red-500">−30 coins</span>
+                      </div>
+                      <div className="flex justify-between py-1">
+                        <span>🖼️ Change banner (2nd+)</span><span className="font-medium text-red-500">−40 coins</span>
                       </div>
                     </div>
                   </CardContent>
