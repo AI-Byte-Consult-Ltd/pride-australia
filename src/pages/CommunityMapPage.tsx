@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import Layout from '@/components/layout/Layout';
 import CommunityMap from '@/components/map/CommunityMap';
 import AddBusinessForm from '@/components/map/AddBusinessForm';
