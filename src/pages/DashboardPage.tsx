@@ -65,13 +65,7 @@ interface Profile {
 
 const MAX_POST_LENGTH = 5000;
 
-const trendingTags = [
-  { topic: 'Europe', tag: '#MadeInEU' },
-  { topic: 'Europe', tag: '#MadeInEurope' },
-  { topic: 'Platform', tag: '#PrideSocial' },
-  { topic: 'Community', tag: '#LGBTQIA' },
-  { topic: 'Community', tag: '#QueerCommunity' },
-] as const;
+// Hashtag filter state is inside the component
 
 // Rainbow username component
 const RainbowUsername = ({ username }: { username: string }) => {
