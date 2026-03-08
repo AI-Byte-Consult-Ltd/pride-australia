@@ -64,6 +64,7 @@ interface Profile {
   pride_coins: number;
   display_name: string | null;
   username: string | null;
+  referral_code: string | null;
 }
 
 const MAX_POST_LENGTH = 5000;
