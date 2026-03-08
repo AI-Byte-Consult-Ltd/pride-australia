@@ -492,6 +492,12 @@ const DashboardPage = () => {
         user_id: user.id,
         message: quoteContent.trim() || null,
       });
+
+      await Promise.all([
+        createNotification(quotingPost.user_id, user.id, 'echo', actualPostId, quoteContent.trim() || undefined),
+        createMentionNotifications(user.id, quoteContent.trim(), actualPostId),
+      ]);
+
       toast({
         title: 'Echoed!',
         description: quoteContent.trim() ? 'You added a comment.' : 'You amplified this voice.',
