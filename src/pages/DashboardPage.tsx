@@ -149,7 +149,7 @@ const DashboardPage = () => {
 
     const { data: profilesData } = await supabase
       .from('profiles')
-      .select('user_id, display_name, username')
+      .select('user_id, display_name, username, avatar_url')
       .in('user_id', userIds);
 
     const { data: likesData } = await supabase.from('post_likes').select('post_id').in('post_id', postIds);
