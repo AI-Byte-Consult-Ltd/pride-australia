@@ -79,6 +79,27 @@ export type Database = {
           },
         ]
       }
+      hashtag_subscriptions: {
+        Row: {
+          created_at: string
+          hashtag: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hashtag: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          hashtag?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           content: string | null
@@ -328,6 +349,13 @@ export type Database = {
       admin_add_pride_coins: {
         Args: { _amount: number; _target_user_id: string }
         Returns: undefined
+      }
+      get_trending_hashtags: {
+        Args: { _limit?: number }
+        Returns: {
+          hashtag: string
+          post_count: number
+        }[]
       }
       has_role: {
         Args: {
