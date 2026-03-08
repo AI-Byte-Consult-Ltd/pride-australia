@@ -25,7 +25,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { createMentionNotifications } from '@/hooks/useNotifications';
+import { createMentionNotifications, createNotification } from '@/hooks/useNotifications';
 
 interface PostReply {
   id: string;
@@ -420,7 +420,11 @@ const DashboardPage = () => {
         .select('id')
         .single();
       if (error) throw error;
-      await createMentionNotifications(user.id, replyContent.trim(), postId, data.id);
+
+      await Promise.all([
+        createMentionNotifications(user.id, replyContent.trim(), postId, data.id),
+        createNotification(replyingToPost.user_id, user.id, 'reply', postId, replyContent.trim()),
+      ]);
       setReplyContent('');
       toast({ title: 'Reply posted!', description: 'Your reply has been added.' });
       await openReplyThread({ ...replyingToPost, id: postId });
@@ -438,14 +442,16 @@ const DashboardPage = () => {
   };
 
   // Like/unlike post
-  const handleLike = async (postId: string, hasLiked: boolean) => {
+  const handleLike = async (postId: string, hasLiked: boolean, postAuthorId: string) => {
     if (!user || likingPostId) return;
     setLikingPostId(postId);
     try {
       if (hasLiked) {
         await supabase.from('post_likes').delete().eq('post_id', postId).eq('user_id', user.id);
       } else {
-        await supabase.from('post_likes').insert({ post_id: postId, user_id: user.id });
+        const { error } = await supabase.from('post_likes').insert({ post_id: postId, user_id: user.id });
+        if (error) throw error;
+        await createNotification(postAuthorId, user.id, 'like', postId);
       }
     } catch {
       toast({ title: 'Error', description: 'Failed to update like.', variant: 'destructive' });
@@ -486,6 +492,12 @@ const DashboardPage = () => {
         user_id: user.id,
         message: quoteContent.trim() || null,
       });
+
+      await Promise.all([
+        createNotification(quotingPost.user_id, user.id, 'echo', actualPostId, quoteContent.trim() || undefined),
+        createMentionNotifications(user.id, quoteContent.trim(), actualPostId),
+      ]);
+
       toast({
         title: 'Echoed!',
         description: quoteContent.trim() ? 'You added a comment.' : 'You amplified this voice.',
@@ -765,9 +777,9 @@ const DashboardPage = () => {
                                 )}
                                 <div className="flex items-center gap-6">
                                   <button
-                                    onClick={() =>
-                                      handleLike(post.original_post_id || post.id, post.user_has_liked)
-                                    }
+                                      onClick={() =>
+                                        handleLike(post.original_post_id || post.id, post.user_has_liked, post.user_id)
+                                      }
                                     disabled={likingPostId === post.id || likingPostId === post.original_post_id}
                                     className={`flex items-center gap-2 transition-colors ${
                                       post.user_has_liked

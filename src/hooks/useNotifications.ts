@@ -12,13 +12,15 @@ export const extractMentions = async (content: string): Promise<string[]> => {
 
   if (mentions.length === 0) return [];
 
-  // Look up user IDs by username
+  const usernameVariants = [...new Set(mentions.flatMap((m) => [m, `@${m}`]))];
+
+  // Look up user IDs by username (supports both "name" and "@name" stored formats)
   const { data: profiles } = await supabase
     .from('profiles')
     .select('user_id, username')
-    .in('username', mentions);
+    .in('username', usernameVariants);
 
-  return profiles?.map(p => p.user_id) || [];
+  return profiles?.map((p) => p.user_id) || [];
 };
 
 // Create notifications for mentioned users
