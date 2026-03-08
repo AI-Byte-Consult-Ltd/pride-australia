@@ -107,7 +107,7 @@ const DashboardPage = () => {
   const [quotingPost, setQuotingPost] = useState<PostWithProfile | null>(null);
   const [quoteContent, setQuoteContent] = useState('');
   const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
-
+  const [hashtagFilter, setHashtagFilter] = useState<string | null>(null);
   const { toast } = useToast();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
