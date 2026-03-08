@@ -929,9 +929,7 @@ const DashboardPage = () => {
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                    {renderContentWithMentionsAndLinks(
-                      replyingToPost.content
-                    )}
+                    {renderContentWithMentionsAndLinks(replyingToPost.content, setHashtagFilter)}
                   </p>
                 </div>
                 {/* Replies List */}
