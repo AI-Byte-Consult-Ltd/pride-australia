@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Navigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/contexts/AuthContext';
