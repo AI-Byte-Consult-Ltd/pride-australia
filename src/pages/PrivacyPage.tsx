@@ -22,6 +22,7 @@ const PrivacyPage = () => {
           name="description"
           content="Read the Privacy Policy for Pride Social Network. Learn how we collect, use, share, and protect personal information, including cookies and GDPR information for EU users."
         />
+        <link rel="canonical" href="https://pridesocial.org/privacy" />
       </Helmet>
 
       <Layout>

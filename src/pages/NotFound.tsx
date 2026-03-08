@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Home, ArrowLeft, Sparkles, Heart, Search, PartyPopper } from 'lucide-react';
 
@@ -25,6 +26,11 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
+    <>
+    <Helmet>
+      <title>Page Not Found | Pride Social Network</title>
+      <meta name="robots" content="noindex, nofollow" />
+    </Helmet>
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 gradient-hero">
       {/* Decorative blobs */}
       <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
@@ -100,6 +106,7 @@ const NotFound = () => {
         </p>
       </div>
     </div>
+    </>
   );
 };
 

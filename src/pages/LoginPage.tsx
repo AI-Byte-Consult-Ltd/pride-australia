@@ -60,6 +60,8 @@ const LoginPage = () => {
       <Helmet>
         <title>Log In | Pride Social Network</title>
         <meta name="description" content="Log in to your Pride Social Network account and connect with the community." />
+        <link rel="canonical" href="https://pridesocial.org/login" />
+        <meta name="robots" content="noindex, follow" />
       </Helmet>
 
       <div className="min-h-[calc(100vh-12rem)] flex items-center justify-center p-4 gradient-hero">

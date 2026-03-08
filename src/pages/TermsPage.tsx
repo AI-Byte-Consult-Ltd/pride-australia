@@ -29,6 +29,7 @@ const TermsPage = () => {
           name="description"
           content="Read the Terms of Service for Pride Social Network. Understand your rights and responsibilities when using our platform."
         />
+        <link rel="canonical" href="https://pridesocial.org/terms" />
       </Helmet>
 
       <Layout>

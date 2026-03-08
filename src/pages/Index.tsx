@@ -93,6 +93,17 @@ const Index = () => {
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={ogImage} />
+
+        {/* JSON-LD Organization */}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Pride Social Network",
+          "url": siteUrl,
+          "logo": `${siteUrl}/icons/icon-512.png`,
+          "description": description,
+          "sameAs": []
+        })}</script>
       </Helmet>
 
       <Layout>
