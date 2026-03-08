@@ -693,6 +693,19 @@ const DashboardPage = () => {
                             </Button>
                           </div>
                         )}
+                        {imagePreview && (
+                          <div className="mt-2 relative inline-block">
+                            <img src={imagePreview} alt="Preview" className="max-h-48 rounded-lg border border-border" />
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              className="absolute top-1 right-1 h-6 w-6"
+                              onClick={() => { setSelectedImage(null); setImagePreview(null); }}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
                         <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
                           <div className="flex items-center gap-4">
                             <div className="flex gap-2">
