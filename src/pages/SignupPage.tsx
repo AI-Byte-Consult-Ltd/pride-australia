@@ -188,6 +188,12 @@ const SignupPage = () => {
             <span className="font-display text-2xl font-bold">Pride Social</span>
           </Link>
 
+          {referralCode && (
+            <div className="text-center mb-4 px-4 py-2 rounded-lg bg-primary/10 text-primary text-sm font-medium">
+              🎉 You've been invited! Sign up to join the community.
+            </div>
+          )}
+
           <Card variant="elevated">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">Join the community</CardTitle>
