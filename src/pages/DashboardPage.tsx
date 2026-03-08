@@ -531,7 +531,7 @@ const DashboardPage = () => {
 
   // Create new post
   const handlePost = async () => {
-    if ((!postContent.trim() && !selectedSticker) || !user) return;
+    if ((!postContent.trim() && !selectedSticker && !selectedImage) || !user) return;
     if (postContent.length > MAX_POST_LENGTH) {
       toast({
         title: 'Post too long',
@@ -542,12 +542,29 @@ const DashboardPage = () => {
     }
     setIsPosting(true);
     try {
+      let uploadedImageUrl: string | null = null;
+
+      // Upload image if selected
+      if (selectedImage) {
+        const fileExt = selectedImage.name.split('.').pop();
+        const filePath = `posts/${user.id}/${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('pride-social-network')
+          .upload(filePath, selectedImage);
+        if (uploadError) throw uploadError;
+        const { data: urlData } = supabase.storage
+          .from('pride-social-network')
+          .getPublicUrl(filePath);
+        uploadedImageUrl = urlData.publicUrl;
+      }
+
       const { data, error } = await supabase
         .from('posts')
         .insert({
           content: postContent.trim() || (selectedSticker ? '' : ''),
           user_id: user.id,
           sticker: selectedSticker || null,
+          image_url: uploadedImageUrl,
         } as any)
         .select('id')
         .single();
@@ -555,6 +572,8 @@ const DashboardPage = () => {
       await createMentionNotifications(user.id, postContent.trim(), data.id);
       setPostContent('');
       setSelectedSticker(null);
+      setSelectedImage(null);
+      setImagePreview(null);
       toast({ title: 'Posted!', description: 'Your post has been shared.' });
     } catch {
       toast({ title: 'Error', description: 'Failed to create post.', variant: 'destructive' });
@@ -563,9 +582,24 @@ const DashboardPage = () => {
     }
   };
 
-  // Stub for image upload (future feature)
+  // Image upload handler
   const handleImageUpload = () => {
-    toast({ title: 'Coming Soon', description: 'Image posting will be available on June 1st, 2026.' });
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/jpeg,image/png,image/gif,image/webp';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        toast({ title: 'File too large', description: 'Images must be under 5MB.', variant: 'destructive' });
+        return;
+      }
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    };
+    input.click();
   };
 
   if (loading) {
