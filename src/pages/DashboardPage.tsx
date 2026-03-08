@@ -131,7 +131,7 @@ const DashboardPage = () => {
 
     const { data: postsData, error: postsError } = await supabase
       .from('posts')
-      .select('id, content, created_at, user_id, sticker')
+      .select('id, content, created_at, user_id, sticker, image_url')
       .order('created_at', { ascending: false })
       .limit(50);
 
