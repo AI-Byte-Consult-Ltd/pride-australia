@@ -6,7 +6,7 @@ import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/MentionInput';
 import { TrendingPanel } from '@/components/TrendingPanel';
 import { StickerPicker } from '@/components/StickerPicker';
@@ -45,6 +45,7 @@ interface PostWithProfile {
   user_id: string;
   author_name: string;
   author_username: string | null;
+  author_avatar: string | null;
   like_count: number;
   user_has_liked: boolean;
   reply_count: number;
@@ -148,7 +149,7 @@ const DashboardPage = () => {
 
     const { data: profilesData } = await supabase
       .from('profiles')
-      .select('user_id, display_name, username')
+      .select('user_id, display_name, username, avatar_url')
       .in('user_id', userIds);
 
     const { data: likesData } = await supabase.from('post_likes').select('post_id').in('post_id', postIds);
@@ -165,9 +166,9 @@ const DashboardPage = () => {
       .eq('user_id', user.id)
       .in('post_id', postIds);
 
-    const profileMap = new Map<string, { display_name: string; username: string | null }>();
+    const profileMap = new Map<string, { display_name: string; username: string | null; avatar_url: string | null }>();
     profilesData?.forEach((p) =>
-      profileMap.set(p.user_id, { display_name: p.display_name || 'Anonymous', username: p.username })
+      profileMap.set(p.user_id, { display_name: p.display_name || 'Anonymous', username: p.username, avatar_url: p.avatar_url })
     );
 
     const likeCountMap = new Map<string, number>();
@@ -220,6 +221,7 @@ const DashboardPage = () => {
         user_id: post.user_id,
         author_name: profile?.display_name || 'Anonymous',
         author_username: profile?.username || null,
+        author_avatar: profile?.avatar_url || null,
         like_count: likeCountMap.get(post.id) || 0,
         user_has_liked: userLikedSet.has(post.id),
         reply_count: replyCountMap.get(post.id) || 0,
@@ -248,13 +250,14 @@ const DashboardPage = () => {
       const newPostData = payload.new as { id: string; content: string; created_at: string; user_id: string };
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('display_name, username')
+      .select('display_name, username, avatar_url')
         .eq('user_id', newPostData.user_id)
         .maybeSingle();
       const newPost: PostWithProfile = {
         ...newPostData,
         author_name: profileData?.display_name || 'Anonymous',
         author_username: profileData?.username || null,
+        author_avatar: profileData?.avatar_url || null,
         like_count: 0,
         user_has_liked: false,
         reply_count: 0,
@@ -755,6 +758,9 @@ const DashboardPage = () => {
                             )}
                             <div className="flex gap-4">
                               <Avatar className="h-10 w-10">
+                                {post.author_avatar ? (
+                                  <AvatarImage src={post.author_avatar} alt={post.author_name} />
+                                ) : null}
                                 <AvatarFallback className="bg-primary/10 text-primary">
                                   {post.author_name[0].toUpperCase()}
                                 </AvatarFallback>
