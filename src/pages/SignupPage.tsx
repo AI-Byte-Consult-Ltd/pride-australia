@@ -149,6 +149,21 @@ const SignupPage = () => {
         title: "Account created!",
         description: "Welcome to Pride Social Network.",
       });
+
+      // Process referral if code present
+      if (referralCode) {
+        // Wait briefly for profile to be created by trigger
+        setTimeout(async () => {
+          const { data: { user: newUser } } = await supabase.auth.getUser();
+          if (newUser) {
+            await supabase.rpc('process_referral', {
+              _referral_code: referralCode,
+              _referred_user_id: newUser.id,
+            });
+          }
+        }, 1500);
+      }
+
       navigate('/dashboard');
     }
     
