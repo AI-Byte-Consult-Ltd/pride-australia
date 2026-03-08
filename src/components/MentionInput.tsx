@@ -109,19 +109,23 @@ export const MentionInput = ({
   const insertMention = (user: UserSuggestion) => {
     if (mentionStartIndex < 0 || !user.username) return;
 
+    const normalizedUsername = user.username.startsWith('@')
+      ? user.username.slice(1)
+      : user.username;
+
     const beforeMention = value.slice(0, mentionStartIndex);
     const afterMention = value.slice(mentionStartIndex + mentionQuery.length + 1);
-    const newValue = `${beforeMention}@${user.username} ${afterMention}`;
-    
+    const newValue = `${beforeMention}@${normalizedUsername} ${afterMention}`;
+
     onChange(newValue);
     setShowSuggestions(false);
     setMentionStartIndex(-1);
     setMentionQuery('');
-    
+
     // Focus back on textarea
     setTimeout(() => {
       if (textareaRef.current) {
-        const newCursorPos = mentionStartIndex + user.username.length + 2;
+        const newCursorPos = mentionStartIndex + normalizedUsername.length + 2;
         textareaRef.current.focus();
         textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
       }

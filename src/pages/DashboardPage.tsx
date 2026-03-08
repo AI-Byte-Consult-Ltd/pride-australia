@@ -777,9 +777,9 @@ const DashboardPage = () => {
                                 )}
                                 <div className="flex items-center gap-6">
                                   <button
-                                    onClick={() =>
-                                      handleLike(post.original_post_id || post.id, post.user_has_liked)
-                                    }
+                                      onClick={() =>
+                                        handleLike(post.original_post_id || post.id, post.user_has_liked, post.user_id)
+                                      }
                                     disabled={likingPostId === post.id || likingPostId === post.original_post_id}
                                     className={`flex items-center gap-2 transition-colors ${
                                       post.user_has_liked
