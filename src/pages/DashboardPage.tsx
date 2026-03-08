@@ -221,6 +221,7 @@ const DashboardPage = () => {
         user_id: post.user_id,
         author_name: profile?.display_name || 'Anonymous',
         author_username: profile?.username || null,
+        author_avatar: profile?.avatar_url || null,
         like_count: likeCountMap.get(post.id) || 0,
         user_has_liked: userLikedSet.has(post.id),
         reply_count: replyCountMap.get(post.id) || 0,
