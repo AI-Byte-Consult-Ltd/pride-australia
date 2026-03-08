@@ -257,11 +257,13 @@ export type Database = {
           created_at: string
           date_of_birth: string | null
           display_name: string | null
+          display_name_changes: number
           id: string
           pride_coins: number
           updated_at: string
           user_id: string
           username: string | null
+          username_changes: number
         }
         Insert: {
           avatar_url?: string | null
@@ -269,11 +271,13 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           display_name?: string | null
+          display_name_changes?: number
           id?: string
           pride_coins?: number
           updated_at?: string
           user_id: string
           username?: string | null
+          username_changes?: number
         }
         Update: {
           avatar_url?: string | null
@@ -281,11 +285,13 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           display_name?: string | null
+          display_name_changes?: number
           id?: string
           pride_coins?: number
           updated_at?: string
           user_id?: string
           username?: string | null
+          username_changes?: number
         }
         Relationships: []
       }
@@ -315,6 +321,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_coins: {
+        Args: { amount: number; target_user_id: string }
+        Returns: undefined
+      }
       admin_add_pride_coins: {
         Args: { _amount: number; _target_user_id: string }
         Returns: undefined
@@ -324,6 +334,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      spend_coins_for_change: {
+        Args: { _change_type: string; _user_id: string }
         Returns: boolean
       }
     }
