@@ -250,7 +250,7 @@ const DashboardPage = () => {
       const newPostData = payload.new as { id: string; content: string; created_at: string; user_id: string };
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('display_name, username')
+      .select('display_name, username, avatar_url')
         .eq('user_id', newPostData.user_id)
         .maybeSingle();
       const newPost: PostWithProfile = {
