@@ -459,14 +459,37 @@ const UserProfilePage = () => {
                         placeholder="What's on your mind? Use @ to mention users"
                         maxLength={MAX_POST_LENGTH}
                       />
+                      {imagePreview && (
+                        <div className="mt-2 relative inline-block">
+                          <img src={imagePreview} alt="Preview" className="max-h-48 rounded-lg border border-border" />
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-1 right-1 h-6 w-6"
+                            onClick={() => { setSelectedImage(null); setImagePreview(null); }}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      )}
                       <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
-                        <span
-                          className={`text-xs ${
-                            postContent.length > MAX_POST_LENGTH * 0.9 ? 'text-destructive' : 'text-muted-foreground'
-                          }`}
-                        >
-                          {postContent.length.toLocaleString()}/{MAX_POST_LENGTH.toLocaleString()}
-                        </span>
+                        <div className="flex items-center gap-4">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-muted-foreground hover:text-primary"
+                            onClick={handleImageUpload}
+                          >
+                            <ImageIcon className="h-5 w-5" />
+                          </Button>
+                          <span
+                            className={`text-xs ${
+                              postContent.length > MAX_POST_LENGTH * 0.9 ? 'text-destructive' : 'text-muted-foreground'
+                            }`}
+                          >
+                            {postContent.length.toLocaleString()}/{MAX_POST_LENGTH.toLocaleString()}
+                          </span>
+                        </div>
                         <Button
                           variant="pride"
                           size="sm"
