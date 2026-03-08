@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import PageSEO from '@/components/PageSEO';
 import { Eye, EyeOff, Heart, Mail, Lock, User, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
