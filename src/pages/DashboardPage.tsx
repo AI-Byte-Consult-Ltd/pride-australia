@@ -558,10 +558,11 @@ const DashboardPage = () => {
         uploadedImageUrl = urlData.publicUrl;
       }
 
+      const trimmedContent = postContent.trim();
       const { data, error } = await supabase
         .from('posts')
         .insert({
-          content: postContent.trim() || (selectedSticker ? '' : ''),
+          content: trimmedContent,
           user_id: user.id,
           sticker: selectedSticker || null,
           image_url: uploadedImageUrl,
@@ -569,14 +570,23 @@ const DashboardPage = () => {
         .select('id')
         .single();
       if (error) throw error;
-      await createMentionNotifications(user.id, postContent.trim(), data.id);
+
+      // Post is already created; notification failures must not fail UX
+      void createMentionNotifications(user.id, trimmedContent, data.id).catch((mentionError) => {
+        console.error('Mention notification failed:', mentionError);
+      });
+
       setPostContent('');
       setSelectedSticker(null);
       setSelectedImage(null);
       setImagePreview(null);
       toast({ title: 'Posted!', description: 'Your post has been shared.' });
-    } catch {
-      toast({ title: 'Error', description: 'Failed to create post.', variant: 'destructive' });
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error?.message || 'Failed to create post.',
+        variant: 'destructive',
+      });
     } finally {
       setIsPosting(false);
     }
