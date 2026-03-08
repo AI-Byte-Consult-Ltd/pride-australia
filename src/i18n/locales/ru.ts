@@ -61,6 +61,10 @@ const ru = {
     fr: 'Français',
     it: 'Italiano',
     de: 'Deutsch',
+    ar: 'العربية',
+    id: 'Bahasa Indonesia',
+    pt: 'Português',
+    es: 'Español',
   },
   nav: {
     home: 'Главная',
