@@ -117,7 +117,7 @@ const UserProfilePage = () => {
     // Получаем профиль по никнейму
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
-      .select('user_id, display_name, username, bio, pride_coins')
+      .select('user_id, display_name, username, bio, avatar_url, banner_url, pride_coins')
       .eq('username', username)
       .maybeSingle();
 
