@@ -69,7 +69,15 @@ export type Database = {
           user_id?: string | null
           website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "businesses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -126,35 +134,23 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          message: string | null
           post_id: string
           user_id: string
-          /**
-           * Optional message associated with an echo. When a user quotes a post, this
-           * field stores the comment text. It can be null for echoes without a comment.
-           */
-          message: string | null
         }
         Insert: {
           created_at?: string
           id?: string
+          message?: string | null
           post_id: string
           user_id: string
-          /**
-           * Optional message associated with an echo. When a user quotes a post, this
-           * field stores the comment text.
-           */
-          message?: string | null
         }
         Update: {
           created_at?: string
           id?: string
+          message?: string | null
           post_id?: string
           user_id?: string
-          /**
-           * Optional message associated with an echo. When a user quotes a post, this
-           * field stores the comment text.
-           */
-          message?: string | null
         }
         Relationships: [
           {
