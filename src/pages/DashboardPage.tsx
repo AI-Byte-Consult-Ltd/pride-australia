@@ -862,21 +862,11 @@ const DashboardPage = () => {
                     </Button>
                   </CardContent>
                 </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Trending</CardTitle>
-                  </CardHeader>
-                    <CardContent className="space-y-3">
-                    {trendingTags.map((t) => (
-                      <div key={t.tag} className="group cursor-pointer">
-                        <p className="text-sm text-muted-foreground">{t.topic}</p>
-                        <p className="font-medium group-hover:text-primary transition-colors">
-                          {t.tag}
-                        </p>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
+                <TrendingPanel
+                  userId={user.id}
+                  activeTag={hashtagFilter}
+                  onTagClick={setHashtagFilter}
+                />
               </aside>
             </div>
           </div>
