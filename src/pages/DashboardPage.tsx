@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/MentionInput';
+import { TrendingPanel } from '@/components/TrendingPanel';
 import {
   Home,
   MapPin,
@@ -64,13 +65,7 @@ interface Profile {
 
 const MAX_POST_LENGTH = 5000;
 
-const trendingTags = [
-  { topic: 'Europe', tag: '#MadeInEU' },
-  { topic: 'Europe', tag: '#MadeInEurope' },
-  { topic: 'Platform', tag: '#PrideSocial' },
-  { topic: 'Community', tag: '#LGBTQIA' },
-  { topic: 'Community', tag: '#QueerCommunity' },
-] as const;
+// Hashtag filter state is inside the component
 
 // Rainbow username component
 const RainbowUsername = ({ username }: { username: string }) => {
@@ -112,7 +107,7 @@ const DashboardPage = () => {
   const [quotingPost, setQuotingPost] = useState<PostWithProfile | null>(null);
   const [quoteContent, setQuoteContent] = useState('');
   const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
-
+  const [hashtagFilter, setHashtagFilter] = useState<string | null>(null);
   const { toast } = useToast();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -697,20 +692,28 @@ const DashboardPage = () => {
                     </TabsTrigger>
                   </TabsList>
                   <TabsContent value="for-you" className="mt-4 space-y-4">
+                    {hashtagFilter && (
+                      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary text-sm font-medium">
+                        Filtering: {hashtagFilter}
+                        <Button variant="ghost" size="icon" className="h-5 w-5 ml-auto" onClick={() => setHashtagFilter(null)}>
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
                     {isLoadingPosts ? (
                       <Card>
                         <CardContent className="p-12 text-center">
                           <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
                         </CardContent>
                       </Card>
-                    ) : posts.length === 0 ? (
+                    ) : posts.filter((p) => !hashtagFilter || p.content.toLowerCase().includes(hashtagFilter)).length === 0 ? (
                       <Card>
                         <CardContent className="p-12 text-center">
-                          <p className="text-muted-foreground">No posts yet. Be the first to share!</p>
+                          <p className="text-muted-foreground">{hashtagFilter ? `No posts with ${hashtagFilter} yet.` : 'No posts yet. Be the first to share!'}</p>
                         </CardContent>
                       </Card>
                     ) : (
-                      posts.map((post) => (
+                      posts.filter((p) => !hashtagFilter || p.content.toLowerCase().includes(hashtagFilter)).map((post) => (
                         <Card key={post.id}>
                           <CardContent className="p-4">
                             {post.is_echo && post.echoed_by_name && (
@@ -760,19 +763,19 @@ const DashboardPage = () => {
                                 {/* Show quoted message if present */}
                                 {post.is_echo && post.echo_message && (
                                   <p className="text-foreground mb-2 whitespace-pre-wrap">
-                                    {renderContentWithMentionsAndLinks(post.echo_message)}
+                                    {renderContentWithMentionsAndLinks(post.echo_message, setHashtagFilter)}
                                   </p>
                                 )}
                                 {/* Wrap original post when a quote exists */}
                                 {post.is_echo && post.echo_message ? (
                                   <div className="bg-muted/50 border border-border rounded p-3 mb-4">
                                     <p className="text-foreground whitespace-pre-wrap">
-                                      {renderContentWithMentionsAndLinks(post.content)}
+                                      {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
                                     </p>
                                   </div>
                                 ) : (
                                   <p className="text-foreground mb-4 whitespace-pre-wrap">
-                                    {renderContentWithMentionsAndLinks(post.content)}
+                                    {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
                                   </p>
                                 )}
                                 <div className="flex items-center gap-6">
@@ -867,21 +870,11 @@ const DashboardPage = () => {
                     </Button>
                   </CardContent>
                 </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base">Trending</CardTitle>
-                  </CardHeader>
-                    <CardContent className="space-y-3">
-                    {trendingTags.map((t) => (
-                      <div key={t.tag} className="group cursor-pointer">
-                        <p className="text-sm text-muted-foreground">{t.topic}</p>
-                        <p className="font-medium group-hover:text-primary transition-colors">
-                          {t.tag}
-                        </p>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
+                <TrendingPanel
+                  userId={user.id}
+                  activeTag={hashtagFilter}
+                  onTagClick={setHashtagFilter}
+                />
               </aside>
             </div>
           </div>
@@ -936,9 +929,7 @@ const DashboardPage = () => {
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                    {renderContentWithMentionsAndLinks(
-                      replyingToPost.content
-                    )}
+                    {renderContentWithMentionsAndLinks(replyingToPost.content, setHashtagFilter)}
                   </p>
                 </div>
                 {/* Replies List */}
@@ -985,7 +976,7 @@ const DashboardPage = () => {
                             </span>
                           </div>
                           <p className="text-sm whitespace-pre-wrap">
-                            {renderContentWithMentionsAndLinks(reply.content)}
+                            {renderContentWithMentionsAndLinks(reply.content, setHashtagFilter)}
                           </p>
                         </div>
                       </div>
@@ -1074,7 +1065,7 @@ const DashboardPage = () => {
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                    {renderContentWithMentionsAndLinks(quotingPost.content)}
+                    {renderContentWithMentionsAndLinks(quotingPost.content, setHashtagFilter)}
                   </p>
                 </div>
                 <div>

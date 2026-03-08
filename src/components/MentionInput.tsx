@@ -217,32 +217,31 @@ export const MentionInput = ({
   );
 };
 
-// Function to render content with mentions and links
-export const renderContentWithMentionsAndLinks = (content: string) => {
-  // Combined regex for URLs and mentions
-  const combinedRegex = /(https?:\/\/[^\s]+)|(@\w+)/g;
-  const parts: Array<{ type: 'text' | 'url' | 'mention'; content: string }> = [];
+// Function to render content with mentions, links, and hashtags
+export const renderContentWithMentionsAndLinks = (
+  content: string,
+  onHashtagClick?: (tag: string) => void
+) => {
+  // Combined regex for URLs, mentions, and hashtags
+  const combinedRegex = /(https?:\/\/[^\s]+)|(@\w+)|(#[A-Za-z0-9_]+)/g;
+  const parts: Array<{ type: 'text' | 'url' | 'mention' | 'hashtag'; content: string }> = [];
   let lastIndex = 0;
   let match;
 
   while ((match = combinedRegex.exec(content)) !== null) {
-    // Add text before match
     if (match.index > lastIndex) {
       parts.push({ type: 'text', content: content.slice(lastIndex, match.index) });
     }
-
     if (match[1]) {
-      // URL match
       parts.push({ type: 'url', content: match[1] });
     } else if (match[2]) {
-      // Mention match
       parts.push({ type: 'mention', content: match[2] });
+    } else if (match[3]) {
+      parts.push({ type: 'hashtag', content: match[3] });
     }
-
     lastIndex = match.index + match[0].length;
   }
 
-  // Add remaining text
   if (lastIndex < content.length) {
     parts.push({ type: 'text', content: content.slice(lastIndex) });
   }
@@ -263,12 +262,25 @@ export const renderContentWithMentionsAndLinks = (content: string) => {
     }
     
     if (part.type === 'mention') {
-      const username = part.content.slice(1); // Remove @
+      const username = part.content.slice(1);
       return (
         <span
           key={index}
           className="text-primary font-medium hover:underline cursor-pointer bg-primary/10 px-1 rounded"
           title={`View @${username}'s profile`}
+        >
+          {part.content}
+        </span>
+      );
+    }
+
+    if (part.type === 'hashtag') {
+      return (
+        <span
+          key={index}
+          className="text-primary font-medium hover:underline cursor-pointer"
+          onClick={() => onHashtagClick?.(part.content.toLowerCase())}
+          title={`Filter by ${part.content}`}
         >
           {part.content}
         </span>
