@@ -651,6 +651,10 @@ const DashboardPage = () => {
                               >
                                 <Image className="h-5 w-5" />
                               </Button>
+                              <StickerPicker
+                                onSelect={setSelectedSticker}
+                                selectedSticker={selectedSticker}
+                              />
                               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
                                 <Sparkles className="h-5 w-5" />
                               </Button>
