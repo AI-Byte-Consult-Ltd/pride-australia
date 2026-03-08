@@ -82,11 +82,12 @@ const EventsPage = () => {
   return (
     <>
       <Helmet>
-        <title>Events | PRIDE Lab Foundation</title>
+        <title>Community Events | Pride Social Network</title>
         <meta
           name="description"
-          content="Join PRIDE Lab Foundation community events across the European Union — online and in-person gatherings for the LGBTQ+ community."
+          content="Join Pride Social Network community events across the European Union — online and in-person gatherings for the LGBTQIA+ community."
         />
+        <link rel="canonical" href="https://pridesocial.org/events" />
       </Helmet>
 
       <Layout>

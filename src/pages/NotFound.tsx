@@ -106,6 +106,7 @@ const NotFound = () => {
         </p>
       </div>
     </div>
+    </>
   );
 };
 
