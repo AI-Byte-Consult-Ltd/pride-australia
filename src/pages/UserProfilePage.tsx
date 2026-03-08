@@ -368,19 +368,25 @@ const UserProfilePage = () => {
         uploadedImageUrl = urlData.publicUrl;
       }
 
-      const { data, error } = await supabase
+      const trimmedContent = postContent.trim();
+      const { error } = await supabase
         .from('posts')
-        .insert({ content: postContent.trim(), user_id: user.id, image_url: uploadedImageUrl } as any)
+        .insert({ content: trimmedContent, user_id: user.id, image_url: uploadedImageUrl } as any)
         .select('id')
         .single();
       if (error) throw error;
+
       setPostContent('');
       setSelectedImage(null);
       setImagePreview(null);
       toast({ title: 'Posted!', description: 'Your post has been shared.' });
       fetchProfileAndPosts();
-    } catch {
-      toast({ title: 'Error', description: 'Failed to create post.', variant: 'destructive' });
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error?.message || 'Failed to create post.',
+        variant: 'destructive',
+      });
     } finally {
       setIsPosting(false);
     }
