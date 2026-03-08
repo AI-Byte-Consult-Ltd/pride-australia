@@ -420,7 +420,11 @@ const DashboardPage = () => {
         .select('id')
         .single();
       if (error) throw error;
-      await createMentionNotifications(user.id, replyContent.trim(), postId, data.id);
+
+      await Promise.all([
+        createMentionNotifications(user.id, replyContent.trim(), postId, data.id),
+        createNotification(replyingToPost.user_id, user.id, 'reply', postId, replyContent.trim()),
+      ]);
       setReplyContent('');
       toast({ title: 'Reply posted!', description: 'Your reply has been added.' });
       await openReplyThread({ ...replyingToPost, id: postId });
