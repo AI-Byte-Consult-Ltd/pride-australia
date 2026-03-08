@@ -92,7 +92,7 @@ const CommunityMapSection = () => {
           style={{ animationDelay: '0.4s' }}
         >
           {/* NOTE: Map viewport should be set to EU inside CommunityMap component (default center/zoom/bounds). */}
-          <CommunityMap compact onAddBusiness={() => setShowAddForm(true)} />
+          <CommunityMap onAddBusiness={() => setShowAddForm(true)} />
         </div>
 
         {/* CTA */}
