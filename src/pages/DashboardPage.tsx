@@ -556,10 +556,12 @@ const DashboardPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Dashboard | Pride Social Network</title>
-        <meta name="description" content="Your Pride Social Network dashboard." />
-      </Helmet>
+      <PageSEO
+        title="Dashboard | Pride Social Network"
+        description="Your Pride Social Network dashboard."
+        path="/dashboard"
+        noIndex
+      />
 
       <Layout hideFooter>
         <div className="min-h-[calc(100vh-4rem)] bg-muted/30">

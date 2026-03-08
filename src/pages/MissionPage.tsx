@@ -95,14 +95,11 @@ const MissionPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Our Mission | Pride Social Network</title>
-        <meta
-          name="description"
-          content="Learn the mission of Pride Social Network: an EU-first LGBTQIA+ social platform built for safety, belonging, and real community impact — Made in EU for the World."
-        />
-        <link rel="canonical" href="https://pridesocial.org/mission" />
-      </Helmet>
+      <PageSEO
+        title="Our Mission | Pride Social Network"
+        description="Learn the mission of Pride Social Network: an EU-first LGBTQIA+ social platform built for safety, belonging, and real community impact — Made in EU for the World."
+        path="/mission"
+      />
 
       <Layout>
         {/* Hero */}

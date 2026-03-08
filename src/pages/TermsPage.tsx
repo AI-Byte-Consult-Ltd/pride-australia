@@ -23,14 +23,11 @@ const TermsPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Terms of Service | Pride Social Network</title>
-        <meta
-          name="description"
-          content="Read the Terms of Service for Pride Social Network. Understand your rights and responsibilities when using our platform."
-        />
-        <link rel="canonical" href="https://pridesocial.org/terms" />
-      </Helmet>
+      <PageSEO
+        title="Terms of Service | Pride Social Network"
+        description="Read the Terms of Service for Pride Social Network. Understand your rights and responsibilities when using our platform."
+        path="/terms"
+      />
 
       <Layout>
         <article className="py-16 lg:py-24">

@@ -18,10 +18,7 @@ const GuidelinesPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('guidelines.metaTitle')}</title>
-        <meta name="description" content={t('guidelines.metaDesc')} />
-      </Helmet>
+      <PageSEO title={t('guidelines.metaTitle')} description={t('guidelines.metaDesc')} path="/guidelines" />
       <Layout>
         <section className="py-16 lg:py-24 gradient-hero">
           <div className="container">

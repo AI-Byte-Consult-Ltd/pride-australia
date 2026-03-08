@@ -11,10 +11,7 @@ const EarlySupportersPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('earlySupporters.metaTitle')}</title>
-        <meta name="description" content={t('earlySupporters.subtitle')} />
-      </Helmet>
+      <PageSEO title={t('earlySupporters.metaTitle')} description={t('earlySupporters.subtitle')} path="/early-supporters" />
       <Layout>
         <section className="py-20 lg:py-28 gradient-hero">
           <div className="container">

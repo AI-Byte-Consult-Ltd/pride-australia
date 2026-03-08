@@ -162,16 +162,7 @@ const TransparencyCostsPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href={`${siteUrl}/transparency-and-costs`} />
-
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:url" content={`${siteUrl}/transparency-and-costs`} />
-      </Helmet>
+      <PageSEO title={title} description={description} path="/transparency-and-costs" />
 
       <Layout>
         {/* Hero */}

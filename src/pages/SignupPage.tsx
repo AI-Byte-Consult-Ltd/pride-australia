@@ -154,11 +154,11 @@ const SignupPage = () => {
 
   return (
     <Layout>
-      <Helmet>
-        <title>Sign Up | Pride Social Network</title>
-        <meta name="description" content="Join Pride Social Network today. Create your free account and connect with the LGBTQIA+ community." />
-        <link rel="canonical" href="https://pridesocial.org/signup" />
-      </Helmet>
+      <PageSEO
+        title="Sign Up | Pride Social Network"
+        description="Join Pride Social Network today. Create your free account and connect with the LGBTQIA+ community."
+        path="/signup"
+      />
 
       <div className="min-h-[calc(100vh-12rem)] flex items-center justify-center p-4 gradient-hero">
         <div className="w-full max-w-md animate-fade-in">

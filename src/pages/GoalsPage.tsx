@@ -170,21 +170,11 @@ const GoalsPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Core Goals | Pride Social Network & Pride Lab Foundation</title>
-        <meta
-          name="description"
-          content="Explore the core goals of Pride Social Network and Pride Lab Foundation — EU-first, made in EU for the world, with a roadmap built for global scale."
-        />
-        <link rel="canonical" href={`${siteUrl}/goals`} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="Core Goals | Pride Social Network & Pride Lab Foundation" />
-        <meta
-          property="og:description"
-          content="EU-first goals, global platform roadmap, mobile apps, safety, creator support, transparency, and Foundation priorities (Italy first)."
-        />
-        <meta property="og:url" content={`${siteUrl}/goals`} />
-      </Helmet>
+      <PageSEO
+        title="Core Goals | Pride Social Network"
+        description="Explore the core goals of Pride Social Network — EU-first, made in EU for the world, with a roadmap built for global scale."
+        path="/goals"
+      />
 
       <Layout>
         {/* Hero */}

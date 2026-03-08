@@ -174,10 +174,12 @@ const SettingsPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Settings | Pride Social Network</title>
-        <meta name="description" content="Manage your Pride Social Network account settings." />
-      </Helmet>
+      <PageSEO
+        title="Settings | Pride Social Network"
+        description="Manage your Pride Social Network account settings."
+        path="/dashboard/settings"
+        noIndex
+      />
 
       <Layout>
         <div className="bg-muted/30 pb-12">

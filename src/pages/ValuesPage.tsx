@@ -20,10 +20,7 @@ const ValuesPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('values.metaTitle')}</title>
-        <meta name="description" content={t('values.subtitle')} />
-      </Helmet>
+      <PageSEO title={t('values.metaTitle')} description={t('values.subtitle')} path="/values" />
       <Layout>
         <section className="py-20 lg:py-28 gradient-hero">
           <div className="container">

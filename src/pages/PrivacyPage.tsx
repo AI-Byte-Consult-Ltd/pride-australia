@@ -16,14 +16,11 @@ const PrivacyPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Privacy Policy | Pride Social Network</title>
-        <meta
-          name="description"
-          content="Read the Privacy Policy for Pride Social Network. Learn how we collect, use, share, and protect personal information, including cookies and GDPR information for EU users."
-        />
-        <link rel="canonical" href="https://pridesocial.org/privacy" />
-      </Helmet>
+      <PageSEO
+        title="Privacy Policy | Pride Social Network"
+        description="Read the Privacy Policy for Pride Social Network. Learn how we collect, use, share, and protect personal information, including cookies and GDPR information for EU users."
+        path="/privacy"
+      />
 
       <Layout>
         <article className="py-16 lg:py-24">

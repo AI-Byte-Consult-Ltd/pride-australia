@@ -12,14 +12,11 @@ const NewsPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>News | Pride Social Network</title>
-        <meta
-          name="description"
-          content="Stay informed about LGBTQIA+ news, events, and community updates across the European Union — culture, pride events, rights, and safety."
-        />
-        <link rel="canonical" href="https://pridesocial.org/news" />
-      </Helmet>
+      <PageSEO
+        title="News | Pride Social Network"
+        description="Stay informed about LGBTQIA+ news, events, and community updates across the European Union — culture, pride events, rights, and safety."
+        path="/news"
+      />
 
       <Layout>
         {/* Hero */}

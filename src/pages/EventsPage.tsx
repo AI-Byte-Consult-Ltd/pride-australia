@@ -81,14 +81,11 @@ const events: EventItem[] = [
 const EventsPage = () => {
   return (
     <>
-      <Helmet>
-        <title>Community Events | Pride Social Network</title>
-        <meta
-          name="description"
-          content="Join Pride Social Network community events across the European Union — online and in-person gatherings for the LGBTQIA+ community."
-        />
-        <link rel="canonical" href="https://pridesocial.org/events" />
-      </Helmet>
+      <PageSEO
+        title="Community Events | Pride Social Network"
+        description="Join Pride Social Network community events across the European Union — online and in-person gatherings for the LGBTQIA+ community."
+        path="/events"
+      />
 
       <Layout>
         {/* Hero */}
