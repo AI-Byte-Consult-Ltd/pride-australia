@@ -976,7 +976,7 @@ const DashboardPage = () => {
                             </span>
                           </div>
                           <p className="text-sm whitespace-pre-wrap">
-                            {renderContentWithMentionsAndLinks(reply.content)}
+                            {renderContentWithMentionsAndLinks(reply.content, setHashtagFilter)}
                           </p>
                         </div>
                       </div>
