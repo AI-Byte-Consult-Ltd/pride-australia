@@ -866,6 +866,17 @@ const DashboardPage = () => {
                                     <span className="text-5xl">{post.sticker}</span>
                                   </div>
                                 )}
+                                {post.image_url && (
+                                  <div className="mb-4">
+                                    <img
+                                      src={post.image_url}
+                                      alt="Post image"
+                                      className="rounded-lg border border-border max-h-96 w-auto object-contain"
+                                      loading="lazy"
+                                    />
+                                  </div>
+                                )}
+                                )}
                                 <div className="flex items-center gap-6">
                                   <button
                                       onClick={() =>
