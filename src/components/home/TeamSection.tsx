@@ -1,6 +1,5 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ExternalLink, Globe, Linkedin } from "lucide-react";
+import { Linkedin } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const teamMembers = [
   {
@@ -36,29 +35,23 @@ const teamMembers = [
 ];
 
 const TeamSection = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="py-20 lg:py-28 bg-muted/30">
       <div className="container">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            Meet Our <span className="gradient-pride-text">Team</span>
+            {t('team.title')} <span className="gradient-pride-text">{t('team.titleHighlight')}</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            The passionate leaders behind PRIDE Social Network, working to create a better community for everyone.
-          </p>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('team.subtitle')}</p>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {teamMembers.map((member, index) => {
             const link = member.website && member.website !== '#' ? member.website : member.linkedIn;
-
             return (
-              <div
-                key={member.name}
-                className="group text-center p-8 rounded-2xl bg-card border shadow-card transition-all duration-300 hover:shadow-elevated animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                {/* PHOTO — clickable to website for NICS AI & AI Byte Consult Ltd. */}
+              <div key={member.name} className="group text-center p-8 rounded-2xl bg-card border shadow-card transition-all duration-300 hover:shadow-elevated animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                 {link && link !== '#' ? (
                   <a href={link} target="_blank" rel="noopener noreferrer">
                     <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4">
@@ -70,31 +63,19 @@ const TeamSection = () => {
                     <img src={member.photo} alt={member.name} className="w-full h-full object-cover" />
                   </div>
                 )}
-
-                {/* NAME — clickable to website for NICS AI & AI Byte Consult Ltd. */}
                 {link && link !== '#' ? (
                   <a href={link} target="_blank" rel="noopener noreferrer">
-                    <h3 className="font-display text-xl font-semibold mb-1 hover:opacity-90 transition-opacity">
-                      {member.name}
-                    </h3>
+                    <h3 className="font-display text-xl font-semibold mb-1 hover:opacity-90 transition-opacity">{member.name}</h3>
                   </a>
                 ) : (
                   <h3 className="font-display text-xl font-semibold mb-1">{member.name}</h3>
                 )}
-
                 <p className="text-sm text-muted-foreground mb-2">{member.role}</p>
                 <p className="text-muted-foreground mb-4">{member.description}</p>
-
-                {/* LinkedIn — only if real */}
                 {member.linkedIn !== '#' && (
-                  <a
-                    href={member.linkedIn}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-                  >
+                  <a href={member.linkedIn} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
                     <Linkedin className="h-5 w-5" />
-                    <span className="text-sm font-medium">Connect on LinkedIn</span>
+                    <span className="text-sm font-medium">{t('common.connectOnLinkedIn')}</span>
                   </a>
                 )}
               </div>
