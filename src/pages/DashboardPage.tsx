@@ -343,7 +343,7 @@ const DashboardPage = () => {
     const fetchProfile = async () => {
       const { data } = await supabase
         .from('profiles')
-        .select('pride_coins, display_name, username')
+        .select('pride_coins, display_name, username, referral_code')
         .eq('user_id', user.id)
         .maybeSingle();
       if (data) setUserProfile(data);
