@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import Layout from '@/components/layout/Layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Heart, Shield, Users, MessageCircle, Flag, Ban } from 'lucide-react';
