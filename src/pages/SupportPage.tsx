@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import SupportPackagesSection from '@/components/home/SupportPackagesSection';
