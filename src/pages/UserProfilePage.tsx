@@ -33,11 +33,7 @@ interface PostWithProfile {
   reply_count: number;
   echo_count: number;
   user_has_echoed: boolean;
-  /**
-   * Optional text added by the echoing user when quoting a post. When present,
-   * this should be displayed above the original post content. This value is
-   * null for regular posts or echoes without a comment.
-   */
+  image_url: string | null;
   echo_message?: string | null;
 }
 
