@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Heart, Shield, Eye, Globe, Users, Sparkles, Building2, MapPin, Flag } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { useTranslation } from 'react-i18next';
