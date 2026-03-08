@@ -739,7 +739,7 @@ const DashboardPage = () => {
                             variant="pride"
                             size="sm"
                             onClick={handlePost}
-                            disabled={(!postContent.trim() && !selectedSticker) || isPosting}
+                            disabled={(!postContent.trim() && !selectedSticker && !selectedImage) || isPosting}
                             className="gap-2"
                           >
                             {isPosting ? (
