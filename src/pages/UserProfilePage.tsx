@@ -473,6 +473,9 @@ const UserProfilePage = () => {
                     <CardContent className="p-4">
                       <div className="flex gap-4">
                         <Avatar className="h-10 w-10">
+                          {profile.avatar_url ? (
+                            <AvatarImage src={profile.avatar_url} alt={post.author_name} />
+                          ) : null}
                           <AvatarFallback className="bg-primary/10 text-primary">
                             {post.author_name[0].toUpperCase()}
                           </AvatarFallback>
