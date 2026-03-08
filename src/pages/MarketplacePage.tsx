@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -68,11 +68,11 @@ const MarketplacePage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Marketplace | Pride Social Network</title>
-        <meta name="description" content="Buy and sell within the LGBTQIA+ community. Support Pride creators and small businesses on our community marketplace." />
-        <link rel="canonical" href="https://pridesocial.org/marketplace" />
-      </Helmet>
+      <PageSEO
+        title="Marketplace | Pride Social Network"
+        description="Buy and sell within the LGBTQIA+ community. Support Pride creators and small businesses on our community marketplace."
+        path="/marketplace"
+      />
 
       <Layout>
         {/* Hero */}

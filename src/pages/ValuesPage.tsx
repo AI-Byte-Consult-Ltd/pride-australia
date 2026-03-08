@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Heart, Shield, Eye, Globe, Users, Sparkles, Building2, MapPin, Flag } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { useTranslation } from 'react-i18next';
@@ -20,10 +20,7 @@ const ValuesPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('values.metaTitle')}</title>
-        <meta name="description" content={t('values.subtitle')} />
-      </Helmet>
+      <PageSEO title={t('values.metaTitle')} description={t('values.subtitle')} path="/values" />
       <Layout>
         <section className="py-20 lg:py-28 gradient-hero">
           <div className="container">

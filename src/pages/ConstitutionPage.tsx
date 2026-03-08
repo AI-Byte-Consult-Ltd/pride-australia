@@ -1,17 +1,14 @@
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import Layout from '@/components/layout/Layout';
 
 const ConstitutionPage = () => {
   return (
     <>
-      <Helmet>
-        <title>Constitution | Pride Social Network</title>
-        <meta
-          name="description"
-          content="Constitution of Pride Social Network — governance, objects, and operating principles."
-        />
-        <link rel="canonical" href="https://pridesocial.org/constitution" />
-      </Helmet>
+      <PageSEO
+        title="Constitution | Pride Social Network"
+        description="Constitution of Pride Social Network — governance, objects, and operating principles."
+        path="/constitution"
+      />
 
       <Layout>
         {/* Hero */}

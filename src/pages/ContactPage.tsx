@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -22,11 +22,7 @@ const ContactPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('contact.metaTitle')}</title>
-        <meta name="description" content={t('contact.metaDesc')} />
-        <link rel="canonical" href="https://pridesocial.org/contact" />
-      </Helmet>
+      <PageSEO title={t('contact.metaTitle')} description={t('contact.metaDesc')} path="/contact" />
       <Layout>
         <section className="py-16 lg:py-24">
           <div className="container">

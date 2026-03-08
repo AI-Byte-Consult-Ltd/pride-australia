@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Calendar, MapPin, Video, Users, Clapperboard, Clock } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -81,14 +81,11 @@ const events: EventItem[] = [
 const EventsPage = () => {
   return (
     <>
-      <Helmet>
-        <title>Community Events | Pride Social Network</title>
-        <meta
-          name="description"
-          content="Join Pride Social Network community events across the European Union — online and in-person gatherings for the LGBTQIA+ community."
-        />
-        <link rel="canonical" href="https://pridesocial.org/events" />
-      </Helmet>
+      <PageSEO
+        title="Community Events | Pride Social Network"
+        description="Join Pride Social Network community events across the European Union — online and in-person gatherings for the LGBTQIA+ community."
+        path="/events"
+      />
 
       <Layout>
         {/* Hero */}

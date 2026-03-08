@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import Layout from '@/components/layout/Layout';
 import { useJurisdiction } from '@/contexts/JurisdictionContext';
 
@@ -7,11 +7,11 @@ const CookiesPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Cookie Policy | Pride Social Network</title>
-        <meta name="description" content="Learn about how Pride Social Network uses cookies and similar technologies to provide a better experience." />
-        <link rel="canonical" href="https://pridesocial.org/cookies" />
-      </Helmet>
+      <PageSEO
+        title="Cookie Policy | Pride Social Network"
+        description="Learn about how Pride Social Network uses cookies and similar technologies to provide a better experience."
+        path="/cookies"
+      />
 
       <Layout>
         <div className="py-16 lg:py-24">

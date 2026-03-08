@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import Layout from '@/components/layout/Layout';
 import CommunityMap from '@/components/map/CommunityMap';
 import AddBusinessForm from '@/components/map/AddBusinessForm';
@@ -11,14 +11,11 @@ const CommunityMapPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Community Map | LGBTQIA+-Friendly Businesses | Pride Social Network</title>
-        <meta
-          name="description"
-          content="Discover LGBTQIA+-friendly businesses and projects across Europe and beyond. Find cafés, artists, health services, and more on the Pride Social Community Map."
-        />
-        <link rel="canonical" href="https://pridesocial.org/community-map" />
-      </Helmet>
+      <PageSEO
+        title="Community Map | LGBTQIA+-Friendly Businesses | Pride Social Network"
+        description="Discover LGBTQIA+-friendly businesses and projects across Europe and beyond. Find cafés, artists, health services, and more on the Pride Social Community Map."
+        path="/community-map"
+      />
 
       <Layout>
         {/* Hero Section */}

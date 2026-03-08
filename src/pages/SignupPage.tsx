@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Eye, EyeOff, Heart, Mail, Lock, User, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -154,11 +154,11 @@ const SignupPage = () => {
 
   return (
     <Layout>
-      <Helmet>
-        <title>Sign Up | Pride Social Network</title>
-        <meta name="description" content="Join Pride Social Network today. Create your free account and connect with the LGBTQIA+ community." />
-        <link rel="canonical" href="https://pridesocial.org/signup" />
-      </Helmet>
+      <PageSEO
+        title="Sign Up | Pride Social Network"
+        description="Join Pride Social Network today. Create your free account and connect with the LGBTQIA+ community."
+        path="/signup"
+      />
 
       <div className="min-h-[calc(100vh-12rem)] flex items-center justify-center p-4 gradient-hero">
         <div className="w-full max-w-md animate-fade-in">

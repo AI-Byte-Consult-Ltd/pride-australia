@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Eye, EyeOff, Heart, Mail, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,12 +57,12 @@ const LoginPage = () => {
 
   return (
     <Layout>
-      <Helmet>
-        <title>Log In | Pride Social Network</title>
-        <meta name="description" content="Log in to your Pride Social Network account and connect with the community." />
-        <link rel="canonical" href="https://pridesocial.org/login" />
-        <meta name="robots" content="noindex, follow" />
-      </Helmet>
+      <PageSEO
+        title="Log In | Pride Social Network"
+        description="Log in to your Pride Social Network account and connect with the community."
+        path="/login"
+        noIndex
+      />
 
       <div className="min-h-[calc(100vh-12rem)] flex items-center justify-center p-4 gradient-hero">
         <div className="w-full max-w-md animate-fade-in">

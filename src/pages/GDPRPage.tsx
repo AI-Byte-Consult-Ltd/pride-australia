@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import PageSEO from '@/components/PageSEO';
 import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
 
@@ -25,16 +25,7 @@ const GDPRPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href={`${siteUrl}/gdpr`} />
-
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:url" content={`${siteUrl}/gdpr`} />
-      </Helmet>
+      <PageSEO title={title} description={description} path="/gdpr" />
 
       <Layout>
         <article className="py-16 lg:py-24">

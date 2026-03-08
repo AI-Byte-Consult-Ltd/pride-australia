@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import SupportPackagesSection from '@/components/home/SupportPackagesSection';
@@ -50,10 +50,7 @@ const SupportPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('support.metaTitle')}</title>
-        <meta name="description" content={t('support.metaDesc')} />
-      </Helmet>
+      <PageSEO title={t('support.metaTitle')} description={t('support.metaDesc')} path="/support" />
       <Layout>
         <section className="py-20 lg:py-28 gradient-hero">
           <div className="container">

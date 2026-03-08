@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import Layout from '@/components/layout/Layout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Heart, Shield, Users, MessageCircle, Flag, Ban } from 'lucide-react';
@@ -18,10 +18,7 @@ const GuidelinesPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('guidelines.metaTitle')}</title>
-        <meta name="description" content={t('guidelines.metaDesc')} />
-      </Helmet>
+      <PageSEO title={t('guidelines.metaTitle')} description={t('guidelines.metaDesc')} path="/guidelines" />
       <Layout>
         <section className="py-16 lg:py-24 gradient-hero">
           <div className="container">

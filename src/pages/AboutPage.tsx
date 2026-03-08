@@ -1,9 +1,9 @@
-import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Heart, Building2, Globe, ArrowRight, Sparkles, Target, Network } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
+import PageSEO from '@/components/PageSEO';
 
 const AboutPage = () => {
   const { t } = useTranslation();
@@ -13,10 +13,7 @@ const AboutPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{t('about.metaTitle')}</title>
-        <meta name="description" content={t('about.metaDesc')} />
-      </Helmet>
+      <PageSEO title={t('about.metaTitle')} description={t('about.metaDesc')} path="/about" />
 
       <Layout>
         <section className="py-20 lg:py-28 gradient-hero">

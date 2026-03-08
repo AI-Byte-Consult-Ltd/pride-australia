@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Navigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/contexts/AuthContext';
@@ -236,9 +236,12 @@ const AdminDashboardPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Admin Dashboard | Pride Social Network</title>
-      </Helmet>
+      <PageSEO
+        title="Admin Dashboard | Pride Social Network"
+        description="Admin dashboard for Pride Social Network."
+        path="/admin"
+        noIndex
+      />
       
       <Layout>
         <div className="container py-8">
