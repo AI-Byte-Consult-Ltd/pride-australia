@@ -257,6 +257,7 @@ const DashboardPage = () => {
         ...newPostData,
         author_name: profileData?.display_name || 'Anonymous',
         author_username: profileData?.username || null,
+        author_avatar: profileData?.avatar_url || null,
         like_count: 0,
         user_has_liked: false,
         reply_count: 0,
