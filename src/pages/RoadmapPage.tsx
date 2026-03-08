@@ -470,13 +470,7 @@ const RoadmapPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Roadmap | Pride Social Network & Pride Lab Foundation</title>
-        <meta
-          name="description"
-          content="Explore the roadmap for Pride Social Network and Pride Lab Foundation — what’s implemented, what’s next, and how our EU HQ and Italy-first foundation plan supports the ecosystem."
-        />
-      </Helmet>
+      <PageSEO title="Roadmap | Pride Social Network" description="Explore the roadmap for Pride Social Network." path="/roadmap" />
 
       <Layout>
         {/* Hero */}
