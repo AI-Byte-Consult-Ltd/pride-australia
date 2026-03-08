@@ -634,12 +634,20 @@ const DashboardPage = () => {
                         <AvatarFallback className="gradient-pride text-primary-foreground">{userInitial}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <MentionInput
+                         <MentionInput
                           value={postContent}
                           onChange={setPostContent}
                           placeholder="What's on your mind? Use @ to mention users"
                           maxLength={MAX_POST_LENGTH}
                         />
+                        {selectedSticker && (
+                          <div className="mt-2 flex items-center gap-2 p-2 rounded-lg bg-muted/50">
+                            <span className="text-4xl">{selectedSticker}</span>
+                            <Button variant="ghost" size="sm" className="h-6 text-xs text-muted-foreground" onClick={() => setSelectedSticker(null)}>
+                              <X className="h-3 w-3 mr-1" /> Remove sticker
+                            </Button>
+                          </div>
+                        )}
                         <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
                           <div className="flex items-center gap-4">
                             <div className="flex gap-2">
