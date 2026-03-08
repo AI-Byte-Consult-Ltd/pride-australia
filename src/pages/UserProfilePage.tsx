@@ -379,14 +379,25 @@ const UserProfilePage = () => {
         <div className="container py-6">
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Заголовок профиля */}
-            <Card>
-              <CardContent className="p-6 flex flex-col items-center text-center">
-                <Avatar className="h-16 w-16 mb-4">
+            <Card className="overflow-hidden">
+              {/* Banner */}
+              <div className="w-full h-32 sm:h-40 relative">
+                {profile.banner_url ? (
+                  <img src={profile.banner_url} alt="Banner" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full gradient-pride opacity-30" />
+                )}
+              </div>
+              <CardContent className="p-6 flex flex-col items-center text-center -mt-12 relative">
+                <Avatar className="h-20 w-20 border-4 border-background shadow-lg">
+                  {profile.avatar_url ? (
+                    <AvatarImage src={profile.avatar_url} alt={displayName} />
+                  ) : null}
                   <AvatarFallback className="gradient-pride text-primary-foreground text-2xl">
                     {userInitial}
                   </AvatarFallback>
                 </Avatar>
-                <h1 className="text-2xl font-display font-bold">{displayName}</h1>
+                <h1 className="text-2xl font-display font-bold mt-3">{displayName}</h1>
                 {profile.username && (
                   <p className="mt-1">
                     <RainbowUsername username={profile.username} />
