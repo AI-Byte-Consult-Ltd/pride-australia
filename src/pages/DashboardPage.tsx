@@ -260,6 +260,7 @@ const DashboardPage = () => {
         reply_count: 0,
         echo_count: 0,
         user_has_echoed: false,
+        sticker: (newPostData as any).sticker || null,
       };
       setPosts((prev) => [newPost, ...prev]);
     });
