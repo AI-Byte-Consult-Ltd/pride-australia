@@ -442,14 +442,16 @@ const DashboardPage = () => {
   };
 
   // Like/unlike post
-  const handleLike = async (postId: string, hasLiked: boolean) => {
+  const handleLike = async (postId: string, hasLiked: boolean, postAuthorId: string) => {
     if (!user || likingPostId) return;
     setLikingPostId(postId);
     try {
       if (hasLiked) {
         await supabase.from('post_likes').delete().eq('post_id', postId).eq('user_id', user.id);
       } else {
-        await supabase.from('post_likes').insert({ post_id: postId, user_id: user.id });
+        const { error } = await supabase.from('post_likes').insert({ post_id: postId, user_id: user.id });
+        if (error) throw error;
+        await createNotification(postAuthorId, user.id, 'like', postId);
       }
     } catch {
       toast({ title: 'Error', description: 'Failed to update like.', variant: 'destructive' });
