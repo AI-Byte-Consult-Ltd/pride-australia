@@ -64,6 +64,10 @@ const en = {
     fr: 'Français',
     it: 'Italiano',
     de: 'Deutsch',
+    ar: 'العربية',
+    id: 'Bahasa Indonesia',
+    pt: 'Português',
+    es: 'Español',
   },
 
   // ─── NAVIGATION ───
