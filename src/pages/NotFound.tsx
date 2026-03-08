@@ -26,6 +26,11 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
+    <>
+    <Helmet>
+      <title>Page Not Found | Pride Social Network</title>
+      <meta name="robots" content="noindex, nofollow" />
+    </Helmet>
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 gradient-hero">
       {/* Decorative blobs */}
       <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />

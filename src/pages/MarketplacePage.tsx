@@ -70,7 +70,8 @@ const MarketplacePage = () => {
     <>
       <Helmet>
         <title>Marketplace | Pride Social Network</title>
-        <meta name="description" content="Buy and sell within the Pride community. Support Pride creators and small businesses on our community marketplace." />
+        <meta name="description" content="Buy and sell within the LGBTQIA+ community. Support Pride creators and small businesses on our community marketplace." />
+        <link rel="canonical" href="https://pridesocial.org/marketplace" />
       </Helmet>
 
       <Layout>

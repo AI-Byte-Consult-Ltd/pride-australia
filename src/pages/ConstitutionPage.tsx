@@ -5,11 +5,12 @@ const ConstitutionPage = () => {
   return (
     <>
       <Helmet>
-        <title>Constitution | PRIDE Lab Foundation</title>
+        <title>Constitution | Pride Social Network</title>
         <meta
           name="description"
-          content="Constitution of PRIDE Lab Foundation Ltd (Company Limited by Guarantee) — governance, objects, and operating principles."
+          content="Constitution of Pride Social Network — governance, objects, and operating principles."
         />
+        <link rel="canonical" href="https://pridesocial.org/constitution" />
       </Helmet>
 
       <Layout>

@@ -12,11 +12,12 @@ const CommunityMapPage = () => {
   return (
     <>
       <Helmet>
-        <title>Community Map | LGBTQ+ Friendly Businesses in Australia</title>
+        <title>Community Map | LGBTQIA+-Friendly Businesses | Pride Social Network</title>
         <meta
           name="description"
-          content="Discover LGBTQ+-friendly businesses and projects across Australia. Find cafés, artists, health services, and more on the Pride Social Community Map."
+          content="Discover LGBTQIA+-friendly businesses and projects across Europe and beyond. Find cafés, artists, health services, and more on the Pride Social Community Map."
         />
+        <link rel="canonical" href="https://pridesocial.org/community-map" />
       </Helmet>
 
       <Layout>

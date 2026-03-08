@@ -10,6 +10,7 @@ const CookiesPage = () => {
       <Helmet>
         <title>Cookie Policy | Pride Social Network</title>
         <meta name="description" content="Learn about how Pride Social Network uses cookies and similar technologies to provide a better experience." />
+        <link rel="canonical" href="https://pridesocial.org/cookies" />
       </Helmet>
 
       <Layout>
