@@ -520,7 +520,7 @@ const DashboardPage = () => {
 
   // Create new post
   const handlePost = async () => {
-    if (!postContent.trim() || !user) return;
+    if ((!postContent.trim() && !selectedSticker) || !user) return;
     if (postContent.length > MAX_POST_LENGTH) {
       toast({
         title: 'Post too long',
@@ -533,12 +533,17 @@ const DashboardPage = () => {
     try {
       const { data, error } = await supabase
         .from('posts')
-        .insert({ content: postContent.trim(), user_id: user.id })
+        .insert({
+          content: postContent.trim() || (selectedSticker ? '' : ''),
+          user_id: user.id,
+          sticker: selectedSticker || null,
+        } as any)
         .select('id')
         .single();
       if (error) throw error;
       await createMentionNotifications(user.id, postContent.trim(), data.id);
       setPostContent('');
+      setSelectedSticker(null);
       toast({ title: 'Posted!', description: 'Your post has been shared.' });
     } catch {
       toast({ title: 'Error', description: 'Failed to create post.', variant: 'destructive' });
