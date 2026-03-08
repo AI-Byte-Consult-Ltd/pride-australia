@@ -131,7 +131,7 @@ const UserProfilePage = () => {
     // Получаем посты пользователя
     const { data: postsData, error: postsError } = await supabase
       .from('posts')
-      .select('id, content, created_at, user_id')
+      .select('id, content, created_at, user_id, image_url')
       .eq('user_id', profileData.user_id)
       .order('created_at', { ascending: false })
       .limit(50);
