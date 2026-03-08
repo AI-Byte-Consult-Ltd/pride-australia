@@ -25,7 +25,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { createMentionNotifications } from '@/hooks/useNotifications';
+import { createMentionNotifications, createNotification } from '@/hooks/useNotifications';
 
 interface PostReply {
   id: string;
