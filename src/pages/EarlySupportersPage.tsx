@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import PageSEO from '@/components/PageSEO';
 import { Link } from 'react-router-dom';
 import { Star, Heart } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
