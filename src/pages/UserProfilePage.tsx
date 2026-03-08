@@ -494,7 +494,7 @@ const UserProfilePage = () => {
                           variant="pride"
                           size="sm"
                           onClick={handlePost}
-                          disabled={!postContent.trim() || isPosting}
+                          disabled={(!postContent.trim() && !selectedImage) || isPosting}
                           className="gap-2"
                         >
                           {isPosting ? (
