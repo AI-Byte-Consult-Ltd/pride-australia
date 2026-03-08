@@ -1124,8 +1124,6 @@ const DashboardPage = () => {
               </div>
             </Card>
           </div>
-        )}
-
         {/* Quote Echo Modal */}
         {quotingPost && (
           <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-3 sm:p-6">
