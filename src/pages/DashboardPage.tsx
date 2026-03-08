@@ -53,6 +53,7 @@ interface PostWithProfile {
   echo_count: number;
   user_has_echoed: boolean;
   sticker: string | null;
+  image_url: string | null;
   is_echo?: boolean;
   echoed_by_name?: string;
   echoed_by_username?: string | null;
@@ -96,6 +97,8 @@ const RainbowUsername = ({ username }: { username: string }) => {
 const DashboardPage = () => {
   const [postContent, setPostContent] = useState('');
   const [selectedSticker, setSelectedSticker] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [posts, setPosts] = useState<PostWithProfile[]>([]);
   const [isPosting, setIsPosting] = useState(false);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
@@ -128,7 +131,7 @@ const DashboardPage = () => {
 
     const { data: postsData, error: postsError } = await supabase
       .from('posts')
-      .select('id, content, created_at, user_id, sticker')
+      .select('id, content, created_at, user_id, sticker, image_url')
       .order('created_at', { ascending: false })
       .limit(50);
 
@@ -230,6 +233,7 @@ const DashboardPage = () => {
         echo_count: echoCountMap.get(post.id) || 0,
         user_has_echoed: userEchoedSet.has(post.id),
         sticker: (post as any).sticker || null,
+        image_url: (post as any).image_url || null,
         is_echo: item.type === 'echo',
         echoed_by_name: item.echoedBy?.name,
         echoed_by_username: item.echoedBy?.username,
@@ -266,6 +270,7 @@ const DashboardPage = () => {
         echo_count: 0,
         user_has_echoed: false,
         sticker: (newPostData as any).sticker || null,
+        image_url: (newPostData as any).image_url || null,
       };
       setPosts((prev) => [newPost, ...prev]);
     });
@@ -526,7 +531,7 @@ const DashboardPage = () => {
 
   // Create new post
   const handlePost = async () => {
-    if ((!postContent.trim() && !selectedSticker) || !user) return;
+    if ((!postContent.trim() && !selectedSticker && !selectedImage) || !user) return;
     if (postContent.length > MAX_POST_LENGTH) {
       toast({
         title: 'Post too long',
@@ -537,12 +542,29 @@ const DashboardPage = () => {
     }
     setIsPosting(true);
     try {
+      let uploadedImageUrl: string | null = null;
+
+      // Upload image if selected
+      if (selectedImage) {
+        const fileExt = selectedImage.name.split('.').pop();
+        const filePath = `posts/${user.id}/${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('pride-social-network')
+          .upload(filePath, selectedImage);
+        if (uploadError) throw uploadError;
+        const { data: urlData } = supabase.storage
+          .from('pride-social-network')
+          .getPublicUrl(filePath);
+        uploadedImageUrl = urlData.publicUrl;
+      }
+
       const { data, error } = await supabase
         .from('posts')
         .insert({
           content: postContent.trim() || (selectedSticker ? '' : ''),
           user_id: user.id,
           sticker: selectedSticker || null,
+          image_url: uploadedImageUrl,
         } as any)
         .select('id')
         .single();
@@ -550,6 +572,8 @@ const DashboardPage = () => {
       await createMentionNotifications(user.id, postContent.trim(), data.id);
       setPostContent('');
       setSelectedSticker(null);
+      setSelectedImage(null);
+      setImagePreview(null);
       toast({ title: 'Posted!', description: 'Your post has been shared.' });
     } catch {
       toast({ title: 'Error', description: 'Failed to create post.', variant: 'destructive' });
@@ -558,9 +582,24 @@ const DashboardPage = () => {
     }
   };
 
-  // Stub for image upload (future feature)
+  // Image upload handler
   const handleImageUpload = () => {
-    toast({ title: 'Coming Soon', description: 'Image posting will be available on June 1st, 2026.' });
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/jpeg,image/png,image/gif,image/webp';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        toast({ title: 'File too large', description: 'Images must be under 5MB.', variant: 'destructive' });
+        return;
+      }
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    };
+    input.click();
   };
 
   if (loading) {
@@ -654,6 +693,19 @@ const DashboardPage = () => {
                             </Button>
                           </div>
                         )}
+                        {imagePreview && (
+                          <div className="mt-2 relative inline-block">
+                            <img src={imagePreview} alt="Preview" className="max-h-48 rounded-lg border border-border" />
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              className="absolute top-1 right-1 h-6 w-6"
+                              onClick={() => { setSelectedImage(null); setImagePreview(null); }}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
                         <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
                           <div className="flex items-center gap-4">
                             <div className="flex gap-2">
@@ -687,7 +739,7 @@ const DashboardPage = () => {
                             variant="pride"
                             size="sm"
                             onClick={handlePost}
-                            disabled={(!postContent.trim() && !selectedSticker) || isPosting}
+                            disabled={(!postContent.trim() && !selectedSticker && !selectedImage) || isPosting}
                             className="gap-2"
                           >
                             {isPosting ? (
@@ -812,6 +864,16 @@ const DashboardPage = () => {
                                 {post.sticker && (
                                   <div className="mb-4">
                                     <span className="text-5xl">{post.sticker}</span>
+                                  </div>
+                                )}
+                                {post.image_url && (
+                                  <div className="mb-4">
+                                    <img
+                                      src={post.image_url}
+                                      alt="Post image"
+                                      className="rounded-lg border border-border max-h-96 w-auto object-contain"
+                                      loading="lazy"
+                                    />
                                   </div>
                                 )}
                                 <div className="flex items-center gap-6">

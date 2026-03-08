@@ -9,7 +9,7 @@ import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/Me
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Heart, MessageCircle, Repeat2, Send, Loader2, X } from 'lucide-react';
+import { Heart, MessageCircle, Repeat2, Send, Loader2, X, Image as ImageIcon } from 'lucide-react';
 
 // Типы поста и ответа
 interface PostReply {
@@ -33,11 +33,7 @@ interface PostWithProfile {
   reply_count: number;
   echo_count: number;
   user_has_echoed: boolean;
-  /**
-   * Optional text added by the echoing user when quoting a post. When present,
-   * this should be displayed above the original post content. This value is
-   * null for regular posts or echoes without a comment.
-   */
+  image_url: string | null;
   echo_message?: string | null;
 }
 
@@ -135,7 +131,7 @@ const UserProfilePage = () => {
     // Получаем посты пользователя
     const { data: postsData, error: postsError } = await supabase
       .from('posts')
-      .select('id, content, created_at, user_id')
+      .select('id, content, created_at, user_id, image_url')
       .eq('user_id', profileData.user_id)
       .order('created_at', { ascending: false })
       .limit(50);
@@ -190,6 +186,7 @@ const UserProfilePage = () => {
       reply_count: replyCountMap.get(post.id) || 0,
       echo_count: echoCountMap.get(post.id) || 0,
       user_has_echoed: userEchoedSet.has(post.id),
+      image_url: (post as any).image_url || null,
     }));
 
     setPosts(postsWithProfiles);
@@ -323,8 +320,30 @@ const UserProfilePage = () => {
   // Состояния для создания нового поста (только на своём профиле)
   const [postContent, setPostContent] = useState('');
   const [isPosting, setIsPosting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const handleImageUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/jpeg,image/png,image/gif,image/webp';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        toast({ title: 'File too large', description: 'Images must be under 5MB.', variant: 'destructive' });
+        return;
+      }
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  };
+
   const handlePost = async () => {
-    if (!postContent.trim() || !user) return;
+    if ((!postContent.trim() && !selectedImage) || !user) return;
     if (postContent.length > MAX_POST_LENGTH) {
       toast({
         title: 'Post too long',
@@ -335,13 +354,29 @@ const UserProfilePage = () => {
     }
     setIsPosting(true);
     try {
+      let uploadedImageUrl: string | null = null;
+      if (selectedImage) {
+        const fileExt = selectedImage.name.split('.').pop();
+        const filePath = `posts/${user.id}/${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('pride-social-network')
+          .upload(filePath, selectedImage);
+        if (uploadError) throw uploadError;
+        const { data: urlData } = supabase.storage
+          .from('pride-social-network')
+          .getPublicUrl(filePath);
+        uploadedImageUrl = urlData.publicUrl;
+      }
+
       const { data, error } = await supabase
         .from('posts')
-        .insert({ content: postContent.trim(), user_id: user.id })
+        .insert({ content: postContent.trim(), user_id: user.id, image_url: uploadedImageUrl } as any)
         .select('id')
         .single();
       if (error) throw error;
       setPostContent('');
+      setSelectedImage(null);
+      setImagePreview(null);
       toast({ title: 'Posted!', description: 'Your post has been shared.' });
       fetchProfileAndPosts();
     } catch {
@@ -424,19 +459,42 @@ const UserProfilePage = () => {
                         placeholder="What's on your mind? Use @ to mention users"
                         maxLength={MAX_POST_LENGTH}
                       />
+                      {imagePreview && (
+                        <div className="mt-2 relative inline-block">
+                          <img src={imagePreview} alt="Preview" className="max-h-48 rounded-lg border border-border" />
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-1 right-1 h-6 w-6"
+                            onClick={() => { setSelectedImage(null); setImagePreview(null); }}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      )}
                       <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
-                        <span
-                          className={`text-xs ${
-                            postContent.length > MAX_POST_LENGTH * 0.9 ? 'text-destructive' : 'text-muted-foreground'
-                          }`}
-                        >
-                          {postContent.length.toLocaleString()}/{MAX_POST_LENGTH.toLocaleString()}
-                        </span>
+                        <div className="flex items-center gap-4">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-muted-foreground hover:text-primary"
+                            onClick={handleImageUpload}
+                          >
+                            <ImageIcon className="h-5 w-5" />
+                          </Button>
+                          <span
+                            className={`text-xs ${
+                              postContent.length > MAX_POST_LENGTH * 0.9 ? 'text-destructive' : 'text-muted-foreground'
+                            }`}
+                          >
+                            {postContent.length.toLocaleString()}/{MAX_POST_LENGTH.toLocaleString()}
+                          </span>
+                        </div>
                         <Button
                           variant="pride"
                           size="sm"
                           onClick={handlePost}
-                          disabled={!postContent.trim() || isPosting}
+                          disabled={(!postContent.trim() && !selectedImage) || isPosting}
                           className="gap-2"
                         >
                           {isPosting ? (
@@ -501,6 +559,16 @@ const UserProfilePage = () => {
                           <p className="text-foreground mb-4 whitespace-pre-wrap">
                             {renderContentWithMentionsAndLinks(post.content)}
                           </p>
+                          {post.image_url && (
+                            <div className="mb-4">
+                              <img
+                                src={post.image_url}
+                                alt="Post image"
+                                className="rounded-lg border border-border max-h-96 w-auto object-contain"
+                                loading="lazy"
+                              />
+                            </div>
+                          )}
                           <div className="flex items-center gap-6">
                             <button
                               onClick={() => handleLike(post.id, post.user_has_liked)}
