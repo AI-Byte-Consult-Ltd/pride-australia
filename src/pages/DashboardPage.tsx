@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/MentionInput';
 import { TrendingPanel } from '@/components/TrendingPanel';
+import { StickerPicker } from '@/components/StickerPicker';
 import {
   Home,
   MapPin,
@@ -49,6 +50,7 @@ interface PostWithProfile {
   reply_count: number;
   echo_count: number;
   user_has_echoed: boolean;
+  sticker: string | null;
   is_echo?: boolean;
   echoed_by_name?: string;
   echoed_by_username?: string | null;
@@ -90,6 +92,7 @@ const RainbowUsername = ({ username }: { username: string }) => {
 
 const DashboardPage = () => {
   const [postContent, setPostContent] = useState('');
+  const [selectedSticker, setSelectedSticker] = useState<string | null>(null);
   const [posts, setPosts] = useState<PostWithProfile[]>([]);
   const [isPosting, setIsPosting] = useState(false);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
@@ -122,7 +125,7 @@ const DashboardPage = () => {
 
     const { data: postsData, error: postsError } = await supabase
       .from('posts')
-      .select('id, content, created_at, user_id')
+      .select('id, content, created_at, user_id, sticker')
       .order('created_at', { ascending: false })
       .limit(50);
 
@@ -222,6 +225,7 @@ const DashboardPage = () => {
         reply_count: replyCountMap.get(post.id) || 0,
         echo_count: echoCountMap.get(post.id) || 0,
         user_has_echoed: userEchoedSet.has(post.id),
+        sticker: (post as any).sticker || null,
         is_echo: item.type === 'echo',
         echoed_by_name: item.echoedBy?.name,
         echoed_by_username: item.echoedBy?.username,
@@ -256,6 +260,7 @@ const DashboardPage = () => {
         reply_count: 0,
         echo_count: 0,
         user_has_echoed: false,
+        sticker: (newPostData as any).sticker || null,
       };
       setPosts((prev) => [newPost, ...prev]);
     });
@@ -515,7 +520,7 @@ const DashboardPage = () => {
 
   // Create new post
   const handlePost = async () => {
-    if (!postContent.trim() || !user) return;
+    if ((!postContent.trim() && !selectedSticker) || !user) return;
     if (postContent.length > MAX_POST_LENGTH) {
       toast({
         title: 'Post too long',
@@ -528,12 +533,17 @@ const DashboardPage = () => {
     try {
       const { data, error } = await supabase
         .from('posts')
-        .insert({ content: postContent.trim(), user_id: user.id })
+        .insert({
+          content: postContent.trim() || (selectedSticker ? '' : ''),
+          user_id: user.id,
+          sticker: selectedSticker || null,
+        } as any)
         .select('id')
         .single();
       if (error) throw error;
       await createMentionNotifications(user.id, postContent.trim(), data.id);
       setPostContent('');
+      setSelectedSticker(null);
       toast({ title: 'Posted!', description: 'Your post has been shared.' });
     } catch {
       toast({ title: 'Error', description: 'Failed to create post.', variant: 'destructive' });
@@ -624,12 +634,20 @@ const DashboardPage = () => {
                         <AvatarFallback className="gradient-pride text-primary-foreground">{userInitial}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <MentionInput
+                         <MentionInput
                           value={postContent}
                           onChange={setPostContent}
                           placeholder="What's on your mind? Use @ to mention users"
                           maxLength={MAX_POST_LENGTH}
                         />
+                        {selectedSticker && (
+                          <div className="mt-2 flex items-center gap-2 p-2 rounded-lg bg-muted/50">
+                            <span className="text-4xl">{selectedSticker}</span>
+                            <Button variant="ghost" size="sm" className="h-6 text-xs text-muted-foreground" onClick={() => setSelectedSticker(null)}>
+                              <X className="h-3 w-3 mr-1" /> Remove sticker
+                            </Button>
+                          </div>
+                        )}
                         <div className="flex items-center justify-between pt-4 border-t border-border mt-4">
                           <div className="flex items-center gap-4">
                             <div className="flex gap-2">
@@ -641,6 +659,10 @@ const DashboardPage = () => {
                               >
                                 <Image className="h-5 w-5" />
                               </Button>
+                              <StickerPicker
+                                onSelect={setSelectedSticker}
+                                selectedSticker={selectedSticker}
+                              />
                               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
                                 <Sparkles className="h-5 w-5" />
                               </Button>
@@ -659,7 +681,7 @@ const DashboardPage = () => {
                             variant="pride"
                             size="sm"
                             onClick={handlePost}
-                            disabled={!postContent.trim() || isPosting}
+                            disabled={(!postContent.trim() && !selectedSticker) || isPosting}
                             className="gap-2"
                           >
                             {isPosting ? (
@@ -777,6 +799,11 @@ const DashboardPage = () => {
                                   <p className="text-foreground mb-4 whitespace-pre-wrap">
                                     {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
                                   </p>
+                                )}
+                                {post.sticker && (
+                                  <div className="mb-4">
+                                    <span className="text-5xl">{post.sticker}</span>
+                                  </div>
                                 )}
                                 <div className="flex items-center gap-6">
                                   <button
