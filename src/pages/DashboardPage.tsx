@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/MentionInput';
 import { TrendingPanel } from '@/components/TrendingPanel';
+import { StickerPicker } from '@/components/StickerPicker';
 import {
   Home,
   MapPin,
