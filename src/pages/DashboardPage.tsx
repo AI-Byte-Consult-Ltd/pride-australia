@@ -45,6 +45,7 @@ interface PostWithProfile {
   user_id: string;
   author_name: string;
   author_username: string | null;
+  author_avatar: string | null;
   like_count: number;
   user_has_liked: boolean;
   reply_count: number;
