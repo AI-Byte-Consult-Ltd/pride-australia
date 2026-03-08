@@ -236,9 +236,12 @@ const AdminDashboardPage = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Admin Dashboard | Pride Social Network</title>
-      </Helmet>
+      <PageSEO
+        title="Admin Dashboard | Pride Social Network"
+        description="Admin dashboard for Pride Social Network."
+        path="/admin"
+        noIndex
+      />
       
       <Layout>
         <div className="container py-8">
