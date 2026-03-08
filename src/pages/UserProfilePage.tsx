@@ -9,7 +9,7 @@ import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/Me
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Heart, MessageCircle, Repeat2, Send, Loader2, X } from 'lucide-react';
+import { Heart, MessageCircle, Repeat2, Send, Loader2, X, Image as ImageIcon } from 'lucide-react';
 
 // Типы поста и ответа
 interface PostReply {
