@@ -225,6 +225,7 @@ const DashboardPage = () => {
         reply_count: replyCountMap.get(post.id) || 0,
         echo_count: echoCountMap.get(post.id) || 0,
         user_has_echoed: userEchoedSet.has(post.id),
+        sticker: (post as any).sticker || null,
         is_echo: item.type === 'echo',
         echoed_by_name: item.echoedBy?.name,
         echoed_by_username: item.echoedBy?.username,
