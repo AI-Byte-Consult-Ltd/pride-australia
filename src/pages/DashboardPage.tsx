@@ -692,20 +692,28 @@ const DashboardPage = () => {
                     </TabsTrigger>
                   </TabsList>
                   <TabsContent value="for-you" className="mt-4 space-y-4">
+                    {hashtagFilter && (
+                      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary text-sm font-medium">
+                        Filtering: {hashtagFilter}
+                        <Button variant="ghost" size="icon" className="h-5 w-5 ml-auto" onClick={() => setHashtagFilter(null)}>
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
                     {isLoadingPosts ? (
                       <Card>
                         <CardContent className="p-12 text-center">
                           <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
                         </CardContent>
                       </Card>
-                    ) : posts.length === 0 ? (
+                    ) : posts.filter((p) => !hashtagFilter || p.content.toLowerCase().includes(hashtagFilter)).length === 0 ? (
                       <Card>
                         <CardContent className="p-12 text-center">
-                          <p className="text-muted-foreground">No posts yet. Be the first to share!</p>
+                          <p className="text-muted-foreground">{hashtagFilter ? `No posts with ${hashtagFilter} yet.` : 'No posts yet. Be the first to share!'}</p>
                         </CardContent>
                       </Card>
                     ) : (
-                      posts.map((post) => (
+                      posts.filter((p) => !hashtagFilter || p.content.toLowerCase().includes(hashtagFilter)).map((post) => (
                         <Card key={post.id}>
                           <CardContent className="p-4">
                             {post.is_echo && post.echoed_by_name && (
