@@ -50,6 +50,7 @@ interface PostWithProfile {
   reply_count: number;
   echo_count: number;
   user_has_echoed: boolean;
+  sticker: string | null;
   is_echo?: boolean;
   echoed_by_name?: string;
   echoed_by_username?: string | null;
