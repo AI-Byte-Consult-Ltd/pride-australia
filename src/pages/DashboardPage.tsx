@@ -97,6 +97,8 @@ const RainbowUsername = ({ username }: { username: string }) => {
 const DashboardPage = () => {
   const [postContent, setPostContent] = useState('');
   const [selectedSticker, setSelectedSticker] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [posts, setPosts] = useState<PostWithProfile[]>([]);
   const [isPosting, setIsPosting] = useState(false);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
