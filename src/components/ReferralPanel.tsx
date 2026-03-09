@@ -18,7 +18,7 @@ export const ReferralPanel = ({ userId, referralCode }: ReferralPanelProps) => {
   const { toast } = useToast();
 
   const referralLink = referralCode
-    ? `${window.location.origin}/signup?ref=${referralCode}`
+    ? `https://pridesocial.org/signup?ref=${referralCode}`
     : '';
 
   useEffect(() => {
