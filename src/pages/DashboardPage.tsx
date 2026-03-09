@@ -55,6 +55,7 @@ interface PostWithProfile {
   sticker: string | null;
   image_url: string | null;
   is_echo?: boolean;
+  echoed_by_user_id?: string;
   echoed_by_name?: string;
   echoed_by_username?: string | null;
   original_post_id?: string;
