@@ -195,6 +195,7 @@ const DashboardPage = () => {
       type: 'post' | 'echo';
       timestamp: string;
       post: typeof postsData[0];
+      echoedByUserId?: string;
       echoedBy?: { name: string; username: string | null };
       message?: string | null;
     };
