@@ -129,7 +129,33 @@ const UserProfilePage = () => {
       return;
     }
 
-    setProfile(profileData as Profile);
+    const { count: followerCount } = await supabase
+      .from('follows')
+      .select('id', { count: 'exact', head: true })
+      .eq('following_id', profileData.user_id);
+
+    const { count: followingCount } = await supabase
+      .from('follows')
+      .select('id', { count: 'exact', head: true })
+      .eq('follower_id', profileData.user_id);
+
+    let isFollowedByMe = false;
+    if (user && user.id !== profileData.user_id) {
+      const { data: followData } = await supabase
+        .from('follows')
+        .select('id')
+        .eq('follower_id', user.id)
+        .eq('following_id', profileData.user_id)
+        .maybeSingle();
+      isFollowedByMe = !!followData;
+    }
+
+    setProfile({
+      ...(profileData as any),
+      follower_count: followerCount || 0,
+      following_count: followingCount || 0,
+      is_followed_by_me: isFollowedByMe
+    });
     setIsLoadingProfile(false);
 
     // Получаем посты пользователя
