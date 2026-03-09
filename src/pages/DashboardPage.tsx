@@ -118,6 +118,8 @@ const DashboardPage = () => {
   const [quoteContent, setQuoteContent] = useState('');
   const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
   const [hashtagFilter, setHashtagFilter] = useState<string | null>(null);
+  const [followingIds, setFollowingIds] = useState<string[]>([]);
+  const [isLoadingFollowing, setIsLoadingFollowing] = useState(false);
   const { toast } = useToast();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
