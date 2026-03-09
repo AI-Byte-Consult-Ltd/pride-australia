@@ -987,7 +987,7 @@ const DashboardPage = () => {
                           <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
                         </CardContent>
                       </Card>
-                    ) : posts.filter((p) => !hashtagFilter || p.content.toLowerCase().includes(hashtagFilter)).length === 0 ? (
+                    ) : forYouFeedPosts.length === 0 ? (
                       <Card>
                         <CardContent className="p-12 text-center">
                           <p className="text-muted-foreground">{hashtagFilter ? `No posts with ${hashtagFilter} yet.` : 'No posts yet. Be the first to share!'}</p>
