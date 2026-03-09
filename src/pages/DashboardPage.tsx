@@ -684,11 +684,11 @@ const DashboardPage = () => {
                 {/* Compose Post */}
                 <Card>
                   <CardContent className="p-4">
-                    <div className="flex gap-4">
-                      <Avatar className="h-10 w-10">
+                    <div className="flex gap-3 sm:gap-4">
+                      <Avatar className="h-10 w-10 shrink-0">
                         <AvatarFallback className="gradient-pride text-primary-foreground">{userInitial}</AvatarFallback>
                       </Avatar>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                          <MentionInput
                           value={postContent}
                           onChange={setPostContent}
