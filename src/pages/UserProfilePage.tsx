@@ -271,6 +271,46 @@ const UserProfilePage = () => {
     setQuoteContent('');
   };
 
+  const handleFollowToggle = async () => {
+    if (!user || !profile || isOwnProfile || isTogglingFollow) return;
+    setIsTogglingFollow(true);
+    
+    try {
+      if (profile.is_followed_by_me) {
+        await supabase
+          .from('follows')
+          .delete()
+          .eq('follower_id', user.id)
+          .eq('following_id', profile.user_id);
+          
+        setProfile(prev => prev ? {
+          ...prev,
+          follower_count: Math.max(0, prev.follower_count - 1),
+          is_followed_by_me: false
+        } : null);
+        toast({ title: 'Unfollowed', description: `You unfollowed ${profile.display_name}` });
+      } else {
+        await supabase
+          .from('follows')
+          .insert({
+            follower_id: user.id,
+            following_id: profile.user_id
+          });
+          
+        setProfile(prev => prev ? {
+          ...prev,
+          follower_count: prev.follower_count + 1,
+          is_followed_by_me: true
+        } : null);
+        toast({ title: 'Followed!', description: `You are now following ${profile.display_name}` });
+      }
+    } catch (error: any) {
+      toast({ title: 'Error', description: 'Failed to update follow status', variant: 'destructive' });
+    } finally {
+      setIsTogglingFollow(false);
+    }
+  };
+
   // Отправка цитирующего эхо
   const handleSubmitQuote = async () => {
     if (!quoteContent.trim() || !user || !quotingPost) return;
