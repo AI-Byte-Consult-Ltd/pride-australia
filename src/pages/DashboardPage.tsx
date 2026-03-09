@@ -997,14 +997,28 @@ const DashboardPage = () => {
                       forYouFeedPosts.map(renderPostCard)
                     )}
                   </TabsContent>
-                  <TabsContent value="following" className="mt-4">
-                    <Card>
-                      <CardContent className="p-12 text-center">
-                        <p className="text-muted-foreground">
-                          Follow other members to see their posts here.
-                        </p>
-                      </CardContent>
-                    </Card>
+                  <TabsContent value="following" className="mt-4 space-y-4">
+                    {isLoadingPosts || isLoadingFollowing ? (
+                      <Card>
+                        <CardContent className="p-12 text-center">
+                          <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
+                        </CardContent>
+                      </Card>
+                    ) : followingIds.length === 0 ? (
+                      <Card>
+                        <CardContent className="p-12 text-center">
+                          <p className="text-muted-foreground">Ты пока ни на кого не подписан(а).</p>
+                        </CardContent>
+                      </Card>
+                    ) : followingFeedPosts.length === 0 ? (
+                      <Card>
+                        <CardContent className="p-12 text-center">
+                          <p className="text-muted-foreground">У тех, на кого ты подписан(а), пока нет постов.</p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      followingFeedPosts.map(renderPostCard)
+                    )}
                   </TabsContent>
                 </Tabs>
               </main>
