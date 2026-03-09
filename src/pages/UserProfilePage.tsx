@@ -45,6 +45,9 @@ interface Profile {
   avatar_url: string | null;
   banner_url: string | null;
   pride_coins: number;
+  follower_count: number;
+  following_count: number;
+  is_followed_by_me: boolean;
 }
 
 // Компонент для радужного отображения никнейма
