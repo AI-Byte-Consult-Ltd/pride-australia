@@ -210,6 +210,7 @@ const DashboardPage = () => {
         type: 'echo',
         timestamp: echo.created_at,
         post: originalPost,
+        echoedByUserId: echo.user_id,
         echoedBy: {
           name: echoerProfile?.display_name || 'Anonymous',
           username: echoerProfile?.username || null,
