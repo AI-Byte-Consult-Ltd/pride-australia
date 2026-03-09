@@ -240,6 +240,7 @@ const DashboardPage = () => {
         sticker: (post as any).sticker || null,
         image_url: (post as any).image_url || null,
         is_echo: item.type === 'echo',
+        echoed_by_user_id: item.echoedByUserId,
         echoed_by_name: item.echoedBy?.name,
         echoed_by_username: item.echoedBy?.username,
         original_post_id: post.id,
