@@ -514,6 +514,33 @@ const UserProfilePage = () => {
                     <RainbowUsername username={profile.username} />
                   </p>
                 )}
+                
+                <div className="flex gap-4 mt-3 text-sm text-muted-foreground">
+                  <div><strong className="text-foreground">{profile.following_count}</strong> Following</div>
+                  <div><strong className="text-foreground">{profile.follower_count}</strong> Followers</div>
+                </div>
+
+                {!isOwnProfile && (
+                  <Button 
+                    className="mt-4 gap-2" 
+                    variant={profile.is_followed_by_me ? "outline" : "pride"}
+                    onClick={handleFollowToggle}
+                    disabled={isTogglingFollow}
+                  >
+                    {isTogglingFollow ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : profile.is_followed_by_me ? (
+                      <>
+                        <UserMinus className="h-4 w-4" /> Unfollow
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="h-4 w-4" /> Follow
+                      </>
+                    )}
+                  </Button>
+                )}
+
                 {profile.bio && (
                   <p className="mt-3 text-sm text-muted-foreground whitespace-pre-wrap">{profile.bio}</p>
                 )}
