@@ -1024,7 +1024,7 @@ const DashboardPage = () => {
               </main>
 
               {/* Right Sidebar */}
-              <aside className="hidden lg:block space-y-6">
+              <aside className="space-y-6 mt-6 lg:mt-0">
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base">Your PRIDE Coins</CardTitle>
