@@ -277,11 +277,13 @@ const UserProfilePage = () => {
     
     try {
       if (profile.is_followed_by_me) {
-        await supabase
+        const { error } = await supabase
           .from('follows')
           .delete()
           .eq('follower_id', user.id)
           .eq('following_id', profile.user_id);
+          
+        if (error) throw error;
           
         setProfile(prev => prev ? {
           ...prev,
@@ -290,12 +292,14 @@ const UserProfilePage = () => {
         } : null);
         toast({ title: 'Unfollowed', description: `You unfollowed ${profile.display_name}` });
       } else {
-        await supabase
+        const { error } = await supabase
           .from('follows')
           .insert({
             follower_id: user.id,
             following_id: profile.user_id
           });
+          
+        if (error) throw error;
           
         setProfile(prev => prev ? {
           ...prev,
@@ -305,7 +309,8 @@ const UserProfilePage = () => {
         toast({ title: 'Followed!', description: `You are now following ${profile.display_name}` });
       }
     } catch (error: any) {
-      toast({ title: 'Error', description: 'Failed to update follow status', variant: 'destructive' });
+      console.error("Follow error:", error);
+      toast({ title: 'Error', description: error.message || 'Failed to update follow status', variant: 'destructive' });
     } finally {
       setIsTogglingFollow(false);
     }
