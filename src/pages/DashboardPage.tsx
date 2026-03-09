@@ -55,6 +55,7 @@ interface PostWithProfile {
   sticker: string | null;
   image_url: string | null;
   is_echo?: boolean;
+  echoed_by_user_id?: string;
   echoed_by_name?: string;
   echoed_by_username?: string | null;
   original_post_id?: string;
@@ -117,6 +118,8 @@ const DashboardPage = () => {
   const [quoteContent, setQuoteContent] = useState('');
   const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
   const [hashtagFilter, setHashtagFilter] = useState<string | null>(null);
+  const [followingIds, setFollowingIds] = useState<string[]>([]);
+  const [isLoadingFollowing, setIsLoadingFollowing] = useState(false);
   const { toast } = useToast();
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -192,6 +195,7 @@ const DashboardPage = () => {
       type: 'post' | 'echo';
       timestamp: string;
       post: typeof postsData[0];
+      echoedByUserId?: string;
       echoedBy?: { name: string; username: string | null };
       message?: string | null;
     };
@@ -206,6 +210,7 @@ const DashboardPage = () => {
         type: 'echo',
         timestamp: echo.created_at,
         post: originalPost,
+        echoedByUserId: echo.user_id,
         echoedBy: {
           name: echoerProfile?.display_name || 'Anonymous',
           username: echoerProfile?.username || null,
@@ -235,6 +240,7 @@ const DashboardPage = () => {
         sticker: (post as any).sticker || null,
         image_url: (post as any).image_url || null,
         is_echo: item.type === 'echo',
+        echoed_by_user_id: item.echoedByUserId,
         echoed_by_name: item.echoedBy?.name,
         echoed_by_username: item.echoedBy?.username,
         original_post_id: post.id,
@@ -245,6 +251,43 @@ const DashboardPage = () => {
     setPosts(postsWithProfiles);
     setIsLoadingPosts(false);
   }, [user]);
+
+  const fetchFollowing = useCallback(async () => {
+    if (!user) return;
+    setIsLoadingFollowing(true);
+    const { data, error } = await supabase
+      .from('follows')
+      .select('following_id')
+      .eq('follower_id', user.id);
+
+    if (error) {
+      setFollowingIds([]);
+      setIsLoadingFollowing(false);
+      return;
+    }
+
+    setFollowingIds((data || []).map((r) => r.following_id));
+    setIsLoadingFollowing(false);
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchFollowing();
+
+    const followsChannel = supabase.channel(`follows-${user.id}`);
+    followsChannel.on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'follows', filter: `follower_id=eq.${user.id}` },
+      () => {
+        void fetchFollowing();
+      }
+    );
+    followsChannel.subscribe();
+
+    return () => {
+      void supabase.removeChannel(followsChannel);
+    };
+  }, [user, fetchFollowing]);
 
   // Realtime subscriptions for posts, likes, echoes
   useEffect(() => {
@@ -626,6 +669,133 @@ const DashboardPage = () => {
     userProfile?.display_name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'User';
   const userInitial = displayName[0].toUpperCase();
 
+  const forYouFeedPosts = posts.filter((p) => !hashtagFilter || p.content.toLowerCase().includes(hashtagFilter));
+  const followingFeedPosts = posts.filter((p) => {
+    if (hashtagFilter && !p.content.toLowerCase().includes(hashtagFilter)) return false;
+    if (followingIds.length === 0) return false;
+    return (
+      followingIds.includes(p.user_id) ||
+      (!!p.echoed_by_user_id && followingIds.includes(p.echoed_by_user_id))
+    );
+  });
+
+  const renderPostCard = (post: PostWithProfile) => (
+    <Card key={post.id}>
+      <CardContent className="p-4">
+        {post.is_echo && post.echoed_by_name && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3 -mt-1">
+            <Repeat2 className="h-4 w-4" />
+            <span>
+              {post.echoed_by_username ? (
+                <Link to={`/users/${encodeURIComponent(post.echoed_by_username)}`}>{post.echoed_by_name}</Link>
+              ) : (
+                post.echoed_by_name
+              )}{' '}
+              echoed
+            </span>
+          </div>
+        )}
+        <div className="flex gap-3 sm:gap-4">
+          <Avatar className="h-10 w-10 shrink-0">
+            {post.author_avatar ? <AvatarImage src={post.author_avatar} alt={post.author_name} /> : null}
+            <AvatarFallback className="bg-primary/10 text-primary">{post.author_name[0].toUpperCase()}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-1">
+              <span className="font-semibold truncate max-w-[200px] sm:max-w-full">
+                {post.author_username ? (
+                  <Link to={`/users/${encodeURIComponent(post.author_username)}`}>{post.author_name}</Link>
+                ) : (
+                  post.author_name
+                )}
+              </span>
+              {post.author_username && (
+                <Link to={`/users/${encodeURIComponent(post.author_username)}`} className="hover:underline">
+                  <RainbowUsername username={post.author_username} />
+                </Link>
+              )}
+              <span className="text-muted-foreground text-sm">· {formatTimeAgo(post.created_at)}</span>
+            </div>
+
+            {post.is_echo && post.echo_message && (
+              <p className="text-foreground mb-2 whitespace-pre-wrap break-words">
+                {renderContentWithMentionsAndLinks(post.echo_message, setHashtagFilter)}
+              </p>
+            )}
+
+            {post.is_echo && post.echo_message ? (
+              <div className="bg-muted/50 border border-border rounded p-3 mb-4">
+                <p className="text-foreground whitespace-pre-wrap break-words">
+                  {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
+                </p>
+              </div>
+            ) : (
+              <p className="text-foreground mb-4 whitespace-pre-wrap break-words">
+                {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
+              </p>
+            )}
+
+            {post.sticker && (
+              <div className="mb-4">
+                <span className="text-5xl">{post.sticker}</span>
+              </div>
+            )}
+
+            {post.image_url && (
+              <div className="mb-4">
+                <img
+                  src={post.image_url}
+                  alt="Post image"
+                  className="rounded-lg border border-border max-h-96 w-auto object-contain"
+                  loading="lazy"
+                />
+              </div>
+            )}
+
+            <div className="flex items-center gap-6">
+              <button
+                onClick={() => handleLike(post.original_post_id || post.id, post.user_has_liked, post.user_id)}
+                disabled={likingPostId === post.id || likingPostId === post.original_post_id}
+                className={`flex items-center gap-2 transition-colors ${
+                  post.user_has_liked ? 'text-pride-pink' : 'text-muted-foreground hover:text-pride-pink'
+                }`}
+              >
+                <Heart className={`h-4 w-4 ${post.user_has_liked ? 'fill-current' : ''}`} />
+                <span className="text-sm">{post.like_count}</span>
+              </button>
+
+              <button
+                onClick={() => openReplyThread({ ...post, id: post.original_post_id || post.id })}
+                className="flex items-center gap-2 text-muted-foreground hover:text-pride-blue transition-colors"
+              >
+                <MessageCircle className="h-4 w-4" />
+                <span className="text-sm">{post.reply_count}</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  if (post.user_has_echoed) {
+                    handleRemoveEcho(post);
+                  } else {
+                    openQuoteModal(post);
+                  }
+                }}
+                disabled={echoingPostId === post.id || echoingPostId === post.original_post_id}
+                className={`flex items-center gap-2 transition-colors ${
+                  post.user_has_echoed ? 'text-pride-green' : 'text-muted-foreground hover:text-pride-green'
+                }`}
+                title="Echo - Amplify this voice"
+              >
+                <Repeat2 className={`h-4 w-4 ${post.user_has_echoed ? 'text-pride-green' : ''}`} />
+                <span className="text-sm">{post.echo_count}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <>
       <PageSEO
@@ -634,6 +804,7 @@ const DashboardPage = () => {
         path="/dashboard"
         noIndex
       />
+
 
       <Layout hideFooter>
         <div className="min-h-[calc(100vh-4rem)] bg-muted/30">
@@ -816,161 +987,38 @@ const DashboardPage = () => {
                           <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
                         </CardContent>
                       </Card>
-                    ) : posts.filter((p) => !hashtagFilter || p.content.toLowerCase().includes(hashtagFilter)).length === 0 ? (
+                    ) : forYouFeedPosts.length === 0 ? (
                       <Card>
                         <CardContent className="p-12 text-center">
                           <p className="text-muted-foreground">{hashtagFilter ? `No posts with ${hashtagFilter} yet.` : 'No posts yet. Be the first to share!'}</p>
                         </CardContent>
                       </Card>
                     ) : (
-                      posts.filter((p) => !hashtagFilter || p.content.toLowerCase().includes(hashtagFilter)).map((post) => (
-                        <Card key={post.id}>
-                          <CardContent className="p-4">
-                            {post.is_echo && post.echoed_by_name && (
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3 -mt-1">
-                                <Repeat2 className="h-4 w-4" />
-                                <span>
-                                  {post.echoed_by_username ? (
-                                    <Link to={`/users/${encodeURIComponent(post.echoed_by_username)}`}>
-                                      {post.echoed_by_name}
-                                    </Link>
-                                  ) : (
-                                    post.echoed_by_name
-                                  )}{' '}
-                                  echoed
-                                </span>
-                              </div>
-                            )}
-                            <div className="flex gap-3 sm:gap-4">
-                              <Avatar className="h-10 w-10 shrink-0">
-                                {post.author_avatar ? (
-                                  <AvatarImage src={post.author_avatar} alt={post.author_name} />
-                                ) : null}
-                                <AvatarFallback className="bg-primary/10 text-primary">
-                                  {post.author_name[0].toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-1">
-                                  <span className="font-semibold truncate max-w-[200px] sm:max-w-full">
-                                    {post.author_username ? (
-                                      <Link to={`/users/${encodeURIComponent(post.author_username)}`}>
-                                        {post.author_name}
-                                      </Link>
-                                    ) : (
-                                      post.author_name
-                                    )}
-                                  </span>
-                                  {post.author_username && (
-                                    <Link
-                                      to={`/users/${encodeURIComponent(post.author_username)}`}
-                                      className="hover:underline"
-                                    >
-                                      <RainbowUsername username={post.author_username} />
-                                    </Link>
-                                  )}
-                                  <span className="text-muted-foreground text-sm">
-                                    · {formatTimeAgo(post.created_at)}
-                                  </span>
-                                </div>
-                                {/* Show quoted message if present */}
-                                {post.is_echo && post.echo_message && (
-                                  <p className="text-foreground mb-2 whitespace-pre-wrap break-words">
-                                    {renderContentWithMentionsAndLinks(post.echo_message, setHashtagFilter)}
-                                  </p>
-                                )}
-                                {/* Wrap original post when a quote exists */}
-                                {post.is_echo && post.echo_message ? (
-                                  <div className="bg-muted/50 border border-border rounded p-3 mb-4">
-                                    <p className="text-foreground whitespace-pre-wrap break-words">
-                                      {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
-                                    </p>
-                                  </div>
-                                ) : (
-                                  <p className="text-foreground mb-4 whitespace-pre-wrap break-words">
-                                    {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
-                                  </p>
-                                )}
-                                {post.sticker && (
-                                  <div className="mb-4">
-                                    <span className="text-5xl">{post.sticker}</span>
-                                  </div>
-                                )}
-                                {post.image_url && (
-                                  <div className="mb-4">
-                                    <img
-                                      src={post.image_url}
-                                      alt="Post image"
-                                      className="rounded-lg border border-border max-h-96 w-auto object-contain"
-                                      loading="lazy"
-                                    />
-                                  </div>
-                                )}
-                                <div className="flex items-center gap-6">
-                                  <button
-                                      onClick={() =>
-                                        handleLike(post.original_post_id || post.id, post.user_has_liked, post.user_id)
-                                      }
-                                    disabled={likingPostId === post.id || likingPostId === post.original_post_id}
-                                    className={`flex items-center gap-2 transition-colors ${
-                                      post.user_has_liked
-                                        ? 'text-pride-pink'
-                                        : 'text-muted-foreground hover:text-pride-pink'
-                                    }`}
-                                  >
-                                    <Heart
-                                      className={`h-4 w-4 ${post.user_has_liked ? 'fill-current' : ''}`}
-                                    />
-                                    <span className="text-sm">{post.like_count}</span>
-                                  </button>
-                                  <button
-                                    onClick={() =>
-                                      openReplyThread({ ...post, id: post.original_post_id || post.id })
-                                    }
-                                    className="flex items-center gap-2 text-muted-foreground hover:text-pride-blue transition-colors"
-                                  >
-                                    <MessageCircle className="h-4 w-4" />
-                                    <span className="text-sm">{post.reply_count}</span>
-                                  </button>
-                                  <button
-                                    onClick={() => {
-                                      if (post.user_has_echoed) {
-                                        handleRemoveEcho(post);
-                                      } else {
-                                        openQuoteModal(post);
-                                      }
-                                    }}
-                                    disabled={echoingPostId === post.id || echoingPostId === post.original_post_id}
-                                    className={`flex items-center gap-2 transition-colors ${
-                                      post.user_has_echoed
-                                        ? 'text-pride-green'
-                                        : 'text-muted-foreground hover:text-pride-green'
-                                    }`}
-                                    title="Echo - Amplify this voice"
-                                  >
-                                    <Repeat2
-                                      className={`h-4 w-4 ${
-                                        post.user_has_echoed ? 'text-pride-green' : ''
-                                      }`}
-                                    />
-                                    <span className="text-sm">{post.echo_count}</span>
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))
+                      forYouFeedPosts.map(renderPostCard)
                     )}
                   </TabsContent>
-                  <TabsContent value="following" className="mt-4">
-                    <Card>
-                      <CardContent className="p-12 text-center">
-                        <p className="text-muted-foreground">
-                          Follow other members to see their posts here.
-                        </p>
-                      </CardContent>
-                    </Card>
+                  <TabsContent value="following" className="mt-4 space-y-4">
+                    {isLoadingPosts || isLoadingFollowing ? (
+                      <Card>
+                        <CardContent className="p-12 text-center">
+                          <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
+                        </CardContent>
+                      </Card>
+                    ) : followingIds.length === 0 ? (
+                      <Card>
+                        <CardContent className="p-12 text-center">
+                          <p className="text-muted-foreground">Ты пока ни на кого не подписан(а).</p>
+                        </CardContent>
+                      </Card>
+                    ) : followingFeedPosts.length === 0 ? (
+                      <Card>
+                        <CardContent className="p-12 text-center">
+                          <p className="text-muted-foreground">У тех, на кого ты подписан(а), пока нет постов.</p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      followingFeedPosts.map(renderPostCard)
+                    )}
                   </TabsContent>
                 </Tabs>
               </main>
