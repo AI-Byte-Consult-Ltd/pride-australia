@@ -249,6 +249,43 @@ const DashboardPage = () => {
     setIsLoadingPosts(false);
   }, [user]);
 
+  const fetchFollowing = useCallback(async () => {
+    if (!user) return;
+    setIsLoadingFollowing(true);
+    const { data, error } = await supabase
+      .from('follows')
+      .select('following_id')
+      .eq('follower_id', user.id);
+
+    if (error) {
+      setFollowingIds([]);
+      setIsLoadingFollowing(false);
+      return;
+    }
+
+    setFollowingIds((data || []).map((r) => r.following_id));
+    setIsLoadingFollowing(false);
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchFollowing();
+
+    const followsChannel = supabase.channel(`follows-${user.id}`);
+    followsChannel.on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'follows', filter: `follower_id=eq.${user.id}` },
+      () => {
+        void fetchFollowing();
+      }
+    );
+    followsChannel.subscribe();
+
+    return () => {
+      void supabase.removeChannel(followsChannel);
+    };
+  }, [user, fetchFollowing]);
+
   // Realtime subscriptions for posts, likes, echoes
   useEffect(() => {
     if (!user) return;
