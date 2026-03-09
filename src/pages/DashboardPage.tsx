@@ -855,19 +855,19 @@ const DashboardPage = () => {
                                 </div>
                                 {/* Show quoted message if present */}
                                 {post.is_echo && post.echo_message && (
-                                  <p className="text-foreground mb-2 whitespace-pre-wrap">
+                                  <p className="text-foreground mb-2 whitespace-pre-wrap break-words">
                                     {renderContentWithMentionsAndLinks(post.echo_message, setHashtagFilter)}
                                   </p>
                                 )}
                                 {/* Wrap original post when a quote exists */}
                                 {post.is_echo && post.echo_message ? (
                                   <div className="bg-muted/50 border border-border rounded p-3 mb-4">
-                                    <p className="text-foreground whitespace-pre-wrap">
+                                    <p className="text-foreground whitespace-pre-wrap break-words">
                                       {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
                                     </p>
                                   </div>
                                 ) : (
-                                  <p className="text-foreground mb-4 whitespace-pre-wrap">
+                                  <p className="text-foreground mb-4 whitespace-pre-wrap break-words">
                                     {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
                                   </p>
                                 )}
