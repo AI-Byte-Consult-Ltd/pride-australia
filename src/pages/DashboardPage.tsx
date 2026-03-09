@@ -811,7 +811,7 @@ const DashboardPage = () => {
           <div className="container py-6">
             <div className="grid lg:grid-cols-[240px_1fr_300px] gap-6">
               {/* Sidebar */}
-              <aside className="hidden lg:block">
+              <aside className="hidden lg:block lg:order-1">
                 <Card className="sticky top-20">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
