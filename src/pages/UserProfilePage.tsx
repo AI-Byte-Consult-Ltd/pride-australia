@@ -9,7 +9,7 @@ import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/Me
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Heart, MessageCircle, Repeat2, Send, Loader2, X, Image as ImageIcon } from 'lucide-react';
+import { Heart, MessageCircle, Repeat2, Send, Loader2, X, Image as ImageIcon, UserPlus, UserMinus } from 'lucide-react';
 
 // Типы поста и ответа
 interface PostReply {
@@ -45,6 +45,9 @@ interface Profile {
   avatar_url: string | null;
   banner_url: string | null;
   pride_coins: number;
+  follower_count: number;
+  following_count: number;
+  is_followed_by_me: boolean;
 }
 
 // Компонент для радужного отображения никнейма
@@ -80,6 +83,7 @@ const UserProfilePage = () => {
   const [posts, setPosts] = useState<PostWithProfile[]>([]);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [isTogglingFollow, setIsTogglingFollow] = useState(false);
 
   // Состояния для взаимодействий (лайки, эхо, ответы)
   const [likingPostId, setLikingPostId] = useState<string | null>(null);
@@ -125,7 +129,33 @@ const UserProfilePage = () => {
       return;
     }
 
-    setProfile(profileData as Profile);
+    const { count: followerCount } = await supabase
+      .from('follows')
+      .select('id', { count: 'exact', head: true })
+      .eq('following_id', profileData.user_id);
+
+    const { count: followingCount } = await supabase
+      .from('follows')
+      .select('id', { count: 'exact', head: true })
+      .eq('follower_id', profileData.user_id);
+
+    let isFollowedByMe = false;
+    if (user && user.id !== profileData.user_id) {
+      const { data: followData } = await supabase
+        .from('follows')
+        .select('id')
+        .eq('follower_id', user.id)
+        .eq('following_id', profileData.user_id)
+        .maybeSingle();
+      isFollowedByMe = !!followData;
+    }
+
+    setProfile({
+      ...(profileData as any),
+      follower_count: followerCount || 0,
+      following_count: followingCount || 0,
+      is_followed_by_me: isFollowedByMe
+    });
     setIsLoadingProfile(false);
 
     // Получаем посты пользователя
@@ -239,6 +269,46 @@ const UserProfilePage = () => {
   const closeQuoteModal = () => {
     setQuotingPost(null);
     setQuoteContent('');
+  };
+
+  const handleFollowToggle = async () => {
+    if (!user || !profile || isOwnProfile || isTogglingFollow) return;
+    setIsTogglingFollow(true);
+    
+    try {
+      if (profile.is_followed_by_me) {
+        await supabase
+          .from('follows')
+          .delete()
+          .eq('follower_id', user.id)
+          .eq('following_id', profile.user_id);
+          
+        setProfile(prev => prev ? {
+          ...prev,
+          follower_count: Math.max(0, prev.follower_count - 1),
+          is_followed_by_me: false
+        } : null);
+        toast({ title: 'Unfollowed', description: `You unfollowed ${profile.display_name}` });
+      } else {
+        await supabase
+          .from('follows')
+          .insert({
+            follower_id: user.id,
+            following_id: profile.user_id
+          });
+          
+        setProfile(prev => prev ? {
+          ...prev,
+          follower_count: prev.follower_count + 1,
+          is_followed_by_me: true
+        } : null);
+        toast({ title: 'Followed!', description: `You are now following ${profile.display_name}` });
+      }
+    } catch (error: any) {
+      toast({ title: 'Error', description: 'Failed to update follow status', variant: 'destructive' });
+    } finally {
+      setIsTogglingFollow(false);
+    }
   };
 
   // Отправка цитирующего эхо
@@ -444,6 +514,33 @@ const UserProfilePage = () => {
                     <RainbowUsername username={profile.username} />
                   </p>
                 )}
+                
+                <div className="flex gap-4 mt-3 text-sm text-muted-foreground">
+                  <div><strong className="text-foreground">{profile.following_count}</strong> Following</div>
+                  <div><strong className="text-foreground">{profile.follower_count}</strong> Followers</div>
+                </div>
+
+                {!isOwnProfile && (
+                  <Button 
+                    className="mt-4 gap-2" 
+                    variant={profile.is_followed_by_me ? "outline" : "pride"}
+                    onClick={handleFollowToggle}
+                    disabled={isTogglingFollow}
+                  >
+                    {isTogglingFollow ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : profile.is_followed_by_me ? (
+                      <>
+                        <UserMinus className="h-4 w-4" /> Unfollow
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="h-4 w-4" /> Follow
+                      </>
+                    )}
+                  </Button>
+                )}
+
                 {profile.bio && (
                   <p className="mt-3 text-sm text-muted-foreground whitespace-pre-wrap">{profile.bio}</p>
                 )}
