@@ -851,27 +851,7 @@ const DashboardPage = () => {
               </aside>
 
               {/* Main Content */}
-              <main className="space-y-6 overflow-hidden max-w-full">
-                {/* Mobile Coins Display */}
-                <Card className="lg:hidden">
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl gradient-pride flex items-center justify-center shrink-0">
-                        <Coins className="h-5 w-5 text-primary-foreground" />
-                      </div>
-                      <div>
-                        <p className="font-display font-bold text-lg leading-none">
-                          {userProfile?.pride_coins ?? 0}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">Pride Coins</p>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm" asChild className="shrink-0">
-                      <Link to="/support">Get More</Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-
+              <main className="space-y-6 overflow-hidden max-w-full order-2 lg:order-2">
                 {/* Compose Post */}
                 <Card>
                   <CardContent className="p-4">
