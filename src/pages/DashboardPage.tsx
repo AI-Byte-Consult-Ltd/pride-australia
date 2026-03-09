@@ -680,15 +680,35 @@ const DashboardPage = () => {
               </aside>
 
               {/* Main Content */}
-              <main className="space-y-6">
+              <main className="space-y-6 overflow-hidden max-w-full">
+                {/* Mobile Coins Display */}
+                <Card className="lg:hidden">
+                  <CardContent className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl gradient-pride flex items-center justify-center shrink-0">
+                        <Coins className="h-5 w-5 text-primary-foreground" />
+                      </div>
+                      <div>
+                        <p className="font-display font-bold text-lg leading-none">
+                          {userProfile?.pride_coins ?? 0}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">Pride Coins</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" asChild className="shrink-0">
+                      <Link to="/support">Get More</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+
                 {/* Compose Post */}
                 <Card>
                   <CardContent className="p-4">
-                    <div className="flex gap-4">
-                      <Avatar className="h-10 w-10">
+                    <div className="flex gap-3 sm:gap-4">
+                      <Avatar className="h-10 w-10 shrink-0">
                         <AvatarFallback className="gradient-pride text-primary-foreground">{userInitial}</AvatarFallback>
                       </Avatar>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                          <MentionInput
                           value={postContent}
                           onChange={setPostContent}
@@ -821,8 +841,8 @@ const DashboardPage = () => {
                                 </span>
                               </div>
                             )}
-                            <div className="flex gap-4">
-                              <Avatar className="h-10 w-10">
+                            <div className="flex gap-3 sm:gap-4">
+                              <Avatar className="h-10 w-10 shrink-0">
                                 {post.author_avatar ? (
                                   <AvatarImage src={post.author_avatar} alt={post.author_name} />
                                 ) : null}
@@ -830,9 +850,9 @@ const DashboardPage = () => {
                                   {post.author_name[0].toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-semibold">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-1">
+                                  <span className="font-semibold truncate max-w-[200px] sm:max-w-full">
                                     {post.author_username ? (
                                       <Link to={`/users/${encodeURIComponent(post.author_username)}`}>
                                         {post.author_name}
@@ -855,19 +875,19 @@ const DashboardPage = () => {
                                 </div>
                                 {/* Show quoted message if present */}
                                 {post.is_echo && post.echo_message && (
-                                  <p className="text-foreground mb-2 whitespace-pre-wrap">
+                                  <p className="text-foreground mb-2 whitespace-pre-wrap break-words">
                                     {renderContentWithMentionsAndLinks(post.echo_message, setHashtagFilter)}
                                   </p>
                                 )}
                                 {/* Wrap original post when a quote exists */}
                                 {post.is_echo && post.echo_message ? (
                                   <div className="bg-muted/50 border border-border rounded p-3 mb-4">
-                                    <p className="text-foreground whitespace-pre-wrap">
+                                    <p className="text-foreground whitespace-pre-wrap break-words">
                                       {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
                                     </p>
                                   </div>
                                 ) : (
-                                  <p className="text-foreground mb-4 whitespace-pre-wrap">
+                                  <p className="text-foreground mb-4 whitespace-pre-wrap break-words">
                                     {renderContentWithMentionsAndLinks(post.content, setHashtagFilter)}
                                   </p>
                                 )}
