@@ -811,7 +811,7 @@ const DashboardPage = () => {
           <div className="container py-6">
             <div className="grid lg:grid-cols-[240px_1fr_300px] gap-6">
               {/* Sidebar */}
-              <aside className="hidden lg:block">
+              <aside className="hidden lg:block lg:order-1">
                 <Card className="sticky top-20">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
@@ -851,27 +851,7 @@ const DashboardPage = () => {
               </aside>
 
               {/* Main Content */}
-              <main className="space-y-6 overflow-hidden max-w-full">
-                {/* Mobile Coins Display */}
-                <Card className="lg:hidden">
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl gradient-pride flex items-center justify-center shrink-0">
-                        <Coins className="h-5 w-5 text-primary-foreground" />
-                      </div>
-                      <div>
-                        <p className="font-display font-bold text-lg leading-none">
-                          {userProfile?.pride_coins ?? 0}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">Pride Coins</p>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm" asChild className="shrink-0">
-                      <Link to="/support">Get More</Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-
+              <main className="space-y-6 overflow-hidden max-w-full order-2 lg:order-2">
                 {/* Compose Post */}
                 <Card>
                   <CardContent className="p-4">
@@ -1024,8 +1004,28 @@ const DashboardPage = () => {
               </main>
 
               {/* Right Sidebar */}
-              <aside className="space-y-6 mt-6 lg:mt-0">
-                <Card>
+              <aside className="space-y-6 order-1 lg:order-3">
+                {/* Mobile Coins Display */}
+                <Card className="lg:hidden">
+                  <CardContent className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl gradient-pride flex items-center justify-center shrink-0">
+                        <Coins className="h-5 w-5 text-primary-foreground" />
+                      </div>
+                      <div>
+                        <p className="font-display font-bold text-lg leading-none">
+                          {userProfile?.pride_coins ?? 0}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">Pride Coins</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" asChild className="shrink-0">
+                      <Link to="/support">Get More</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="hidden lg:block">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base">Your PRIDE Coins</CardTitle>
                   </CardHeader>
