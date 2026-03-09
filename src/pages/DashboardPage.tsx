@@ -821,8 +821,8 @@ const DashboardPage = () => {
                                 </span>
                               </div>
                             )}
-                            <div className="flex gap-4">
-                              <Avatar className="h-10 w-10">
+                            <div className="flex gap-3 sm:gap-4">
+                              <Avatar className="h-10 w-10 shrink-0">
                                 {post.author_avatar ? (
                                   <AvatarImage src={post.author_avatar} alt={post.author_name} />
                                 ) : null}
@@ -830,9 +830,9 @@ const DashboardPage = () => {
                                   {post.author_name[0].toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-semibold">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-1">
+                                  <span className="font-semibold truncate max-w-[200px] sm:max-w-full">
                                     {post.author_username ? (
                                       <Link to={`/users/${encodeURIComponent(post.author_username)}`}>
                                         {post.author_name}
