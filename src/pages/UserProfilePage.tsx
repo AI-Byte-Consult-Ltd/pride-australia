@@ -83,6 +83,7 @@ const UserProfilePage = () => {
   const [posts, setPosts] = useState<PostWithProfile[]>([]);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [isTogglingFollow, setIsTogglingFollow] = useState(false);
 
   // Состояния для взаимодействий (лайки, эхо, ответы)
   const [likingPostId, setLikingPostId] = useState<string | null>(null);
