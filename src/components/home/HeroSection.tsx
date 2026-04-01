@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
-import heroImage from '@/assets/hero-block-image.png';
+import heroImage from '@/assets/hero-pride.jpg';
 
 const HeroSection = () => {
   const { t } = useTranslation();
