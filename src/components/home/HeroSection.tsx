@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
-import heroImage from '@/assets/hero-block-image.png';
+import heroImage from '@/assets/hero-pride.jpg';
 
 const HeroSection = () => {
   const { t } = useTranslation();
@@ -62,7 +62,7 @@ const HeroSection = () => {
           <div className="order-1 lg:order-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <div className="relative">
               <div className="absolute inset-0 gradient-pride rounded-3xl opacity-20 blur-2xl transform scale-95" />
-              <img src={heroImage} alt="Joyful Pride mascots celebrating together" className="relative w-full h-auto rounded-3xl shadow-soft animate-float" />
+              <img src={heroImage} alt="Pride community celebrating together with rainbow flags" className="relative w-full h-auto rounded-3xl shadow-soft animate-float" />
             </div>
           </div>
         </div>
