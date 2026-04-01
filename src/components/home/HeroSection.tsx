@@ -62,7 +62,7 @@ const HeroSection = () => {
           <div className="order-1 lg:order-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <div className="relative">
               <div className="absolute inset-0 gradient-pride rounded-3xl opacity-20 blur-2xl transform scale-95" />
-              <img src={heroImage} <img src={heroImage} alt="Pride community celebrating together with rainbow flags" className="relative w-full h-auto rounded-3xl shadow-soft animate-float" /> className="relative w-full h-auto rounded-3xl shadow-soft animate-float" />
+              <img src={heroImage} alt="Pride community celebrating together with rainbow flags" className="relative w-full h-auto rounded-3xl shadow-soft animate-float" />
             </div>
           </div>
         </div>
