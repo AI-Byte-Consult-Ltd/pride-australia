@@ -95,6 +95,7 @@ const App = () => {
 
                   {/* Events */}
                   <Route path="/events" element={<EventsPage />} />
+                  <Route path="/arcade" element={<PrideArcadePage />} />
 
                   {/* Foundation */}
                   <Route path="/roadmap" element={<RoadmapPage />} />
