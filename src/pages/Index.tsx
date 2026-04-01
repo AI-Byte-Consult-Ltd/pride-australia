@@ -28,7 +28,7 @@ const Index = () => {
     "Made in EU 🇪🇺, for the World 🗺️.";
 
   // Social preview image
-  const ogImage = `${siteUrl}/og/pridesocial-og.png`;
+  const ogImage = `${siteUrl}/og/pridesocial-og.jpg`;
 
   return (
     <>
