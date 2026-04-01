@@ -428,6 +428,14 @@ export type Database = {
         Args: { _amount: number; _target_user_id: string }
         Returns: undefined
       }
+      arcade_play: {
+        Args: { _entry_fee?: number; _user_id: string }
+        Returns: boolean
+      }
+      arcade_reward: {
+        Args: { _reward: number; _user_id: string }
+        Returns: undefined
+      }
       get_trending_hashtags: {
         Args: { _limit?: number }
         Returns: {
