@@ -48,6 +48,9 @@ import UserProfilePage from "./pages/UserProfilePage";
 // ✅ NEW: Business profile page (/business/:id)
 import BusinessProfilePage from "./pages/BusinessProfilePage";
 
+// Arcade & Shop
+import PrideArcadePage from "./pages/PrideArcadePage";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

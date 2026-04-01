@@ -49,6 +49,7 @@ const PrideArcadePage = () => {
       <PageSEO
         title="Pride Arcade — PRIDE Social Network"
         description="Play mini-games, earn and spend Pride Coins in the arcade."
+        path="/arcade"
       />
 
       <div className="container mx-auto px-4 py-8 max-w-4xl space-y-10">
