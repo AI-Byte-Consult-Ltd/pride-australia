@@ -77,6 +77,7 @@ const ru = {
     logout: 'Выйти',
     settings: 'Настройки',
     feed: 'Лента',
+    arcade: 'Аркада',
   },
   hero: {
     badge: 'Сделано в ЕС 🇪🇺 для всего мира 🗺️',
