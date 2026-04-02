@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import { Coins, Play, Trophy, Heart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 const CANVAS_WIDTH = 360;
 const CANVAS_HEIGHT = 520;
@@ -14,7 +14,7 @@ const PADDLE_HEIGHT = 14;
 const ITEM_SIZE = 28;
 const BOMB_SIZE = 24;
 const ENTRY_FEE = 10;
-const GAME_DURATION = 30; // seconds
+const GAME_DURATION = 30;
 
 const PRIDE_COLORS = [
   '#E40303', '#FF8C00', '#FFED00',
@@ -63,8 +63,8 @@ export function RainbowCatcherGame() {
 
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
-  // Fetch balance
   useEffect(() => {
     if (!user) return;
     supabase
@@ -77,7 +77,6 @@ export function RainbowCatcherGame() {
       });
   }, [user, gameState]);
 
-  // Touch/mouse controls
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
     if (gameState !== 'playing') return;
     const rect = canvasRef.current?.getBoundingClientRect();
@@ -87,7 +86,6 @@ export function RainbowCatcherGame() {
     gameStateRef.current.paddleX = Math.max(0, Math.min(CANVAS_WIDTH - PADDLE_WIDTH, x * scale - PADDLE_WIDTH / 2));
   }, [gameState]);
 
-  // Keyboard controls
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (gameState !== 'playing') return;
@@ -113,11 +111,11 @@ export function RainbowCatcherGame() {
 
   const startGame = async () => {
     if (!user) {
-      toast({ title: 'Войдите в аккаунт', description: 'Нужна авторизация для игры', variant: 'destructive' });
+      toast({ title: t('arcade.loginRequired'), description: t('arcade.loginRequiredDesc'), variant: 'destructive' });
       return;
     }
     if (balance !== null && balance < ENTRY_FEE) {
-      toast({ title: 'Недостаточно Pride Coins', description: `Нужно ${ENTRY_FEE} монет для входа`, variant: 'destructive' });
+      toast({ title: t('arcade.notEnoughCoins'), description: t('arcade.notEnoughCoinsDesc', { count: ENTRY_FEE }), variant: 'destructive' });
       return;
     }
 
@@ -126,7 +124,7 @@ export function RainbowCatcherGame() {
     setLoading(false);
 
     if (error || data === false) {
-      toast({ title: 'Не удалось начать', description: 'Недостаточно Pride Coins', variant: 'destructive' });
+      toast({ title: t('arcade.startFailed'), description: t('arcade.startFailedDesc'), variant: 'destructive' });
       return;
     }
 
@@ -158,10 +156,8 @@ export function RainbowCatcherGame() {
     }
   }, [user]);
 
-  // Game loop
   useEffect(() => {
     if (gameState !== 'playing') return;
-
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -172,27 +168,22 @@ export function RainbowCatcherGame() {
       const dt = Math.min((now - gs.lastTime) / 1000, 0.05);
       gs.lastTime = now;
 
-      // Timer
       gs.timeLeft -= dt;
       if (gs.timeLeft <= 0 || gs.lives <= 0) {
         endGame(gs.score);
         return;
       }
 
-      // Spawn
       gs.spawnTimer -= dt;
       if (gs.spawnTimer <= 0) {
         gs.items.push(spawnItem());
         gs.spawnTimer = 0.5 + Math.random() * 0.4;
       }
 
-      // Update items
       const paddleY = CANVAS_HEIGHT - 30;
       const alive: FallingItem[] = [];
       for (const item of gs.items) {
         item.y += item.speed * dt;
-
-        // Collision with paddle
         if (
           item.y + ITEM_SIZE >= paddleY &&
           item.y <= paddleY + PADDLE_HEIGHT &&
@@ -208,31 +199,19 @@ export function RainbowCatcherGame() {
           }
           continue;
         }
-
-        // Off screen
-        if (item.y > CANVAS_HEIGHT) {
-          if (item.type !== 'bomb') {
-            // Missed a heart/star
-          }
-          continue;
-        }
+        if (item.y > CANVAS_HEIGHT) continue;
         alive.push(item);
       }
       gs.items = alive;
-
       setTimeLeft(Math.max(0, Math.ceil(gs.timeLeft)));
 
-      // Draw
       ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-      // Background gradient
       const bg = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
       bg.addColorStop(0, '#1a0533');
       bg.addColorStop(1, '#0d0d2b');
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-      // Stars background
       ctx.fillStyle = 'rgba(255,255,255,0.3)';
       for (let i = 0; i < 30; i++) {
         const sx = (i * 137.5) % CANVAS_WIDTH;
@@ -240,7 +219,6 @@ export function RainbowCatcherGame() {
         ctx.fillRect(sx, sy, 1.5, 1.5);
       }
 
-      // Items
       for (const item of gs.items) {
         ctx.save();
         if (item.type === 'bomb') {
@@ -264,15 +242,12 @@ export function RainbowCatcherGame() {
         ctx.restore();
       }
 
-      // Paddle - rainbow gradient
       const pGrad = ctx.createLinearGradient(gs.paddleX, 0, gs.paddleX + PADDLE_WIDTH, 0);
       PRIDE_COLORS.forEach((c, i) => pGrad.addColorStop(i / (PRIDE_COLORS.length - 1), c));
       ctx.fillStyle = pGrad;
       ctx.beginPath();
       ctx.roundRect(gs.paddleX, paddleY, PADDLE_WIDTH, PADDLE_HEIGHT, 7);
       ctx.fill();
-
-      // Glow
       ctx.shadowColor = '#FF8C00';
       ctx.shadowBlur = 10;
       ctx.fill();
@@ -288,7 +263,6 @@ export function RainbowCatcherGame() {
   return (
     <Card variant="elevated" className="max-w-sm mx-auto overflow-hidden">
       <CardContent className="p-4 space-y-3">
-        {/* HUD */}
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-1">
             <Coins className="h-4 w-4 text-yellow-500" />
@@ -306,7 +280,6 @@ export function RainbowCatcherGame() {
           <span className="font-mono text-xs">{timeLeft}s</span>
         </div>
 
-        {/* Canvas */}
         <div className="relative">
           <canvas
             ref={canvasRef}
@@ -317,12 +290,11 @@ export function RainbowCatcherGame() {
             onPointerMove={handlePointerMove}
           />
 
-          {/* Overlay */}
           {gameState !== 'playing' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 rounded-lg gap-4">
               {gameState === 'ended' && (
                 <div className="text-center space-y-2">
-                  <p className="text-2xl font-bold text-white">🎉 Очки: {score}</p>
+                  <p className="text-2xl font-bold text-white">🎉 {t('arcade.score')}: {score}</p>
                   <p className="text-yellow-400 font-semibold flex items-center gap-1 justify-center">
                     <Coins className="h-5 w-5" /> +{reward} Pride Coins
                   </p>
@@ -332,10 +304,10 @@ export function RainbowCatcherGame() {
               {gameState === 'idle' && (
                 <div className="text-center space-y-2 px-6">
                   <p className="text-3xl">🏳️‍🌈</p>
-                  <p className="text-white font-bold text-lg">Rainbow Catcher</p>
+                  <p className="text-white font-bold text-lg">{t('arcade.gameTitle')}</p>
                   <p className="text-muted-foreground text-sm">
-                    Лови флаги и звёзды, избегай бомб!<br />
-                    Вход: {ENTRY_FEE} Pride Coins
+                    {t('arcade.gameDesc')}<br />
+                    {t('arcade.gameEntry')}: {ENTRY_FEE} Pride Coins
                   </p>
                 </div>
               )}
@@ -347,14 +319,14 @@ export function RainbowCatcherGame() {
                 disabled={loading}
               >
                 <Play className="h-5 w-5 mr-1" />
-                {gameState === 'ended' ? 'Играть снова' : 'Играть'} ({ENTRY_FEE} 🪙)
+                {gameState === 'ended' ? t('arcade.playAgain') : t('arcade.play')} ({ENTRY_FEE} 🪙)
               </Button>
             </div>
           )}
         </div>
 
         <p className="text-xs text-muted-foreground text-center">
-          Управляй мышкой или пальцем • ⭐ = 3 очка • 🏳️‍🌈 = 1 очко • 💣 = -1 ❤️
+          {t('arcade.controls')}
         </p>
       </CardContent>
     </Card>

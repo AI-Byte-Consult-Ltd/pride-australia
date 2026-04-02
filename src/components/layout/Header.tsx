@@ -48,7 +48,7 @@ const Header = () => {
   const navItems = [
     { name: t('nav.home'), href: '/' },
     { name: t('nav.communityMap'), href: '/community-map' },
-    { name: '🎮 Arcade', href: '/arcade' },
+    { name: `🎮 ${t('nav.arcade')}`, href: '/arcade' },
     { name: t('nav.support'), href: '/support' },
     { name: t('nav.about'), href: '/about' },
   ];

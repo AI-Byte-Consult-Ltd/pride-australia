@@ -79,6 +79,7 @@ const ar = {
     logout: 'تسجيل الخروج',
     settings: 'الإعدادات',
     feed: 'المنشورات',
+    arcade: 'الأركيد',
   },
 
   hero: {
@@ -757,6 +758,8 @@ const ar = {
     echoed: 'أعاد صدى منشورك',
     liked: 'أعجب بمنشورك',
   },
+
+  arcade: { pageTitle: 'أركيد وبرايد شوب', pageSubtitle: 'اكسب وأنفق Pride Coins — العب وخصص ملفك الشخصي وادعم المجتمع', gameSectionTitle: '🎮 Rainbow Catcher', spendTitle: 'أين تنفق Pride Coins', earnTitle: '💡 كيف تكسب Pride Coins', gameTitle: 'Rainbow Catcher', gameDesc: 'التقط الأعلام والنجوم، تجنب القنابل!', gameEntry: 'رسوم الدخول', play: 'العب', playAgain: 'العب مجدداً', score: 'النقاط', controls: 'استخدم الماوس أو الإصبع • ⭐ = 3 نقاط • 🏳️‍🌈 = 1 نقطة • 💣 = -1 ❤️', loginRequired: 'سجّل الدخول', loginRequiredDesc: 'يجب تسجيل الدخول للعب', notEnoughCoins: 'رصيد Pride Coins غير كافٍ', notEnoughCoinsDesc: 'تحتاج {{count}} عملة', startFailed: 'تعذر البدء', startFailedDesc: 'رصيد Pride Coins غير كافٍ', optNameChange: 'تغيير الاسم / الصورة', optNameChangeDesc: 'التغيير الأول مجاني', optArcade: 'ألعاب أركيد', optArcadeDesc: 'العب ألعاب مصغرة واربح المزيد', optBoostPost: 'تعزيز منشور', optBoostPostDesc: 'ارفع منشورك للأعلى لمدة 24 ساعة', optGift: 'إهداء عملات', optGiftDesc: 'أرسل Pride Coins لمستخدم آخر', optBadge: 'شارة حصرية', optBadgeDesc: 'شارة فريدة في الملف لمدة 30 يوماً', soon: 'قريباً', coins: 'عملة', anyAmount: 'أي مبلغ', earnCreatePost: 'إنشاء منشور', earnEcho: 'عمل Echo', earnReply: 'ترك رد', earnLike: 'إعجاب بمنشور', earnReceiveLike: 'تلقي إعجاب', earnReceiveReply: 'تلقي رد', earnReceiveEcho: 'تلقي Echo', earnInvite: 'دعوة صديق', earnArcade: 'الفوز في الأركيد', earnUpTo: 'حتى' },
 };
 
 export default ar;
