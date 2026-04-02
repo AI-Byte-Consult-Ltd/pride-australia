@@ -79,6 +79,7 @@ const ar = {
     logout: 'تسجيل الخروج',
     settings: 'الإعدادات',
     feed: 'المنشورات',
+    arcade: 'الأركيد',
   },
 
   hero: {
