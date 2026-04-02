@@ -82,6 +82,7 @@ const en = {
     logout: 'Log out',
     settings: 'Settings',
     feed: 'Feed',
+    arcade: 'Arcade',
   },
 
   // ─── HERO SECTION ───
