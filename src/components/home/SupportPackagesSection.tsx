@@ -163,9 +163,6 @@ const SupportPackagesSection = () => {
                   <Button variant="outline" size="lg" className="w-full gap-2" onClick={() => handleSubscribe(pkg, 'paypal')}>
                     <Wallet className="h-4 w-4" />{t('supportPackages.subscribePaypal')}
                   </Button>
-                  <Button variant="outline" size="lg" className="w-full gap-2" onClick={() => handleSubscribe(pkg, 'coinbase')}>
-                    <Coins className="h-4 w-4" />{t('supportPackages.subscribeCrypto')}
-                  </Button>
                 </CardFooter>
               </Card>
             );
