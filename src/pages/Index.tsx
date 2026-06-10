@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import Layout from "@/components/layout/Layout";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
-import TeamSection from "@/components/home/TeamSection";
+
 import EventsSection from "@/components/home/EventsSection";
 import NewsSection from "@/components/home/NewsSection";
 import CommunityMapSection from "@/components/home/CommunityMapSection";
@@ -113,7 +113,7 @@ const Index = () => {
         {/* Become a supporter — high conversion block */}
         <SupportPackagesSection />
 
-        <TeamSection />
+        
         <EventsSection />
         <NewsSection />
         <CommunityMapSection />
