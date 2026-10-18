@@ -83,7 +83,7 @@ const GuidelinesPage = () => {
                   <h3 className="font-display text-xl font-semibold mb-3">{t('guidelines.appealsTitle')}</h3>
                   <p className="text-muted-foreground">
                     If you believe your content was removed or your account was actioned in error, you may appeal by contacting{' '}
-                    <a href="mailto:info@pridesocial.org" className="text-primary hover:underline">info@pridesocial.org</a>. Appeals are reviewed within 7 business days.
+                    <a href="mailto:info@aibyteconsult.com" className="text-primary hover:underline">info@aibyteconsult.com</a>. Appeals are reviewed within 7 business days.
                   </p>
                 </div>
               </div>

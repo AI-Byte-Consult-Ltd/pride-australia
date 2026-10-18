@@ -11,7 +11,7 @@ import SupportPackagesSection from "@/components/home/SupportPackagesSection";
 import CTASection from "@/components/home/CTASection";
 
 const Index = () => {
-  const siteUrl = "https://pridesocial.org";
+  const siteUrl = "https://pride.aibyteconsult.com";
 
   /**
    * SEO STRATEGY:

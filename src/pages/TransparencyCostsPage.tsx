@@ -23,7 +23,7 @@ import {
 import { Link } from "react-router-dom";
 
 const TransparencyCostsPage = () => {
-  const siteUrl = "https://pridesocial.org";
+  const siteUrl = "https://pride.aibyteconsult.com";
   const title = "Transparency & Costs | Pride Social Network (EU HQ)";
   const description =
     "Transparent cost breakdown for Pride Social Network: EU-based operations, Italy foundation registration planning, mobile apps (iOS & Android), infrastructure, and how memberships support development.";

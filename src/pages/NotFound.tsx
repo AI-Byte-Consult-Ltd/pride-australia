@@ -99,8 +99,8 @@ const NotFound = () => {
         {/* Small bottom note */}
         <p className="mt-4 text-center text-xs text-muted-foreground">
           Tip: if you think this is a bug, send us the URL at{' '}
-          <a className="text-primary hover:underline" href="mailto:info@pridesocial.org">
-            info@pridesocial.org
+          <a className="text-primary hover:underline" href="mailto:info@aibyteconsult.com">
+            info@aibyteconsult.com
           </a>
           .
         </p>

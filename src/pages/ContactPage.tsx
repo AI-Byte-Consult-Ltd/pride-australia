@@ -38,7 +38,7 @@ const ContactPage = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">{t('contact.emailDesc')}</p>
-                  <a href="mailto:info@pridesocial.org" className="text-primary hover:underline font-medium">info@pridesocial.org</a>
+                  <a href="mailto:info@aibyteconsult.com" className="text-primary hover:underline font-medium">info@aibyteconsult.com</a>
                 </CardContent>
               </Card>
               <Card variant="elevated" className="text-center animate-fade-in" style={{ animationDelay: '0.1s' }}>
@@ -68,7 +68,7 @@ const ContactPage = () => {
             </div>
             <div className="max-w-3xl mx-auto mt-12 text-center text-sm text-muted-foreground animate-fade-in">
               {t('contact.legalNote')}{' '}
-              <a href="mailto:info@pridesocial.org" className="text-primary hover:underline">info@pridesocial.org</a>{' '}
+              <a href="mailto:info@aibyteconsult.com" className="text-primary hover:underline">info@aibyteconsult.com</a>{' '}
               {t('contact.legalNoteEnd')}
             </div>
           </div>

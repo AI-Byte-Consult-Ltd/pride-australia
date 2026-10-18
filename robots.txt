@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://pridesocial.org/sitemap.xml
+Sitemap: https://pride.aibyteconsult.com/sitemap.xml
