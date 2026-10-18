@@ -10,8 +10,11 @@ interface AuthContextType {
     email: string,
     password: string,
     displayName: string,
-    dateOfBirth?: string
+    dateOfBirth?: string,
+    referralCode?: string
   ) => Promise<{ error: Error | null }>;
+  requestPasswordReset: (email: string) => Promise<{ error: Error | null }>;
+  updatePassword: (password: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
@@ -87,7 +90,7 @@ const generateCreativeUsername = (): string => {
   const shortNumber = Math.floor(Math.random() * 99) + 1;
   const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'][Math.floor(Math.random() * 10)];
 
-  const separators = ['', '', '', '', '-', '_']; // bias to no separator
+  const separators = ['', '', '', '', '_']; // bias to no separator
   const sep = separators[Math.floor(Math.random() * separators.length)];
 
   // Choose a pattern (weighted)
@@ -102,8 +105,8 @@ const generateCreativeUsername = (): string => {
 
   const pick = patterns[Math.floor(Math.random() * patterns.length)];
 
-  // Remove spaces/hyphens that might appear in adjectives like "Sun-kissed"
-  const clean = (s: string) => s.replace(/\s+/g, '').replace(/–/g, '-');
+  // Usernames may only contain letters, digits and "_" (e.g. "Sun-kissed" -> "Sunkissed")
+  const clean = (s: string) => '@' + s.slice(1).replace(/[^A-Za-z0-9_]/g, '').slice(0, 29);
 
   return clean(pick());
 };
@@ -122,53 +125,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(session?.user ?? null);
       setLoading(false);
 
-      // Update profile with date_of_birth and username if it was passed during signup
+      // Give accounts without a username a generated one. The server only sets it
+      // when the profile has none, so an existing username is never overwritten.
+      // Date of birth is stored by the signup trigger on the server.
       if (event === 'SIGNED_IN' && session?.user) {
-        const dateOfBirth = session.user.user_metadata?.date_of_birth;
-        const isNewUser = session.user.user_metadata?.is_new_user;
-
-        if (dateOfBirth || isNewUser) {
-          // Use setTimeout to avoid blocking the auth state change
-          setTimeout(async () => {
-            const updates: { date_of_birth?: string; username?: string } = {};
-
-            if (dateOfBirth) {
-              updates.date_of_birth = dateOfBirth;
-            }
-
-            // Generate username for new users
-            if (isNewUser) {
-              let username = generateCreativeUsername();
-              let attempts = 0;
-
-              // Try to find a unique username
-              while (attempts < 7) {
-                const { data: existing } = await supabase
-                  .from('profiles')
-                  .select('username')
-                  .eq('username', username)
-                  .maybeSingle();
-
-                if (!existing) {
-                  updates.username = username;
-                  break;
-                }
-
-                username = generateCreativeUsername();
-                attempts++;
-              }
-
-              if (!updates.username) {
-                // Fallback with timestamp
-                updates.username = `@Pride${Date.now()}`;
-              }
-            }
-
-            if (Object.keys(updates).length > 0) {
-              await supabase.from('profiles').update(updates).eq('user_id', session.user.id);
-            }
-          }, 100);
-        }
+        setTimeout(() => {
+          void supabase.rpc('ensure_username', { _candidate: generateCreativeUsername() });
+        }, 100);
       }
     });
 
@@ -182,7 +145,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, displayName: string, dateOfBirth?: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    displayName: string,
+    dateOfBirth?: string,
+    referralCode?: string
+  ) => {
     const redirectUrl = `${window.location.origin}/`;
 
     const { error } = await supabase.auth.signUp({
@@ -193,7 +162,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data: {
           display_name: displayName,
           date_of_birth: dateOfBirth,
-          is_new_user: true,
+          // Processed by the server once the email is confirmed
+          referral_code: referralCode || undefined,
         },
       },
     });
@@ -209,11 +179,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
+  const requestPasswordReset = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    return { error };
+  };
+
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({ password });
+    return { error };
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
   };
 
-  return <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut, requestPasswordReset, updatePassword }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

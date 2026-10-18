@@ -132,7 +132,6 @@ const en = {
     subscribeStripe: 'Subscribe with Stripe',
     subscribeRevolut: 'Subscribe with Card (Revolut)',
     subscribePaypal: 'Subscribe with PayPal',
-    subscribeCrypto: 'Subscribe with Crypto',
     // Package names
     basicName: 'PRIDE Basic',
     basicDesc: 'A simple monthly membership to support Pride Social Network. Get supporter perks now, and unlock more features soon.',

@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { JurisdictionProvider } from "@/contexts/JurisdictionContext";
@@ -10,46 +11,56 @@ import { AuthProvider } from "@/contexts/AuthContext";
 
 // Pages
 import Index from "./pages/Index";
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
-import AboutPage from "./pages/AboutPage";
-import SupportPage from "./pages/SupportPage";
-import CommunityMapPage from "./pages/CommunityMapPage";
-import PrivacyPage from "./pages/PrivacyPage";
-import TermsPage from "./pages/TermsPage";
-import ContactPage from "./pages/ContactPage";
-import CookiesPage from "./pages/CookiesPage";
-import GuidelinesPage from "./pages/GuidelinesPage";
-import DashboardPage from "./pages/DashboardPage";
-import AdminDashboardPage from "./pages/AdminDashboardPage";
-import MissionPage from "./pages/MissionPage";
-import GoalsPage from "./pages/GoalsPage";
-import ValuesPage from "./pages/ValuesPage";
-import NewsPage from "./pages/NewsPage";
-import EventsPage from "./pages/EventsPage";
-import SettingsPage from "./pages/SettingsPage";
-import EarlySupportersPage from "./pages/EarlySupportersPage";
-import NotFound from "./pages/NotFound";
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const SignupPage = lazy(() => import("./pages/SignupPage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const SupportPage = lazy(() => import("./pages/SupportPage"));
+const CommunityMapPage = lazy(() => import("./pages/CommunityMapPage"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const CookiesPage = lazy(() => import("./pages/CookiesPage"));
+const GuidelinesPage = lazy(() => import("./pages/GuidelinesPage"));
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
+const MissionPage = lazy(() => import("./pages/MissionPage"));
+const GoalsPage = lazy(() => import("./pages/GoalsPage"));
+const ValuesPage = lazy(() => import("./pages/ValuesPage"));
+const NewsPage = lazy(() => import("./pages/NewsPage"));
+const EventsPage = lazy(() => import("./pages/EventsPage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const EarlySupportersPage = lazy(() => import("./pages/EarlySupportersPage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 // NEW PAGES
-import TransparencyCostsPage from "./pages/TransparencyCostsPage";
-import GDPRPage from "./pages/GDPRPage";
-import RoadmapPage from "./pages/RoadmapPage";
+const TransparencyCostsPage = lazy(() => import("./pages/TransparencyCostsPage"));
+const GDPRPage = lazy(() => import("./pages/GDPRPage"));
+const RoadmapPage = lazy(() => import("./pages/RoadmapPage"));
 
 // NEW: Constitution page
-import ConstitutionPage from "./pages/ConstitutionPage";
+const ConstitutionPage = lazy(() => import("./pages/ConstitutionPage"));
 
 // ✅ NEW: News article page (/news/:id)
-import NewsArticlePage from "./pages/NewsArticle";
+const NewsArticlePage = lazy(() => import("./pages/NewsArticle"));
 
 // ✅ NEW: User profile page (/users/:username)
-import UserProfilePage from "./pages/UserProfilePage";
+const UserProfilePage = lazy(() => import("./pages/UserProfilePage"));
 
 // ✅ NEW: Business profile page (/business/:id)
-import BusinessProfilePage from "./pages/BusinessProfilePage";
+const BusinessProfilePage = lazy(() => import("./pages/BusinessProfilePage"));
 
 // Arcade & Shop
-import PrideArcadePage from "./pages/PrideArcadePage";
+const PrideArcadePage = lazy(() => import("./pages/PrideArcadePage"));
+
+// Password recovery
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
+
+const PageFallback = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+  </div>
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -73,11 +84,14 @@ const App = () => {
               <Sonner />
 
               <BrowserRouter>
+                <Suspense fallback={<PageFallback />}>
                 <Routes>
                   {/* Public */}
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/signup" element={<SignupPage />} />
+                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                  <Route path="/reset-password" element={<ResetPasswordPage />} />
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/mission" element={<MissionPage />} />
                   <Route path="/goals" element={<GoalsPage />} />
@@ -133,6 +147,7 @@ const App = () => {
                   {/* Catch-all */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                </Suspense>
               </BrowserRouter>
             </TooltipProvider>
           </JurisdictionProvider>

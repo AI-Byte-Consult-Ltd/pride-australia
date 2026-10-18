@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { SUPPORT_LINKS } from '@/config/supportLinks';
 import { useTranslation } from 'react-i18next';
 
-type Provider = 'stripe' | 'revolut' | 'paypal' | 'coinbase';
+type Provider = 'stripe' | 'revolut' | 'paypal';
 
 interface SupportPackage {
   id: 'basic' | 'pro' | 'elite';

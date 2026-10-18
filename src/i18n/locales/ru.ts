@@ -121,7 +121,6 @@ const ru = {
     subscribeStripe: 'Подписка через Stripe',
     subscribeRevolut: 'Подписка картой (Revolut)',
     subscribePaypal: 'Подписка через PayPal',
-    subscribeCrypto: 'Подписка криптовалютой',
     basicName: 'PRIDE Basic',
     basicDesc: 'Простая ежемесячная подписка для поддержки Pride Social Network.',
     proName: 'PRIDE Pro',

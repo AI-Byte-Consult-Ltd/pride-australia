@@ -9,7 +9,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/layout/Layout';
 
 const SignupPage = () => {
@@ -130,7 +129,7 @@ const SignupPage = () => {
     // Format birthday as ISO date string (YYYY-MM-DD)
     const dateOfBirth = `${birthYear}-${birthMonth}-${birthDay}`;
 
-    const { error } = await signUp(email, password, name, dateOfBirth);
+    const { error } = await signUp(email, password, name, dateOfBirth, referralCode || undefined);
 
     if (error) {
       let message = 'An error occurred during signup.';
@@ -150,20 +149,7 @@ const SignupPage = () => {
         description: "Welcome to Pride Social Network.",
       });
 
-      // Process referral if code present
-      if (referralCode) {
-        // Wait briefly for profile to be created by trigger
-        setTimeout(async () => {
-          const { data: { user: newUser } } = await supabase.auth.getUser();
-          if (newUser) {
-            await supabase.rpc('process_referral', {
-              _referral_code: referralCode,
-              _referred_user_id: newUser.id,
-            });
-          }
-        }, 1500);
-      }
-
+      // The referral (if any) is credited by the server once the email is confirmed
       navigate('/dashboard');
     }
     

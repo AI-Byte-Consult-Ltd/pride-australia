@@ -182,12 +182,14 @@ const TermsPage = () => {
                   and some features may be marked as “Soon” and released in phases.
                 </p>
                 <p className="text-muted-foreground mt-4">
-                  We may also provide PRIDE Coins (or similar internal units) as part of membership or participation.
-                  PRIDE Coins are intended for use inside the Platform. Unless explicitly stated otherwise, PRIDE Coins:
+                  We may also provide PRIDE Coins as part of membership or participation. PRIDE Coins are internal
+                  activity points that can only be used inside the Platform. PRIDE Coins:
                 </p>
                 <ul className="list-disc pl-6 text-muted-foreground space-y-2">
-                  <li>Are not legal tender and are not a substitute for money</li>
-                  <li>Have no guaranteed monetary value and are not guaranteed to be redeemable for cash</li>
+                  <li>Are not a cryptocurrency, digital asset or token, and are not recorded on any blockchain</li>
+                  <li>Are not legal tender, electronic money or a substitute for money</li>
+                  <li>Have no monetary value and cannot be exchanged for cash, crypto-assets or any other currency</li>
+                  <li>Cannot be sold, transferred outside the Platform or withdrawn</li>
                   <li>May be adjusted, limited, or removed to prevent abuse or to protect platform integrity</li>
                 </ul>
                 <p className="text-muted-foreground mt-4">

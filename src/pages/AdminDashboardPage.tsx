@@ -10,10 +10,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Coins, Shield, Users, RefreshCw } from 'lucide-react';
+import { Coins, Shield, Users, RefreshCw, Flag, Trash2, Check } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
 
 type AppRole = Database['public']['Enums']['app_role'];
+type OpenReport = Database['public']['Functions']['get_open_reports']['Returns'][number];
 
 interface UserProfile {
   id: string;
@@ -38,6 +39,7 @@ const AdminDashboardPage = () => {
   const [loading, setLoading] = useState(true);
   const [coinsToAdd, setCoinsToAdd] = useState<{ [key: string]: string }>({});
   const [roleToAssign, setRoleToAssign] = useState<{ [key: string]: AppRole }>({});
+  const [reports, setReports] = useState<OpenReport[]>([]);
 
   useEffect(() => {
     if (user) {
@@ -74,7 +76,7 @@ const AdminDashboardPage = () => {
     // Fetch all profiles
     const { data: profilesData, error: profilesError } = await supabase
       .from('profiles')
-      .select('*')
+      .select('id, user_id, display_name, pride_coins, created_at')
       .order('created_at', { ascending: false });
 
     if (profilesError) {
@@ -82,6 +84,9 @@ const AdminDashboardPage = () => {
     } else {
       setProfiles(profilesData || []);
     }
+
+    const { data: reportsData } = await supabase.rpc('get_open_reports', { _limit: 200 });
+    setReports(reportsData || []);
 
     // Fetch all user roles
     const { data: rolesData, error: rolesError } = await supabase
@@ -102,7 +107,7 @@ const AdminDashboardPage = () => {
     if (isNaN(amount) || amount === 0) {
       toast({
         title: "Invalid amount",
-        description: "Please enter a valid number of units to add.",
+        description: "Please enter a valid number of Pride Coins to add.",
         variant: "destructive",
       });
       return;
@@ -119,14 +124,14 @@ const AdminDashboardPage = () => {
     if (error) {
       toast({
         title: "Error",
-        description: error.message || "Failed to update PRIDE Units.",
+        description: error.message || "Failed to update Pride Coins.",
         variant: "destructive",
       });
     } else {
       const newTotal = profile.pride_coins + amount;
       toast({
         title: "Success",
-        description: `Added ${amount} PRIDE Units. New balance: ${newTotal.toLocaleString()}`,
+        description: `Added ${amount} Pride Coins. New balance: ${newTotal.toLocaleString()}`,
       });
       setCoinsToAdd({ ...coinsToAdd, [userId]: '' });
       fetchData();
@@ -196,6 +201,35 @@ const AdminDashboardPage = () => {
     }
   };
 
+  const resolveReport = async (report: OpenReport, removeContent: boolean) => {
+    if (!user) return;
+    if (removeContent && (report.target_type === 'post' || report.target_type === 'reply')) {
+      const table = report.target_type === 'post' ? 'posts' : 'post_replies';
+      const { error } = await supabase.from(table).delete().eq('id', report.target_id);
+      if (error) {
+        toast({ title: 'Error', description: 'Failed to remove content.', variant: 'destructive' });
+        return;
+      }
+    }
+    // Close every open report about the same target
+    const { error } = await supabase
+      .from('content_reports')
+      .update({
+        status: removeContent ? 'resolved' : 'dismissed',
+        resolved_by: user.id,
+        resolved_at: new Date().toISOString(),
+      })
+      .eq('target_type', report.target_type)
+      .eq('target_id', report.target_id)
+      .eq('status', 'open');
+    if (error) {
+      toast({ title: 'Error', description: 'Failed to update report.', variant: 'destructive' });
+      return;
+    }
+    toast({ title: removeContent ? 'Content removed' : 'Report dismissed' });
+    fetchData();
+  };
+
   const getUserRoles = (userId: string) => {
     return userRoles.filter(r => r.user_id === userId);
   };
@@ -252,7 +286,7 @@ const AdminDashboardPage = () => {
                 Admin Dashboard
               </h1>
               <p className="text-muted-foreground mt-1">
-                Manage users, roles, and PRIDE Units
+                Manage users, roles, and Pride Coins
               </p>
             </div>
             <Button onClick={fetchData} variant="outline" size="sm">
@@ -278,7 +312,7 @@ const AdminDashboardPage = () => {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Total PRIDE Units
+                  Total Pride Coins
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -303,11 +337,56 @@ const AdminDashboardPage = () => {
             </Card>
           </div>
 
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Flag className="w-5 h-5 text-destructive" /> Reports ({reports.length})
+              </CardTitle>
+              <CardDescription>Content and users reported by the community</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {reports.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No open reports.</p>
+              ) : (
+                <div className="space-y-3">
+                  {reports.map((report) => (
+                    <div key={report.id} className="rounded-lg border p-3 space-y-2">
+                      <div className="flex flex-wrap items-center gap-2 text-sm">
+                        <span className="font-medium capitalize">{report.target_type}</span>
+                        <span className="text-muted-foreground">
+                          by {report.target_username || 'unknown'} · reported by {report.reporter_username || 'unknown'} ·{' '}
+                          {new Date(report.created_at).toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="text-sm"><span className="text-muted-foreground">Reason:</span> {report.reason}</p>
+                      {report.target_preview && (
+                        <p className="text-sm bg-muted/50 rounded p-2 whitespace-pre-wrap break-words">{report.target_preview}</p>
+                      )}
+                      {!report.target_preview && report.target_type !== 'user' && (
+                        <p className="text-sm text-muted-foreground">Content was already deleted.</p>
+                      )}
+                      <div className="flex gap-2">
+                        {report.target_type !== 'user' && report.target_preview && (
+                          <Button size="sm" variant="destructive" onClick={() => resolveReport(report, true)}>
+                            <Trash2 className="w-4 h-4 mr-1" /> Remove {report.target_type}
+                          </Button>
+                        )}
+                        <Button size="sm" variant="outline" onClick={() => resolveReport(report, false)}>
+                          <Check className="w-4 h-4 mr-1" /> Dismiss
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>User Management</CardTitle>
               <CardDescription>
-                Add PRIDE coins and manage user roles
+                Add Pride Coins and manage user roles
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -316,8 +395,8 @@ const AdminDashboardPage = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>User</TableHead>
-                      <TableHead>PRIDE Units</TableHead>
-                      <TableHead>Add Units</TableHead>
+                      <TableHead>Pride Coins</TableHead>
+                      <TableHead>Add Pride Coins</TableHead>
                       <TableHead>Roles</TableHead>
                       <TableHead>Assign Role</TableHead>
                     </TableRow>

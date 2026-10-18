@@ -1,16 +1,17 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import PageSEO from '@/components/PageSEO';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/MentionInput';
 import { TrendingPanel } from '@/components/TrendingPanel';
 import { StickerPicker } from '@/components/StickerPicker';
 import { ReferralPanel } from '@/components/ReferralPanel';
+import { ReportBlockMenu } from '@/components/ReportBlockMenu';
 import {
   Home,
   MapPin,
@@ -28,7 +29,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { createMentionNotifications, createNotification } from '@/hooks/useNotifications';
+import type { Database } from '@/integrations/supabase/types';
 
 interface PostReply {
   id: string;
@@ -61,7 +62,42 @@ interface PostWithProfile {
   original_post_id?: string;
   /** Text added when echoing (quote); null otherwise */
   echo_message?: string | null;
+  /** Time of the feed item (post or echo) — used as the pagination cursor */
+  feed_time: string;
 }
+
+type FeedRow = Database['public']['Functions']['get_feed']['Returns'][number];
+type FeedMode = 'for_you' | 'following';
+
+const FEED_PAGE_SIZE = 30;
+
+// Notifications and Pride Coins rewards are created by database triggers
+const toFeedPost = (row: FeedRow): PostWithProfile => {
+  const isEcho = row.item_type === 'echo';
+  return {
+    id: isEcho ? `echo-${row.post_id}-${row.echoer_id}` : row.post_id,
+    content: row.content,
+    created_at: row.created_at,
+    user_id: row.author_id,
+    author_name: row.author_name || 'Anonymous',
+    author_username: row.author_username,
+    author_avatar: row.author_avatar,
+    like_count: Number(row.like_count),
+    user_has_liked: row.liked_by_me,
+    reply_count: Number(row.reply_count),
+    echo_count: Number(row.echo_count),
+    user_has_echoed: row.echoed_by_me,
+    sticker: row.sticker,
+    image_url: row.image_url,
+    is_echo: isEcho,
+    echoed_by_user_id: row.echoer_id || undefined,
+    echoed_by_name: row.echoer_name || undefined,
+    echoed_by_username: row.echoer_username,
+    original_post_id: row.post_id,
+    echo_message: row.echo_message,
+    feed_time: row.item_time,
+  };
+};
 
 interface Profile {
   pride_coins: number;
@@ -119,6 +155,12 @@ const DashboardPage = () => {
   const [isSubmittingQuote, setIsSubmittingQuote] = useState(false);
   const [hashtagFilter, setHashtagFilter] = useState<string | null>(null);
   const [followingIds, setFollowingIds] = useState<string[]>([]);
+  const [feedMode, setFeedMode] = useState<FeedMode>('for_you');
+  const [hasMorePosts, setHasMorePosts] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  // Read by realtime handlers, which are subscribed once
+  const feedFilterRef = useRef({ feedMode, hashtagFilter, followingIds });
+  feedFilterRef.current = { feedMode, hashtagFilter, followingIds };
   const [isLoadingFollowing, setIsLoadingFollowing] = useState(false);
   const { toast } = useToast();
   const { user, loading } = useAuth();
@@ -128,129 +170,46 @@ const DashboardPage = () => {
     if (!loading && !user) navigate('/login');
   }, [user, loading, navigate]);
 
-  // Fetch posts and echoes
+  // Fetch the first page of the feed (posts + echoes) for the current tab and hashtag
   const fetchPosts = useCallback(async () => {
     if (!user) return;
-
-    const { data: postsData, error: postsError } = await supabase
-      .from('posts')
-      .select('id, content, created_at, user_id, sticker, image_url')
-      .order('created_at', { ascending: false })
-      .limit(50);
-
-    if (postsError || !postsData) {
+    const { data, error } = await supabase.rpc('get_feed', {
+      _mode: feedMode,
+      _limit: FEED_PAGE_SIZE,
+      _hashtag: hashtagFilter || undefined,
+    });
+    if (error || !data) {
       setPosts([]);
-      setIsLoadingPosts(false);
-      return;
+      setHasMorePosts(false);
+    } else {
+      setPosts(data.map(toFeedPost));
+      setHasMorePosts(data.length === FEED_PAGE_SIZE);
     }
-
-    const { data: allEchoesData } = await supabase
-      .from('post_echoes')
-      .select('id, post_id, user_id, created_at, message')
-      .order('created_at', { ascending: false })
-      .limit(50);
-
-    const postUserIds = postsData.map((p) => p.user_id);
-    const echoUserIds = allEchoesData?.map((e) => e.user_id) || [];
-    const userIds = [...new Set([...postUserIds, ...echoUserIds])];
-    const postIds = postsData.map((p) => p.id);
-
-    const { data: profilesData } = await supabase
-      .from('profiles')
-      .select('user_id, display_name, username, avatar_url')
-      .in('user_id', userIds);
-
-    const { data: likesData } = await supabase.from('post_likes').select('post_id').in('post_id', postIds);
-    const { data: userLikesData } = await supabase
-      .from('post_likes')
-      .select('post_id')
-      .eq('user_id', user.id)
-      .in('post_id', postIds);
-    const { data: repliesData } = await supabase.from('post_replies').select('post_id').in('post_id', postIds);
-    const { data: echoCountsData } = await supabase.from('post_echoes').select('post_id').in('post_id', postIds);
-    const { data: userEchoesData } = await supabase
-      .from('post_echoes')
-      .select('post_id')
-      .eq('user_id', user.id)
-      .in('post_id', postIds);
-
-    const profileMap = new Map<string, { display_name: string; username: string | null; avatar_url: string | null }>();
-    profilesData?.forEach((p) =>
-      profileMap.set(p.user_id, { display_name: p.display_name || 'Anonymous', username: p.username, avatar_url: p.avatar_url })
-    );
-
-    const likeCountMap = new Map<string, number>();
-    likesData?.forEach((l) => likeCountMap.set(l.post_id, (likeCountMap.get(l.post_id) || 0) + 1));
-    const replyCountMap = new Map<string, number>();
-    repliesData?.forEach((r) => replyCountMap.set(r.post_id, (replyCountMap.get(r.post_id) || 0) + 1));
-    const echoCountMap = new Map<string, number>();
-    echoCountsData?.forEach((e) => echoCountMap.set(e.post_id, (echoCountMap.get(e.post_id) || 0) + 1));
-    const userLikedSet = new Set(userLikesData?.map((l) => l.post_id) || []);
-    const userEchoedSet = new Set(userEchoesData?.map((e) => e.post_id) || []);
-
-    const postsMap = new Map<string, typeof postsData[0]>();
-    postsData.forEach((p) => postsMap.set(p.id, p));
-
-    type FeedItem = {
-      type: 'post' | 'echo';
-      timestamp: string;
-      post: typeof postsData[0];
-      echoedByUserId?: string;
-      echoedBy?: { name: string; username: string | null };
-      message?: string | null;
-    };
-
-    const feedItems: FeedItem[] = [];
-    postsData.forEach((post) => feedItems.push({ type: 'post', timestamp: post.created_at, post }));
-    allEchoesData?.forEach((echo) => {
-      const originalPost = postsMap.get(echo.post_id);
-      if (!originalPost) return;
-      const echoerProfile = profileMap.get(echo.user_id);
-      feedItems.push({
-        type: 'echo',
-        timestamp: echo.created_at,
-        post: originalPost,
-        echoedByUserId: echo.user_id,
-        echoedBy: {
-          name: echoerProfile?.display_name || 'Anonymous',
-          username: echoerProfile?.username || null,
-        },
-        message: echo.message || null,
-      });
-    });
-
-    feedItems.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
-    const postsWithProfiles: PostWithProfile[] = feedItems.map((item, index) => {
-      const post = item.post;
-      const profile = profileMap.get(post.user_id);
-      return {
-        id: item.type === 'echo' ? `echo-${post.id}-${index}` : post.id,
-        content: post.content,
-        created_at: post.created_at,
-        user_id: post.user_id,
-        author_name: profile?.display_name || 'Anonymous',
-        author_username: profile?.username || null,
-        author_avatar: profile?.avatar_url || null,
-        like_count: likeCountMap.get(post.id) || 0,
-        user_has_liked: userLikedSet.has(post.id),
-        reply_count: replyCountMap.get(post.id) || 0,
-        echo_count: echoCountMap.get(post.id) || 0,
-        user_has_echoed: userEchoedSet.has(post.id),
-        sticker: (post as any).sticker || null,
-        image_url: (post as any).image_url || null,
-        is_echo: item.type === 'echo',
-        echoed_by_user_id: item.echoedByUserId,
-        echoed_by_name: item.echoedBy?.name,
-        echoed_by_username: item.echoedBy?.username,
-        original_post_id: post.id,
-        echo_message: item.message || null,
-      };
-    });
-
-    setPosts(postsWithProfiles);
     setIsLoadingPosts(false);
-  }, [user]);
+  }, [user, feedMode, hashtagFilter]);
+
+  const loadMorePosts = async () => {
+    if (!user || isLoadingMore || posts.length === 0) return;
+    setIsLoadingMore(true);
+    const { data } = await supabase.rpc('get_feed', {
+      _mode: feedMode,
+      _limit: FEED_PAGE_SIZE,
+      _hashtag: hashtagFilter || undefined,
+      _before: posts[posts.length - 1].feed_time,
+    });
+    if (data) {
+      setPosts((prev) => {
+        const seen = new Set(prev.map((p) => p.id));
+        return [...prev, ...data.map(toFeedPost).filter((p) => !seen.has(p.id))];
+      });
+      setHasMorePosts(data.length === FEED_PAGE_SIZE);
+    }
+    setIsLoadingMore(false);
+  };
+
+  const removeUserFromFeed = (blockedUserId: string) => {
+    setPosts((prev) => prev.filter((p) => p.user_id !== blockedUserId && p.echoed_by_user_id !== blockedUserId));
+  };
 
   const fetchFollowing = useCallback(async () => {
     if (!user) return;
@@ -296,7 +255,23 @@ const DashboardPage = () => {
     // Create channels and subscribe separately
     const postsChannel = supabase.channel('posts-channel');
     postsChannel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, async (payload) => {
-      const newPostData = payload.new as { id: string; content: string; created_at: string; user_id: string };
+      const newPostData = payload.new as {
+        id: string;
+        content: string;
+        created_at: string;
+        user_id: string;
+        sticker: string | null;
+        image_url: string | null;
+      };
+      const filters = feedFilterRef.current;
+      if (filters.hashtagFilter && !newPostData.content.toLowerCase().includes(filters.hashtagFilter)) return;
+      if (
+        filters.feedMode === 'following' &&
+        newPostData.user_id !== user.id &&
+        !filters.followingIds.includes(newPostData.user_id)
+      ) {
+        return;
+      }
       const { data: profileData } = await supabase
         .from('profiles')
       .select('display_name, username, avatar_url')
@@ -312,10 +287,12 @@ const DashboardPage = () => {
         reply_count: 0,
         echo_count: 0,
         user_has_echoed: false,
-        sticker: (newPostData as any).sticker || null,
-        image_url: (newPostData as any).image_url || null,
+        sticker: newPostData.sticker || null,
+        image_url: newPostData.image_url || null,
+        original_post_id: newPostData.id,
+        feed_time: newPostData.created_at,
       };
-      setPosts((prev) => [newPost, ...prev]);
+      setPosts((prev) => (prev.some((p) => p.id === newPost.id) ? prev : [newPost, ...prev]));
     });
     postsChannel.subscribe();
 
@@ -390,12 +367,11 @@ const DashboardPage = () => {
   useEffect(() => {
     if (!user) return;
     const fetchProfile = async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('pride_coins, display_name, username, referral_code')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      if (data) setUserProfile(data);
+      const [{ data }, { data: privateData }] = await Promise.all([
+        supabase.from('profiles').select('pride_coins, display_name, username').eq('user_id', user.id).maybeSingle(),
+        supabase.rpc('get_my_private_profile'),
+      ]);
+      if (data) setUserProfile({ ...data, referral_code: privateData?.[0]?.referral_code ?? null });
     };
     fetchProfile();
     const profileChannel = supabase.channel('profile-updates');
@@ -403,13 +379,13 @@ const DashboardPage = () => {
       'postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `user_id=eq.${user.id}` },
       (payload) => {
-        const updated = payload.new as { pride_coins: number; display_name: string | null; username: string | null; referral_code: string | null };
-        setUserProfile({
+        const updated = payload.new as { pride_coins: number; display_name: string | null; username: string | null };
+        setUserProfile((prev) => ({
           pride_coins: updated.pride_coins,
           display_name: updated.display_name,
           username: updated.username,
-          referral_code: updated.referral_code,
-        });
+          referral_code: prev?.referral_code ?? null,
+        }));
       }
     );
     profileChannel.subscribe();
@@ -468,17 +444,10 @@ const DashboardPage = () => {
     const postId = replyingToPost.original_post_id || replyingToPost.id;
     setIsSubmittingReply(true);
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('post_replies')
-        .insert({ post_id: postId, user_id: user.id, content: replyContent.trim() })
-        .select('id')
-        .single();
+        .insert({ post_id: postId, user_id: user.id, content: replyContent.trim() });
       if (error) throw error;
-
-      await Promise.all([
-        createMentionNotifications(user.id, replyContent.trim(), postId, data.id),
-        createNotification(replyingToPost.user_id, user.id, 'reply', postId, replyContent.trim()),
-      ]);
       setReplyContent('');
       toast({ title: 'Reply posted!', description: 'Your reply has been added.' });
       await openReplyThread({ ...replyingToPost, id: postId });
@@ -496,7 +465,7 @@ const DashboardPage = () => {
   };
 
   // Like/unlike post
-  const handleLike = async (postId: string, hasLiked: boolean, postAuthorId: string) => {
+  const handleLike = async (postId: string, hasLiked: boolean) => {
     if (!user || likingPostId) return;
     setLikingPostId(postId);
     try {
@@ -505,7 +474,6 @@ const DashboardPage = () => {
       } else {
         const { error } = await supabase.from('post_likes').insert({ post_id: postId, user_id: user.id });
         if (error) throw error;
-        await createNotification(postAuthorId, user.id, 'like', postId);
       }
     } catch {
       toast({ title: 'Error', description: 'Failed to update like.', variant: 'destructive' });
@@ -541,16 +509,12 @@ const DashboardPage = () => {
     const actualPostId = quotingPost.original_post_id || quotingPost.id;
     setIsSubmittingQuote(true);
     try {
-      await supabase.from('post_echoes').insert({
+      const { error } = await supabase.from('post_echoes').insert({
         post_id: actualPostId,
         user_id: user.id,
         message: quoteContent.trim() || null,
       });
-
-      await Promise.all([
-        createNotification(quotingPost.user_id, user.id, 'echo', actualPostId, quoteContent.trim() || undefined),
-        createMentionNotifications(user.id, quoteContent.trim(), actualPostId),
-      ]);
+      if (error) throw error;
 
       toast({
         title: 'Echoed!',
@@ -602,22 +566,13 @@ const DashboardPage = () => {
       }
 
       const trimmedContent = postContent.trim();
-      const { data, error } = await supabase
-        .from('posts')
-        .insert({
-          content: trimmedContent,
-          user_id: user.id,
-          sticker: selectedSticker || null,
-          image_url: uploadedImageUrl,
-        } as any)
-        .select('id')
-        .single();
-      if (error) throw error;
-
-      // Post is already created; notification failures must not fail UX
-      void createMentionNotifications(user.id, trimmedContent, data.id).catch((mentionError) => {
-        console.error('Mention notification failed:', mentionError);
+      const { error } = await supabase.from('posts').insert({
+        content: trimmedContent,
+        user_id: user.id,
+        sticker: selectedSticker || null,
+        image_url: uploadedImageUrl,
       });
+      if (error) throw error;
 
       setPostContent('');
       setSelectedSticker(null);
@@ -669,16 +624,6 @@ const DashboardPage = () => {
     userProfile?.display_name || user.user_metadata?.display_name || user.email?.split('@')[0] || 'User';
   const userInitial = displayName[0].toUpperCase();
 
-  const forYouFeedPosts = posts.filter((p) => !hashtagFilter || p.content.toLowerCase().includes(hashtagFilter));
-  const followingFeedPosts = posts.filter((p) => {
-    if (hashtagFilter && !p.content.toLowerCase().includes(hashtagFilter)) return false;
-    if (followingIds.length === 0) return false;
-    return (
-      followingIds.includes(p.user_id) ||
-      (!!p.echoed_by_user_id && followingIds.includes(p.echoed_by_user_id))
-    );
-  });
-
   const renderPostCard = (post: PostWithProfile) => (
     <Card key={post.id}>
       <CardContent className="p-4">
@@ -715,6 +660,15 @@ const DashboardPage = () => {
                 </Link>
               )}
               <span className="text-muted-foreground text-sm">· {formatTimeAgo(post.created_at)}</span>
+              <div className="ml-auto -my-1">
+                <ReportBlockMenu
+                  targetType="post"
+                  targetId={post.original_post_id || post.id}
+                  targetUserId={post.user_id}
+                  targetName={post.author_name}
+                  onBlocked={removeUserFromFeed}
+                />
+              </div>
             </div>
 
             {post.is_echo && post.echo_message && (
@@ -754,7 +708,7 @@ const DashboardPage = () => {
 
             <div className="flex items-center gap-6">
               <button
-                onClick={() => handleLike(post.original_post_id || post.id, post.user_has_liked, post.user_id)}
+                onClick={() => handleLike(post.original_post_id || post.id, post.user_has_liked)}
                 disabled={likingPostId === post.id || likingPostId === post.original_post_id}
                 className={`flex items-center gap-2 transition-colors ${
                   post.user_has_liked ? 'text-pride-pink' : 'text-muted-foreground hover:text-pride-pink'
@@ -937,7 +891,13 @@ const DashboardPage = () => {
                 </Card>
 
                 {/* Feed */}
-                <Tabs defaultValue="for-you">
+                <Tabs
+                  value={feedMode === 'for_you' ? 'for-you' : 'following'}
+                  onValueChange={(value) => {
+                    setIsLoadingPosts(true);
+                    setFeedMode(value === 'following' ? 'following' : 'for_you');
+                  }}
+                >
                   <TabsList className="w-full justify-start bg-card border-b rounded-none h-auto p-0">
                     <TabsTrigger
                       value="for-you"
@@ -952,7 +912,7 @@ const DashboardPage = () => {
                       Following
                     </TabsTrigger>
                   </TabsList>
-                  <TabsContent value="for-you" className="mt-4 space-y-4">
+                  <div className="mt-4 space-y-4">
                     {hashtagFilter && (
                       <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary text-sm font-medium">
                         Filtering: {hashtagFilter}
@@ -961,45 +921,42 @@ const DashboardPage = () => {
                         </Button>
                       </div>
                     )}
-                    {isLoadingPosts ? (
+                    {isLoadingPosts || (feedMode === 'following' && isLoadingFollowing) ? (
                       <Card>
                         <CardContent className="p-12 text-center">
                           <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
                         </CardContent>
                       </Card>
-                    ) : forYouFeedPosts.length === 0 ? (
+                    ) : feedMode === 'following' && followingIds.length === 0 ? (
                       <Card>
                         <CardContent className="p-12 text-center">
-                          <p className="text-muted-foreground">{hashtagFilter ? `No posts with ${hashtagFilter} yet.` : 'No posts yet. Be the first to share!'}</p>
+                          <p className="text-muted-foreground">You're not following anyone yet.</p>
+                        </CardContent>
+                      </Card>
+                    ) : posts.length === 0 ? (
+                      <Card>
+                        <CardContent className="p-12 text-center">
+                          <p className="text-muted-foreground">
+                            {hashtagFilter
+                              ? `No posts with ${hashtagFilter} yet.`
+                              : feedMode === 'following'
+                                ? "People you follow haven't posted yet."
+                                : 'No posts yet. Be the first to share!'}
+                          </p>
                         </CardContent>
                       </Card>
                     ) : (
-                      forYouFeedPosts.map(renderPostCard)
+                      <>
+                        {posts.map(renderPostCard)}
+                        {hasMorePosts && (
+                          <Button variant="outline" className="w-full" onClick={loadMorePosts} disabled={isLoadingMore}>
+                            {isLoadingMore && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                            Load more
+                          </Button>
+                        )}
+                      </>
                     )}
-                  </TabsContent>
-                  <TabsContent value="following" className="mt-4 space-y-4">
-                    {isLoadingPosts || isLoadingFollowing ? (
-                      <Card>
-                        <CardContent className="p-12 text-center">
-                          <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
-                        </CardContent>
-                      </Card>
-                    ) : followingIds.length === 0 ? (
-                      <Card>
-                        <CardContent className="p-12 text-center">
-                          <p className="text-muted-foreground">Ты пока ни на кого не подписан(а).</p>
-                        </CardContent>
-                      </Card>
-                    ) : followingFeedPosts.length === 0 ? (
-                      <Card>
-                        <CardContent className="p-12 text-center">
-                          <p className="text-muted-foreground">У тех, на кого ты подписан(а), пока нет постов.</p>
-                        </CardContent>
-                      </Card>
-                    ) : (
-                      followingFeedPosts.map(renderPostCard)
-                    )}
-                  </TabsContent>
+                  </div>
                 </Tabs>
               </main>
 
@@ -1020,7 +977,7 @@ const DashboardPage = () => {
                       </div>
                     </div>
                     <Button variant="outline" size="sm" asChild className="shrink-0">
-                      <Link to="/support">Get More</Link>
+                      <Link to="/dashboard/settings">How to earn</Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -1042,7 +999,7 @@ const DashboardPage = () => {
                       </div>
                     </div>
                     <Button variant="outline" size="sm" className="w-full mt-4" asChild>
-                      <Link to="/support">Get More Coins</Link>
+                      <Link to="/dashboard/settings">How to earn Pride Coins</Link>
                     </Button>
                   </CardContent>
                 </Card>
