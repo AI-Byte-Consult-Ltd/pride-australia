@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      arcade_sessions: {
+        Row: {
+          created_at: string
+          finished: boolean
+          id: string
+          reward: number
+          score: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          finished?: boolean
+          id?: string
+          reward?: number
+          score?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          finished?: boolean
+          id?: string
+          reward?: number
+          score?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       businesses: {
         Row: {
           address: string | null
@@ -78,6 +105,42 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      content_reports: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string
+          reporter_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason: string
+          reporter_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string
+          reporter_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: []
       }
       follows: {
         Row: {
@@ -394,6 +457,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -428,6 +512,10 @@ export type Database = {
         Args: { _amount: number; _target_user_id: string }
         Returns: undefined
       }
+      arcade_finish: {
+        Args: { _score: number; _session_id: string }
+        Returns: number
+      }
       arcade_play: {
         Args: { _entry_fee?: number; _user_id: string }
         Returns: boolean
@@ -435,6 +523,65 @@ export type Database = {
       arcade_reward: {
         Args: { _reward: number; _user_id: string }
         Returns: undefined
+      }
+      arcade_start: { Args: never; Returns: string }
+      delete_my_account: { Args: never; Returns: undefined }
+      ensure_username: { Args: { _candidate: string }; Returns: string }
+      get_feed: {
+        Args: {
+          _author?: string
+          _before?: string
+          _hashtag?: string
+          _limit?: number
+          _mode?: string
+        }
+        Returns: {
+          author_avatar: string
+          author_id: string
+          author_name: string
+          author_username: string
+          content: string
+          created_at: string
+          echo_count: number
+          echo_message: string
+          echoed_by_me: boolean
+          echoer_id: string
+          echoer_name: string
+          echoer_username: string
+          image_url: string
+          item_time: string
+          item_type: string
+          like_count: number
+          liked_by_me: boolean
+          post_id: string
+          reply_count: number
+          sticker: string
+        }[]
+      }
+      get_my_private_profile: {
+        Args: never
+        Returns: {
+          avatar_changes: number
+          banner_changes: number
+          display_name_changes: number
+          referral_code: string
+          username_changes: number
+        }[]
+      }
+      get_open_reports: {
+        Args: { _limit?: number }
+        Returns: {
+          created_at: string
+          id: string
+          reason: string
+          reporter_id: string
+          reporter_username: string
+          status: string
+          target_id: string
+          target_preview: string
+          target_type: string
+          target_username: string
+        }[]
       }
       get_trending_hashtags: {
         Args: { _limit?: number }
@@ -457,6 +604,10 @@ export type Database = {
       spend_coins_for_change: {
         Args: { _change_type: string; _user_id: string }
         Returns: boolean
+      }
+      update_profile_field: {
+        Args: { _field: string; _value: string }
+        Returns: number
       }
     }
     Enums: {
