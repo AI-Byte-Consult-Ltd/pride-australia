@@ -9,6 +9,7 @@ import { MentionInput, renderContentWithMentionsAndLinks } from '@/components/Me
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { ReportBlockMenu } from '@/components/ReportBlockMenu';
 import { Heart, MessageCircle, Repeat2, Send, Loader2, X, Image as ImageIcon, UserPlus, UserMinus } from 'lucide-react';
 
 // Типы поста и ответа
@@ -158,65 +159,32 @@ const UserProfilePage = () => {
     });
     setIsLoadingProfile(false);
 
-    // Получаем посты пользователя
-    const { data: postsData, error: postsError } = await supabase
-      .from('posts')
-      .select('id, content, created_at, user_id, image_url')
-      .eq('user_id', profileData.user_id)
-      .order('created_at', { ascending: false })
-      .limit(50);
+    // Посты пользователя с реальными счётчиками (одним запросом к серверу)
+    const { data: feedData, error: postsError } = await supabase.rpc('get_feed', {
+      _mode: 'author',
+      _author: profileData.user_id,
+      _limit: 50,
+    });
 
-    if (postsError || !postsData) {
+    if (postsError || !feedData) {
       setPosts([]);
       setIsLoadingPosts(false);
       return;
     }
 
-    if (postsData.length === 0) {
-      setPosts([]);
-      setIsLoadingPosts(false);
-      return;
-    }
-
-    const postIds = postsData.map((p) => p.id);
-
-    // Загружаем лайки, ответы и эхо
-    const { data: likesData } = await supabase.from('post_likes').select('post_id').in('post_id', postIds);
-    const { data: userLikesData } = await supabase
-      .from('post_likes')
-      .select('post_id')
-      .eq('user_id', user.id)
-      .in('post_id', postIds);
-    const { data: repliesData } = await supabase.from('post_replies').select('post_id').in('post_id', postIds);
-    const { data: echoCountsData } = await supabase.from('post_echoes').select('post_id').in('post_id', postIds);
-    const { data: userEchoesData } = await supabase
-      .from('post_echoes')
-      .select('post_id')
-      .eq('user_id', user.id)
-      .in('post_id', postIds);
-
-    const likeCountMap = new Map<string, number>();
-    likesData?.forEach((l) => likeCountMap.set(l.post_id, (likeCountMap.get(l.post_id) || 0) + 1));
-    const replyCountMap = new Map<string, number>();
-    repliesData?.forEach((r) => replyCountMap.set(r.post_id, (replyCountMap.get(r.post_id) || 0) + 1));
-    const echoCountMap = new Map<string, number>();
-    echoCountsData?.forEach((e) => echoCountMap.set(e.post_id, (echoCountMap.get(e.post_id) || 0) + 1));
-    const userLikedSet = new Set(userLikesData?.map((l) => l.post_id) || []);
-    const userEchoedSet = new Set(userEchoesData?.map((e) => e.post_id) || []);
-
-    const postsWithProfiles: PostWithProfile[] = postsData.map((post) => ({
-      id: post.id,
-      content: post.content,
-      created_at: post.created_at,
-      user_id: post.user_id,
-      author_name: profileData.display_name || 'Anonymous',
-      author_username: profileData.username || null,
-      like_count: likeCountMap.get(post.id) || 0,
-      user_has_liked: userLikedSet.has(post.id),
-      reply_count: replyCountMap.get(post.id) || 0,
-      echo_count: echoCountMap.get(post.id) || 0,
-      user_has_echoed: userEchoedSet.has(post.id),
-      image_url: (post as any).image_url || null,
+    const postsWithProfiles: PostWithProfile[] = feedData.map((row) => ({
+      id: row.post_id,
+      content: row.content,
+      created_at: row.created_at,
+      user_id: row.author_id,
+      author_name: row.author_name || 'Anonymous',
+      author_username: row.author_username,
+      like_count: Number(row.like_count),
+      user_has_liked: row.liked_by_me,
+      reply_count: Number(row.reply_count),
+      echo_count: Number(row.echo_count),
+      user_has_echoed: row.echoed_by_me,
+      image_url: row.image_url,
     }));
 
     setPosts(postsWithProfiles);
@@ -526,8 +494,9 @@ const UserProfilePage = () => {
                 </div>
 
                 {!isOwnProfile && (
+                  <div className="mt-4 flex items-center gap-2">
                   <Button 
-                    className="mt-4 gap-2" 
+                    className="gap-2" 
                     variant={profile.is_followed_by_me ? "outline" : "pride"}
                     onClick={handleFollowToggle}
                     disabled={isTogglingFollow}
@@ -544,6 +513,14 @@ const UserProfilePage = () => {
                       </>
                     )}
                   </Button>
+                  <ReportBlockMenu
+                    targetType="user"
+                    targetId={profile.user_id}
+                    targetUserId={profile.user_id}
+                    targetName={profile.display_name || undefined}
+                    onBlocked={() => navigate('/dashboard')}
+                  />
+                  </div>
                 )}
 
                 {profile.bio && (

@@ -7,6 +7,17 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { 
   Home, 
   MapPin, 
@@ -18,6 +29,7 @@ import {
   User,
   Camera,
   ImageIcon,
+  Trash2,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -41,7 +53,22 @@ const DISPLAY_NAME_CHANGE_COST = 25;
 const AVATAR_CHANGE_COST = 30;
 const BANNER_CHANGE_COST = 40;
 
-const PROFILE_FIELDS = 'display_name, username, bio, avatar_url, banner_url, pride_coins, username_changes, display_name_changes, avatar_changes, banner_changes';
+const PROFILE_FIELDS = 'display_name, username, bio, avatar_url, banner_url, pride_coins';
+const STORAGE_BUCKET = 'pride-social-network';
+
+// Error codes raised by update_profile_field() on the server
+const PROFILE_ERRORS: Record<string, string> = {
+  username_taken: 'This username is already taken',
+  invalid_username: 'Only letters, numbers, and underscores allowed (4–30 characters including @)',
+  invalid_display_name: 'Display name must be 2–50 characters',
+  insufficient_coins: 'Not enough Pride Coins for this change',
+  invalid_image_url: 'Image upload failed, please try again',
+};
+
+const profileErrorMessage = (error: { message?: string } | null) => {
+  const code = Object.keys(PROFILE_ERRORS).find((key) => error?.message?.includes(key));
+  return code ? PROFILE_ERRORS[code] : 'Something went wrong, please try again.';
+};
 
 const SettingsPage = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -57,7 +84,8 @@ const SettingsPage = () => {
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -66,15 +94,21 @@ const SettingsPage = () => {
 
   const fetchProfile = async () => {
     if (!user) return;
-    const { data, error } = await supabase
-      .from('profiles')
-      .select(PROFILE_FIELDS)
-      .eq('user_id', user.id)
-      .maybeSingle();
+    const [{ data, error }, { data: privateData }] = await Promise.all([
+      supabase.from('profiles').select(PROFILE_FIELDS).eq('user_id', user.id).maybeSingle(),
+      supabase.rpc('get_my_private_profile'),
+    ]);
+    const counters = privateData?.[0];
     if (error) {
       console.error('Error fetching profile:', error);
     } else if (data) {
-      setProfile(data as Profile);
+      setProfile({
+        ...data,
+        username_changes: counters?.username_changes ?? 0,
+        display_name_changes: counters?.display_name_changes ?? 0,
+        avatar_changes: counters?.avatar_changes ?? 0,
+        banner_changes: counters?.banner_changes ?? 0,
+      });
       setUsername(data.username || '');
       setDisplayName(data.display_name || '');
     }
@@ -124,42 +158,36 @@ const SettingsPage = () => {
   const handleSaveUsername = async () => {
     if (!user || !validateUsername(username) || !profile) return;
     setIsSavingUsername(true);
-    const { data: existing } = await supabase
-      .from('profiles').select('user_id').eq('username', username).neq('user_id', user.id).maybeSingle();
-    if (existing) { setUsernameError('This username is already taken'); setIsSavingUsername(false); return; }
-    if (usernameChangeCost > 0) {
-      const { data: success } = await supabase.rpc('spend_coins_for_change', { _user_id: user.id, _change_type: 'username' });
-      if (!success) { toast({ title: 'Insufficient coins', description: `You need ${usernameChangeCost} Pride Coins.`, variant: 'destructive' }); setIsSavingUsername(false); return; }
+    const { data: cost, error } = await supabase.rpc('update_profile_field', { _field: 'username', _value: username });
+    if (error) {
+      const message = profileErrorMessage(error);
+      if (error.message.includes('username')) setUsernameError(message);
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     } else {
-      await supabase.from('profiles').update({ username_changes: 1 }).eq('user_id', user.id);
+      await fetchProfile();
+      toast({ title: 'Success', description: cost ? `Username updated! ${cost} Pride Coins spent.` : 'Username updated!' });
     }
-    const { error } = await supabase.from('profiles').update({ username }).eq('user_id', user.id);
-    if (error) { toast({ title: 'Error', description: 'Failed to update username.', variant: 'destructive' }); }
-    else { await fetchProfile(); toast({ title: 'Success', description: usernameChangeCost > 0 ? `Username updated! ${usernameChangeCost} coins spent.` : 'Username updated!' }); }
     setIsSavingUsername(false);
   };
 
   const handleSaveDisplayName = async () => {
     if (!user || !profile || displayName.trim().length < 2 || displayName.length > 50) return;
     setIsSavingDisplayName(true);
-    if (displayNameChangeCost > 0) {
-      const { data: success } = await supabase.rpc('spend_coins_for_change', { _user_id: user.id, _change_type: 'display_name' });
-      if (!success) { toast({ title: 'Insufficient coins', description: `You need ${displayNameChangeCost} Pride Coins.`, variant: 'destructive' }); setIsSavingDisplayName(false); return; }
+    const { data: cost, error } = await supabase.rpc('update_profile_field', { _field: 'display_name', _value: displayName.trim() });
+    if (error) {
+      toast({ title: 'Error', description: profileErrorMessage(error), variant: 'destructive' });
     } else {
-      await supabase.from('profiles').update({ display_name_changes: 1 }).eq('user_id', user.id);
+      await fetchProfile();
+      toast({ title: 'Success', description: cost ? `Display name updated! ${cost} Pride Coins spent.` : 'Display name updated!' });
     }
-    const { error } = await supabase.from('profiles').update({ display_name: displayName.trim() }).eq('user_id', user.id);
-    if (error) { toast({ title: 'Error', description: 'Failed to update display name.', variant: 'destructive' }); }
-    else { await fetchProfile(); toast({ title: 'Success', description: displayNameChangeCost > 0 ? `Display name updated! ${displayNameChangeCost} coins spent.` : 'Display name updated!' }); }
     setIsSavingDisplayName(false);
   };
 
   const uploadImage = async (file: File, type: 'avatar' | 'banner') => {
-    if (!user) return;
+    if (!user || !profile) return;
     const isAvatar = type === 'avatar';
     const setUploading = isAvatar ? setIsUploadingAvatar : setIsUploadingBanner;
     const cost = isAvatar ? avatarChangeCost : bannerChangeCost;
-    const costLabel = isAvatar ? AVATAR_CHANGE_COST : BANNER_CHANGE_COST;
 
     if (file.size > 5 * 1024 * 1024) {
       toast({ title: 'File too large', description: 'Maximum file size is 5MB.', variant: 'destructive' });
@@ -169,28 +197,18 @@ const SettingsPage = () => {
       toast({ title: 'Invalid file', description: 'Please upload an image file.', variant: 'destructive' });
       return;
     }
+    if (cost > profile.pride_coins) {
+      toast({ title: 'Not enough Pride Coins', description: `You need ${cost} Pride Coins to change your ${type}.`, variant: 'destructive' });
+      return;
+    }
 
     setUploading(true);
-
-    // Spend coins if needed
-    if (cost > 0) {
-      const { data: success } = await supabase.rpc('spend_coins_for_change', { _user_id: user.id, _change_type: type });
-      if (!success) {
-        toast({ title: 'Insufficient coins', description: `You need ${costLabel} Pride Coins to change your ${type}.`, variant: 'destructive' });
-        setUploading(false);
-        return;
-      }
-    } else {
-      // First free change — increment counter
-      const counterField = isAvatar ? 'avatar_changes' : 'banner_changes';
-      await supabase.from('profiles').update({ [counterField]: 1 } as any).eq('user_id', user.id);
-    }
 
     const ext = file.name.split('.').pop() || 'jpg';
     const filePath = `${type}s/${user.id}/${Date.now()}.${ext}`;
 
     const { error: uploadError } = await supabase.storage
-      .from('pride-social-network')
+      .from(STORAGE_BUCKET)
       .upload(filePath, file, { upsert: true });
 
     if (uploadError) {
@@ -199,22 +217,46 @@ const SettingsPage = () => {
       return;
     }
 
-    const { data: urlData } = supabase.storage
-      .from('pride-social-network')
-      .getPublicUrl(filePath);
+    const { data: urlData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
 
-    const urlField = isAvatar ? 'avatar_url' : 'banner_url';
-    const { error: updateError } = await supabase.from('profiles')
-      .update({ [urlField]: urlData.publicUrl } as any)
-      .eq('user_id', user.id);
+    // The server checks the URL, charges Pride Coins (2nd+ change) and saves it
+    const { data: charged, error: updateError } = await supabase.rpc('update_profile_field', {
+      _field: isAvatar ? 'avatar_url' : 'banner_url',
+      _value: urlData.publicUrl,
+    });
 
     if (updateError) {
-      toast({ title: 'Error', description: `Failed to update ${type}.`, variant: 'destructive' });
+      void supabase.storage.from(STORAGE_BUCKET).remove([filePath]);
+      toast({ title: 'Error', description: profileErrorMessage(updateError), variant: 'destructive' });
     } else {
       await fetchProfile();
-      toast({ title: 'Success', description: cost > 0 ? `${isAvatar ? 'Avatar' : 'Banner'} updated! ${cost} coins spent.` : `${isAvatar ? 'Avatar' : 'Banner'} updated!` });
+      const label = isAvatar ? 'Avatar' : 'Banner';
+      toast({ title: 'Success', description: charged ? `${label} updated! ${charged} Pride Coins spent.` : `${label} updated!` });
     }
     setUploading(false);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    setIsDeletingAccount(true);
+
+    // Remove uploaded files first; the database cleanup can't reach storage
+    for (const folder of ['posts', 'avatars', 'banners']) {
+      const { data: files } = await supabase.storage.from(STORAGE_BUCKET).list(`${folder}/${user.id}`, { limit: 1000 });
+      if (files && files.length > 0) {
+        await supabase.storage.from(STORAGE_BUCKET).remove(files.map((f) => `${folder}/${user.id}/${f.name}`));
+      }
+    }
+
+    const { error } = await supabase.rpc('delete_my_account');
+    if (error) {
+      toast({ title: 'Error', description: 'Could not delete your account. Please contact support.', variant: 'destructive' });
+      setIsDeletingAccount(false);
+      return;
+    }
+    await signOut();
+    toast({ title: 'Account deleted', description: 'Your account and data have been removed.' });
+    navigate('/');
   };
 
   if (loading || isLoading) {
@@ -472,26 +514,30 @@ const SettingsPage = () => {
                   </CardContent>
                 </Card>
 
-                {/* Tokenomics Info */}
+                {/* How Pride Coins are earned and spent */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Coins className="h-5 w-5 text-yellow-500" /> How to Earn Pride Coins
                     </CardTitle>
+                    <CardDescription>
+                      Rewards are given once per post and have daily limits. Pride Coins are internal points with no
+                      monetary value.
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-2 text-sm">
                       <div className="flex justify-between py-1 border-b border-border">
-                        <span>📝 Create a post</span><span className="font-medium text-green-600">+5 coins</span>
+                        <span>📝 Create a post (up to 5 a day)</span><span className="font-medium text-green-600">+5 coins</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-border">
-                        <span>🔁 Echo a post</span><span className="font-medium text-green-600">+3 coins</span>
+                        <span>🔁 Echo someone's post</span><span className="font-medium text-green-600">+3 coins</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-border">
                         <span>💬 Reply to a post</span><span className="font-medium text-green-600">+2 coins</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-border">
-                        <span>❤️ Like a post</span><span className="font-medium text-green-600">+1 coin</span>
+                        <span>❤️ Like someone's post</span><span className="font-medium text-green-600">+1 coin</span>
                       </div>
                       <div className="flex justify-between py-1 border-b border-border">
                         <span>📩 Receive a like</span><span className="font-medium text-green-600">+1 coin</span>
@@ -515,6 +561,47 @@ const SettingsPage = () => {
                         <span>🖼️ Change banner (2nd+)</span><span className="font-medium text-red-500">−40 coins</span>
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+
+                {/* Danger zone */}
+                <Card className="border-destructive/40">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-destructive">
+                      <Trash2 className="h-5 w-5" /> Delete account
+                    </CardTitle>
+                    <CardDescription>
+                      Permanently deletes your profile, posts, replies, likes, follows, uploaded images and Pride Coins.
+                      This cannot be undone.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" disabled={isDeletingAccount}>
+                          {isDeletingAccount ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+                          Delete my account
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            All your data will be permanently removed. You will be logged out and won't be able to
+                            restore the account.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDeleteAccount}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Delete permanently
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </CardContent>
                 </Card>
               </main>

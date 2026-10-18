@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Users, ArrowRight, Heart, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import CommunityMap from '@/components/map/CommunityMap';
-import AddBusinessForm from '@/components/map/AddBusinessForm';
+// Google Maps and the form libraries are heavy — load them only with this section
+const CommunityMap = lazy(() => import('@/components/map/CommunityMap'));
+const AddBusinessForm = lazy(() => import('@/components/map/AddBusinessForm'));
 import { useTranslation } from 'react-i18next';
 
 const CommunityMapSection = () => {
@@ -54,7 +55,9 @@ const CommunityMapSection = () => {
         </div>
 
         <div className="rounded-xl overflow-hidden border border-border shadow-lg mb-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-          <CommunityMap onAddBusiness={() => setShowAddForm(true)} />
+          <Suspense fallback={<div className="h-[400px] rounded-xl bg-muted animate-pulse" />}>
+            <CommunityMap onAddBusiness={() => setShowAddForm(true)} />
+          </Suspense>
         </div>
 
         <div className="text-center animate-fade-in" style={{ animationDelay: '0.5s' }}>
@@ -73,7 +76,11 @@ const CommunityMapSection = () => {
         </div>
       </div>
 
-      <AddBusinessForm open={showAddForm} onOpenChange={setShowAddForm} />
+      {showAddForm && (
+        <Suspense fallback={null}>
+          <AddBusinessForm open={showAddForm} onOpenChange={setShowAddForm} />
+        </Suspense>
+      )}
     </section>
   );
 };

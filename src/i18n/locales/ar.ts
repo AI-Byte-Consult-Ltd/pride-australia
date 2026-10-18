@@ -126,7 +126,6 @@ const ar = {
     subscribeStripe: 'اشترك عبر Stripe',
     subscribeRevolut: 'اشترك بالبطاقة (Revolut)',
     subscribePaypal: 'اشترك عبر PayPal',
-    subscribeCrypto: 'اشترك بالعملات الرقمية',
     basicName: 'PRIDE Basic',
     basicDesc: 'عضوية شهرية بسيطة لدعم Pride Social Network. احصل على امتيازات الداعمين الآن وافتح ميزات إضافية قريبًا.',
     proName: 'PRIDE Pro',

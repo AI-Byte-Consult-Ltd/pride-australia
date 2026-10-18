@@ -60,6 +60,8 @@ export function RainbowCatcherGame() {
   const [balance, setBalance] = useState<number | null>(null);
   const [reward, setReward] = useState(0);
   const [loading, setLoading] = useState(false);
+  // Server-side session: the entry fee is paid and the reward is validated on the server
+  const sessionIdRef = useRef<string | null>(null);
 
   const { user } = useAuth();
   const { toast } = useToast();
@@ -120,14 +122,15 @@ export function RainbowCatcherGame() {
     }
 
     setLoading(true);
-    const { data, error } = await supabase.rpc('arcade_play', { _user_id: user.id, _entry_fee: ENTRY_FEE });
+    const { data: sessionId, error } = await supabase.rpc('arcade_start');
     setLoading(false);
 
-    if (error || data === false) {
+    if (error || !sessionId) {
       toast({ title: t('arcade.startFailed'), description: t('arcade.startFailedDesc'), variant: 'destructive' });
       return;
     }
 
+    sessionIdRef.current = sessionId;
     setBalance(prev => (prev ?? 0) - ENTRY_FEE);
     gameStateRef.current = {
       paddleX: CANVAS_WIDTH / 2 - PADDLE_WIDTH / 2,
@@ -147,13 +150,13 @@ export function RainbowCatcherGame() {
 
   const endGame = useCallback(async (finalScore: number) => {
     setGameState('ended');
-    const earned = Math.min(Math.floor(finalScore / 5), 50);
-    setReward(earned);
+    const sessionId = sessionIdRef.current;
+    sessionIdRef.current = null;
+    if (!user || !sessionId) return;
 
-    if (user && earned > 0) {
-      await supabase.rpc('arcade_reward', { _user_id: user.id, _reward: earned });
-      setBalance(prev => (prev ?? 0) + earned);
-    }
+    const { data: earned } = await supabase.rpc('arcade_finish', { _session_id: sessionId, _score: finalScore });
+    setReward(earned ?? 0);
+    if (earned) setBalance(prev => (prev ?? 0) + earned);
   }, [user]);
 
   useEffect(() => {
