@@ -3,7 +3,7 @@ const ru = {
     madeInEU: 'Сделано в ЕС 🇪🇺 для всего мира 🗺️',
     prideSocial: 'Pride Social',
     prideSocialNetwork: 'Pride Social Network',
-    email: 'info@pridesocial.org',
+    email: 'info@aibyteconsult.com',
     joinNetwork: 'Присоединиться',
     supportPSN: 'Поддержать Pride Social Network',
     learnMore: 'Узнать больше',

@@ -173,7 +173,7 @@ const EventsPage = () => {
                 we’d love to hear from you — and help promote it.
               </p>
               <Button variant="outline" size="lg" asChild>
-                <a href="mailto:info@pridesocial.org">Contact Us</a>
+                <a href="mailto:info@aibyteconsult.com">Contact Us</a>
               </Button>
             </div>
           </div>

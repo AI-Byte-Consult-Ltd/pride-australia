@@ -199,8 +199,8 @@ const TermsPage = () => {
                 <p className="text-muted-foreground mt-4">
                   Refunds, chargebacks, and disputes are handled according to the rules of the payment provider and
                   applicable consumer laws. If you believe a payment is in error, contact us at{' '}
-                  <a href="mailto:info@pridesocial.org" className="text-primary hover:underline">
-                    info@pridesocial.org
+                  <a href="mailto:info@aibyteconsult.com" className="text-primary hover:underline">
+                    info@aibyteconsult.com
                   </a>
                   .
                 </p>
@@ -297,8 +297,8 @@ const TermsPage = () => {
                 <h2 className="font-display text-2xl font-semibold mb-4">14. Contact</h2>
                 <p className="text-muted-foreground">
                   For questions about these Terms, please contact{' '}
-                  <a href="mailto:info@pridesocial.org" className="text-primary hover:underline">
-                    info@pridesocial.org
+                  <a href="mailto:info@aibyteconsult.com" className="text-primary hover:underline">
+                    info@aibyteconsult.com
                   </a>
                   .
                 </p>

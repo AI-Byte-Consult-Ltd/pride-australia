@@ -3,7 +3,7 @@ const pt = {
     madeInEU: 'Feito na UE 🇪🇺 para o Mundo 🗺️',
     prideSocial: 'Pride Social',
     prideSocialNetwork: 'Pride Social Network',
-    email: 'info@pridesocial.org',
+    email: 'info@aibyteconsult.com',
     joinNetwork: 'Junte-se à Rede',
     supportPSN: 'Apoie a Pride Social Network',
     learnMore: 'Saiba Mais',

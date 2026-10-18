@@ -8,7 +8,7 @@ const PrivacyPage = () => {
   const lastUpdated = 'January 30, 2026';
 
   const siteName = 'Pride Social Network';
-  const contactEmail = 'info@pridesocial.org';
+  const contactEmail = 'info@aibyteconsult.com';
 
   const isEU = jurisdiction === 'eu';
   const isAU = jurisdiction === 'australia';

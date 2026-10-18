@@ -3,7 +3,7 @@ import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
 
 const GDPRPage = () => {
-  const siteUrl = "https://pridesocial.org";
+  const siteUrl = "https://pride.aibyteconsult.com";
   const title = "GDPR & EU Data Protection | Pride Social Network";
   const description =
     "Your EU/EEA privacy rights under GDPR, how Pride Social Network handles personal data, cookies, security, and international transfers.";
@@ -18,8 +18,8 @@ const GDPRPage = () => {
 
   const controller = {
     name: "Pride Social Network (operated by AI Byte Consult Ltd.)",
-    email: "info@pridesocial.org",
-    website: "pridesocial.org",
+    email: "info@aibyteconsult.com",
+    website: "pride.aibyteconsult.com",
     euHqAddress: "Via del Corso 123, 00186 Rome (RM), Italy",
   };
 

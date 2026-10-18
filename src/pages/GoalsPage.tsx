@@ -27,7 +27,7 @@ import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 
 const GoalsPage = () => {
-  const siteUrl = 'https://pridesocial.org';
+  const siteUrl = 'https://pride.aibyteconsult.com';
 
   // “Big network” style: goals framed like a scaled platform.
   const platformGoals = [

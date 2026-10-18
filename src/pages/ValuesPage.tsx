@@ -55,7 +55,7 @@ const ValuesPage = () => {
               <p className="text-lg text-muted-foreground mb-8">{t('values.livingPara3')}</p>
               <p className="text-lg text-muted-foreground">
                 {t('values.livingContact')}{' '}
-                <a href="mailto:info@pridesocial.org" className="text-primary hover:underline">info@pridesocial.org</a>.
+                <a href="mailto:info@aibyteconsult.com" className="text-primary hover:underline">info@aibyteconsult.com</a>.
               </p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
-const SITE_URL = 'https://pridesocial.org';
+const SITE_URL = 'https://pride.aibyteconsult.com';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og/pridesocial-og.jpg`;
 
 interface PageSEOProps {
