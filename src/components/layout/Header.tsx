@@ -103,7 +103,7 @@ const Header = () => {
           {/* Language */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-1.5 px-2">
+              <Button variant="ghost" size="sm" className="gap-1.5 px-2" aria-label={`Language: ${currentLang.label}`}>
                 <Globe className="h-4 w-4 opacity-70" />
                 <span className="hidden sm:inline text-xs">{currentLang.flag}</span>
                 <ChevronDown className="h-3 w-3 opacity-70" />
@@ -188,6 +188,8 @@ const Header = () => {
             size="icon"
             className="md:hidden"
             onClick={() => setMobileMenuOpen((v) => !v)}
+            aria-label="Menu"
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X /> : <Menu />}
           </Button>

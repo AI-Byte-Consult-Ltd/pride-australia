@@ -84,13 +84,13 @@ const SupportPackagesSection = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {packages.map((pkg, index) => {
             const benefitsNow = t(pkg.benefitsNowKey, { returnObjects: true }) as string[];
             const benefitsSoon = t(pkg.benefitsSoonKey, { returnObjects: true }) as string[];
 
             return (
-              <Card key={pkg.id} variant={pkg.featured ? 'featured' : 'elevated'} className="relative animate-fade-in flex flex-col" style={{ animationDelay: `${index * 0.1}s` }}>
+              <Card key={pkg.id} variant={pkg.featured ? 'featured' : 'elevated'} className="relative animate-fade-in flex flex-col min-w-0" style={{ animationDelay: `${index * 0.1}s` }}>
                 {pkg.featured && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                     <span className="inline-block px-4 py-1 rounded-full gradient-pride text-primary-foreground text-sm font-medium shadow-soft">
@@ -144,8 +144,8 @@ const SupportPackagesSection = () => {
                       <div className="space-y-2">
                         {Array.isArray(benefitsSoon) && benefitsSoon.map((benefit, i) => (
                           <div key={i} className="flex items-start gap-2 text-sm">
-                            <Check className="h-4 w-4 text-muted-foreground/60 shrink-0 mt-0.5" />
-                            <span className="text-muted-foreground">{benefit} <span className="text-muted-foreground/70">{t('supportPackages.soon')}</span></span>
+                            <Check className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                            <span className="text-muted-foreground">{benefit} <span className="text-muted-foreground">{t('supportPackages.soon')}</span></span>
                           </div>
                         ))}
                       </div>

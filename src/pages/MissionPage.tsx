@@ -50,7 +50,7 @@ const MissionPage = () => {
       description:
         'EU-based foundation to support community programs, partnerships, and responsible impact initiatives aligned with Pride Social Network.',
       badge: 'EU priority',
-      badgeColor: 'bg-green-500/10 text-green-600',
+      badgeColor: 'bg-green-500/10 text-green-700',
     },
     {
       icon: <Building2 className="h-6 w-6" />,

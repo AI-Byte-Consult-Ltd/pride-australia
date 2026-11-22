@@ -41,7 +41,7 @@ const EarlySupportersPage = () => {
                 ))}
                 {[...Array(Math.max(0, 5 - supporters.length))].map((_, i) => (
                   <div key={`empty-${i}`} className="p-6 rounded-2xl border-2 border-dashed border-border/50 flex items-center justify-center min-h-[180px] animate-fade-in" style={{ animationDelay: `${(supporters.length + i) * 0.1}s` }}>
-                    <div className="text-center text-muted-foreground/50"><Star className="h-8 w-8 mx-auto mb-2" /><p className="text-sm">{t('earlySupporters.yourNameHere')}</p></div>
+                    <div className="text-center text-muted-foreground"><Star className="h-8 w-8 mx-auto mb-2" /><p className="text-sm">{t('earlySupporters.yourNameHere')}</p></div>
                   </div>
                 ))}
               </div>

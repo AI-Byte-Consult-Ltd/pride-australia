@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/layout/Layout';
+import { useTranslation } from 'react-i18next';
 
 const SignupPage = () => {
   const [name, setName] = useState('');
@@ -28,22 +29,24 @@ const SignupPage = () => {
   const referralCode = searchParams.get('ref');
   const { toast } = useToast();
   const { signUp, user } = useAuth();
+  const { t } = useTranslation();
+  const monthNames = t('auth.months', { returnObjects: true }) as string[];
 
   // Generate days, months, years for dropdowns
   const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, '0'));
   const months = [
-    { value: '01', label: 'January' },
-    { value: '02', label: 'February' },
-    { value: '03', label: 'March' },
-    { value: '04', label: 'April' },
-    { value: '05', label: 'May' },
-    { value: '06', label: 'June' },
-    { value: '07', label: 'July' },
-    { value: '08', label: 'August' },
-    { value: '09', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' },
+    { value: '01', label: monthNames[0] },
+    { value: '02', label: monthNames[1] },
+    { value: '03', label: monthNames[2] },
+    { value: '04', label: monthNames[3] },
+    { value: '05', label: monthNames[4] },
+    { value: '06', label: monthNames[5] },
+    { value: '07', label: monthNames[6] },
+    { value: '08', label: monthNames[7] },
+    { value: '09', label: monthNames[8] },
+    { value: '10', label: monthNames[9] },
+    { value: '11', label: monthNames[10] },
+    { value: '12', label: monthNames[11] },
   ];
   
   const currentYear = new Date().getFullYear();
@@ -58,7 +61,7 @@ const SignupPage = () => {
 
   const validateBirthday = (): string | null => {
     if (!birthDay || !birthMonth || !birthYear) {
-      return 'Please enter your complete date of birth.';
+      return t('auth.dobRequired');
     }
     
     const day = parseInt(birthDay, 10);
@@ -70,7 +73,7 @@ const SignupPage = () => {
     
     // Check if date is valid
     if (birthDate.getDate() !== day || birthDate.getMonth() !== month - 1) {
-      return 'Please enter a valid date.';
+      return t('auth.invalidDate');
     }
     
     // Check minimum age (18 years)
@@ -82,7 +85,7 @@ const SignupPage = () => {
     const actualAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
     
     if (actualAge < 18) {
-      return 'You must be at least 18 years old to sign up.';
+      return t('auth.tooYoung');
     }
     
     return null;
@@ -95,8 +98,8 @@ const SignupPage = () => {
     // Validate name
     if (name.trim().length < 2) {
       toast({
-        title: "Invalid name",
-        description: "Please enter a valid display name.",
+        title: t('auth.invalidName'),
+        description: t('auth.invalidNameDesc'),
         variant: "destructive",
       });
       setLoading(false);
@@ -107,7 +110,7 @@ const SignupPage = () => {
     const birthdayError = validateBirthday();
     if (birthdayError) {
       toast({
-        title: "Invalid date of birth",
+        title: t('auth.invalidDob'),
         description: birthdayError,
         variant: "destructive",
       });
@@ -118,8 +121,8 @@ const SignupPage = () => {
     // Basic password validation
     if (password.length < 8) {
       toast({
-        title: "Password too short",
-        description: "Password must be at least 8 characters long.",
+        title: t('auth.passwordTooShort'),
+        description: t('auth.passwordTooShortDesc'),
         variant: "destructive",
       });
       setLoading(false);
@@ -132,21 +135,21 @@ const SignupPage = () => {
     const { error } = await signUp(email, password, name, dateOfBirth, referralCode || undefined);
 
     if (error) {
-      let message = 'An error occurred during signup.';
+      let message = t('auth.signupFailed');
       if (error.message.includes('already registered')) {
-        message = 'This email is already registered. Try logging in instead.';
+        message = t('auth.alreadyRegistered');
       } else if (error.message.includes('invalid')) {
-        message = 'Please enter a valid email address.';
+        message = t('auth.invalidEmail');
       }
       toast({
-        title: "Signup failed",
+        title: t('auth.signupFailed'),
         description: message,
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Account created!",
-        description: "Welcome to Pride Social Network.",
+        title: t('auth.accountCreated'),
+        description: t('auth.welcomeMsg'),
       });
 
       // The referral (if any) is credited by the server once the email is confirmed
@@ -159,8 +162,8 @@ const SignupPage = () => {
   return (
     <Layout>
       <PageSEO
-        title="Sign Up | Pride Social Network"
-        description="Join Pride Social Network today. Create your free account and connect with the LGBTQIA+ community."
+        title={t('auth.signupTitle')}
+        description={t('auth.signupDesc')}
         path="/signup"
       />
 
@@ -189,7 +192,7 @@ const SignupPage = () => {
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Display Name <span className="text-destructive">*</span></Label>
+                  <Label htmlFor="name">{t('auth.displayName')} <span className="text-destructive">*</span></Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -205,7 +208,7 @@ const SignupPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email <span className="text-destructive">*</span></Label>
+                  <Label htmlFor="email">{t('auth.email')} <span className="text-destructive">*</span></Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -224,12 +227,12 @@ const SignupPage = () => {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    Date of Birth <span className="text-destructive">*</span>
+                    {t('auth.dateOfBirth')} <span className="text-destructive">*</span>
                   </Label>
                   <div className="grid grid-cols-3 gap-2">
                     <Select value={birthDay} onValueChange={setBirthDay}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Day" />
+                      <SelectTrigger aria-label={t('auth.day')}>
+                        <SelectValue placeholder={t('auth.day')} />
                       </SelectTrigger>
                       <SelectContent>
                         {days.map((day) => (
@@ -241,8 +244,8 @@ const SignupPage = () => {
                     </Select>
                     
                     <Select value={birthMonth} onValueChange={setBirthMonth}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Month" />
+                      <SelectTrigger aria-label={t('auth.month')}>
+                        <SelectValue placeholder={t('auth.month')} />
                       </SelectTrigger>
                       <SelectContent>
                         {months.map((month) => (
@@ -254,8 +257,8 @@ const SignupPage = () => {
                     </Select>
                     
                     <Select value={birthYear} onValueChange={setBirthYear}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Year" />
+                      <SelectTrigger aria-label={t('auth.year')}>
+                        <SelectValue placeholder={t('auth.year')} />
                       </SelectTrigger>
                       <SelectContent>
                         {years.map((year) => (
@@ -266,11 +269,11 @@ const SignupPage = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                  <p className="text-xs text-muted-foreground">You must be at least 18 years old to sign up</p>
+                  <p className="text-xs text-muted-foreground">{t('auth.ageRequirement')}</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password <span className="text-destructive">*</span></Label>
+                  <Label htmlFor="password">{t('auth.password')} <span className="text-destructive">*</span></Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -286,24 +289,25 @@ const SignupPage = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Must be at least 8 characters</p>
+                  <p className="text-xs text-muted-foreground">{t('auth.passwordMinLength')}</p>
                 </div>
               </CardContent>
 
               <CardFooter className="flex flex-col gap-4">
                 <Button type="submit" variant="pride" size="lg" className="w-full" disabled={loading}>
-                  {loading ? 'Creating account...' : 'Create Account'}
+                  {loading ? t('auth.creatingAccount') : t('auth.createAccount')}
                 </Button>
 
                 <p className="text-center text-sm text-muted-foreground">
-                  Already have an account?{' '}
+                  {t('auth.hasAccount')}{' '}
                   <Link to="/login" className="text-primary font-medium hover:underline">
-                    Log in
+                    {t('nav.login')}
                   </Link>
                 </p>
               </CardFooter>
@@ -311,10 +315,10 @@ const SignupPage = () => {
           </Card>
 
           <p className="text-center text-xs text-muted-foreground mt-6">
-            By signing up, you agree to our{' '}
-            <Link to="/terms" className="hover:underline">Terms of Service</Link>
-            {' '}and{' '}
-            <Link to="/privacy" className="hover:underline">Privacy Policy</Link>
+            {t('auth.bySigningUp')}{' '}
+            <Link to="/terms" className="underline">{t('auth.termsLink')}</Link>
+            {' '}{t('auth.andText')}{' '}
+            <Link to="/privacy" className="underline">{t('auth.privacyLink')}</Link>
           </p>
         </div>
       </div>
