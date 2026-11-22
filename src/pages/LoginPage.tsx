@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/layout/Layout';
+import { useTranslation } from 'react-i18next';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -18,6 +19,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { signIn, user } = useAuth();
+  const { t } = useTranslation();
 
   // Redirect if already logged in
   useEffect(() => {
@@ -33,21 +35,21 @@ const LoginPage = () => {
     const { error } = await signIn(email, password);
 
     if (error) {
-      let message = 'An error occurred during login.';
+      let message = t('auth.loginFailed');
       if (error.message.includes('Invalid login credentials')) {
-        message = 'Invalid email or password. Please try again.';
+        message = t('auth.invalidCredentials');
       } else if (error.message.includes('Email not confirmed')) {
-        message = 'Please confirm your email before logging in.';
+        message = t('auth.emailNotConfirmed');
       }
       toast({
-        title: "Login failed",
+        title: t('auth.loginFailed'),
         description: message,
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Welcome back!",
-        description: "You've successfully logged in.",
+        title: t('auth.welcomeBack'),
+        description: t('auth.welcomeBackMsg'),
       });
       navigate('/dashboard');
     }
@@ -58,8 +60,8 @@ const LoginPage = () => {
   return (
     <Layout>
       <PageSEO
-        title="Log In | Pride Social Network"
-        description="Log in to your Pride Social Network account and connect with the community."
+        title={t('auth.loginTitle')}
+        description={t('auth.loginDesc')}
         path="/login"
         noIndex
       />
@@ -76,14 +78,14 @@ const LoginPage = () => {
 
           <Card variant="elevated">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Welcome back</CardTitle>
-              <CardDescription>Log in to your account to continue</CardDescription>
+              <CardTitle className="text-2xl">{t('auth.welcomeBack')}</CardTitle>
+              <CardDescription>{t('auth.loginSubtitle')}</CardDescription>
             </CardHeader>
 
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('auth.email')}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -100,9 +102,9 @@ const LoginPage = () => {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t('auth.password')}</Label>
                     <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                      Forgot password?
+                      {t('auth.forgotPassword')}
                     </Link>
                   </div>
                   <div className="relative">
@@ -119,6 +121,7 @@ const LoginPage = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -129,13 +132,13 @@ const LoginPage = () => {
 
               <CardFooter className="flex flex-col gap-4">
                 <Button type="submit" variant="pride" size="lg" className="w-full" disabled={loading}>
-                  {loading ? 'Logging in...' : 'Log in'}
+                  {loading ? t('auth.loggingIn') : t('nav.login')}
                 </Button>
 
                 <p className="text-center text-sm text-muted-foreground">
-                  Don't have an account?{' '}
+                  {t('auth.noAccount')}{' '}
                   <Link to="/signup" className="text-primary font-medium hover:underline">
-                    Sign up
+                    {t('nav.signup')}
                   </Link>
                 </p>
               </CardFooter>
@@ -143,10 +146,10 @@ const LoginPage = () => {
           </Card>
 
           <p className="text-center text-xs text-muted-foreground mt-6">
-            By continuing, you agree to our{' '}
-            <Link to="/terms" className="hover:underline">Terms of Service</Link>
-            {' '}and{' '}
-            <Link to="/privacy" className="hover:underline">Privacy Policy</Link>
+            {t('auth.agreeTerms')}{' '}
+            <Link to="/terms" className="underline">{t('auth.termsLink')}</Link>
+            {' '}{t('auth.andText')}{' '}
+            <Link to="/privacy" className="underline">{t('auth.privacyLink')}</Link>
           </p>
         </div>
       </div>

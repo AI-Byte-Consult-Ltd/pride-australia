@@ -233,7 +233,7 @@ const TransparencyCostsPage = () => {
                             cost.type === "one-off"
                               ? "bg-blue-500/10 text-blue-600"
                               : cost.type === "recurring"
-                              ? "bg-green-500/10 text-green-600"
+                              ? "bg-green-500/10 text-green-700"
                               : cost.type === "ongoing"
                               ? "bg-purple-500/10 text-purple-600"
                               : "bg-muted text-muted-foreground"

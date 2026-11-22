@@ -419,7 +419,7 @@ const GoalsPage = () => {
                         <span
                           className={`text-xs font-medium px-2 py-1 rounded-full ${
                             item.status === 'Primary'
-                              ? 'bg-green-500/10 text-green-600'
+                              ? 'bg-green-500/10 text-green-700'
                               : item.status === 'Secondary'
                               ? 'bg-blue-500/10 text-blue-600'
                               : 'bg-muted text-muted-foreground'

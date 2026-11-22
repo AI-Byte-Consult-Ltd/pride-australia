@@ -420,7 +420,7 @@ const RoadmapPage = () => {
     status?: 'implemented' | 'short-term' | 'mid-term' | 'upcoming';
   }) => {
     const statusLabels = {
-      implemented: { label: 'Already Implemented', color: 'bg-green-500/10 text-green-600' },
+      implemented: { label: 'Already Implemented', color: 'bg-green-500/10 text-green-700' },
       'short-term': { label: 'Next Updates', color: 'bg-blue-500/10 text-blue-600' },
       'mid-term': { label: 'Upcoming', color: 'bg-purple-500/10 text-purple-600' },
       upcoming: { label: 'Planned', color: 'bg-primary/10 text-primary' },
@@ -452,7 +452,7 @@ const RoadmapPage = () => {
             <li key={index} className="flex items-start gap-3">
               <div
                 className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${
-                  status === 'implemented' ? 'bg-green-500/10 text-green-600' : 'bg-muted text-muted-foreground'
+                  status === 'implemented' ? 'bg-green-500/10 text-green-700' : 'bg-muted text-muted-foreground'
                 }`}
               >
                 {item.icon}

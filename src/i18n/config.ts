@@ -37,4 +37,13 @@ i18n
     },
   });
 
+// Keep <html lang> and text direction in sync with the active language
+const applyDocumentLanguage = (lng?: string) => {
+  const code = (lng || 'en').split('-')[0];
+  document.documentElement.lang = code;
+  document.documentElement.dir = code === 'ar' ? 'rtl' : 'ltr';
+};
+applyDocumentLanguage(i18n.resolvedLanguage || i18n.language);
+i18n.on('languageChanged', applyDocumentLanguage);
+
 export default i18n;
