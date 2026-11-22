@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <script>
+      (function () {
+        // GitHub Pages SPA fix:
+        // If the URL looks like "/?/support" (set by 404.html), restore it to "/support"
+        var l = window.location;
+        if (l.search && l.search.startsWith("?/")) {
+          var path = l.search.slice(2); // remove "?/"
+          // convert "&" back to "?" (preserves query strings)
+          path = path.replace(/&/g, "?");
+          var newUrl = l.pathname.replace(/\/$/, "") + "/" + path + l.hash;
+          window.history.replaceState(null, "", newUrl);
+        }
+      })();
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Default SEO (overridden per-page by react-helmet-async) -->
+    <title>Pride Social Network — LGBTQIA+ Community | Made in EU, for the World</title>
+    <meta
+      name="description"
+      content="Pride Social Network is a modern LGBTQIA+ social platform created in the European Union for a global community. Connect safely, share stories, discover events, and list your business."
+    />
+    <meta name="author" content="Pride Social Network" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+
+    <!-- PNG Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png" />
+
+    <!-- Default OG (overridden per-page) -->
+    <meta property="og:site_name" content="Pride Social Network" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Pride Social Network — LGBTQIA+ Community | Made in EU, for the World" />
+    <meta property="og:description" content="A modern LGBTQIA+ social platform created in the European Union for a global community. Connect, share, and celebrate together." />
+    <meta property="og:image" content="https://pride.aibyteconsult.com/og/pridesocial-og.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://pride.aibyteconsult.com/og/pridesocial-og.jpg" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#8b5cf6" />
+
+    <!-- Apple PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Pride Social" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <script type="module" crossorigin src="/assets/index-DU2G7QAt.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Brmb37pB.css">
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <!-- Vite entry point -->
+  </body>
+</html>
